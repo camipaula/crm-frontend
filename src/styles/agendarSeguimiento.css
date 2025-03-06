@@ -1,0 +1,17 @@
+.custom-select {
+    width: 100%;
+    font-size: 16px;
+  }
+  
+  .custom-select .css-1s2u09g-control {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+  
+  .custom-select .css-26l3qy-menu {
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  

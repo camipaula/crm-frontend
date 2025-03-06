@@ -1,0 +1,30 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Ajusta el espacio del contenido */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-left: 250px; /* Sidebar abierto */
+  margin-top: 60px; /* Navbar fijo */
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 60px);
+}
+
+/* Ajuste cuando el sidebar está cerrado */
+.sidebar.closed ~ .main-container {
+  margin-left: 60px;
+}
+
+.content {
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}

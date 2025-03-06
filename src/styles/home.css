@@ -1,0 +1,62 @@
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #76e1c7, #2a7ab0, #a6c8ff);
+}
+
+.home-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+}
+
+.home-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.home-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    transition: 0.3s;
+}
+
+.home-button:hover {
+    opacity: 0.8;
+}
+
+/* Colores para los botones */
+.clientes { background: #2a7ab0; }
+.prospectos { background: #2a9647; }
+.pedidos { background: #8144d1; }
+
+/* Responsive: en pantallas grandes, los botones estarán en fila */
+@media (min-width: 600px) {
+    .button-container {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .home-button {
+        min-width: 120px;
+    }
+}

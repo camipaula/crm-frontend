@@ -1,0 +1,93 @@
+.vendedoras-container {
+    width: 95%;
+    max-width: 1600px; /* Opcional, para pantallas muy grandes */
+    background-color: #fff;
+    padding: 40px;
+    margin: 20px auto;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 120px); /* Para llenar pantalla */
+  }
+  
+  .title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  .btn-crear {
+    display: block;
+    margin: 0 auto 30px auto;
+    padding: 12px 24px;
+    background-color: #4caf50;
+    color: #fff;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-crear:hover {
+    background-color: #45a049;
+  }
+  
+  .vendedoras-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    font-size: 1rem;
+  }
+  
+  
+  .vendedoras-table th,
+  .vendedoras-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .vendedoras-table th {
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  
+  .vendedoras-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .vendedoras-table button {
+    padding: 6px 12px;
+    margin: 0 5px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-editar {
+    background-color: #2196f3;
+    color: #fff;
+  }
+  
+  .btn-editar:hover {
+    background-color: #1976d2;
+  }
+  
+  .btn-eliminar {
+    background-color: #f44336;
+    color: #fff;
+  }
+  
+  .btn-eliminar:hover {
+    background-color: #d32f2f;
+  }
+  
+  .error {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+  }
+  

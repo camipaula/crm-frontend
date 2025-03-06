@@ -1,0 +1,102 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #007bff;
+  color: white;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.closed {
+  width: 60px;
+}
+
+/* Botón abrir/cerrar */
+.sidebar .toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s;
+}
+
+.sidebar .toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Menú */
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.sidebar li {
+  width: 100%;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px 15px;
+  color: white;
+  font-size: 16px;
+  text-decoration: none;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.sidebar.closed .nav-link {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.sidebar.closed .nav-link span {
+  display: none;
+}
+
+/* Botón logout */
+.sidebar .logout-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  padding: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: auto; /* lo baja al fondo */
+}
+
+.sidebar.closed .logout-btn {
+  justify-content: center;
+}
+
+.sidebar.closed .logout-btn span {
+  display: none;
+}
+
+.sidebar .logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+

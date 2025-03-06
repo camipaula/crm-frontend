@@ -1,0 +1,130 @@
+/* Contenedor principal */
+.seguimientos-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Título principal */
+  .title {
+    font-size: 28px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  
+  /* Tarjeta de cada venta */
+  .venta-card {
+    background: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    text-align: left;
+  }
+  
+  .venta-card h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .venta-card h3 {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  /* Tabla de seguimientos */
+  .seguimientos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 15px;
+  }
+  
+  .seguimientos-table th,
+  .seguimientos-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+  }
+  
+  .seguimientos-table th {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .seguimientos-table tr:nth-child(even) {
+    background: #f1f1f1;
+  }
+  
+  .seguimientos-table tr:hover {
+    background: #e9ecef;
+  }
+  
+  /* Botones */
+  .seguimientos-table button {
+    padding: 6px 10px;
+    margin: 3px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  /* Botón Ver Historial */
+  .btn-historial {
+    background: #ff9800;
+    color: white;
+  }
+  
+  .btn-historial:hover {
+    background: #e68a00;
+  }
+  
+  /* Botón Agendar Seguimiento */
+  .btn-agendar {
+    background: #076eff;
+    color: white;
+  }
+  
+  .btn-agendar:hover {
+    background: #0056b3;
+  }
+  
+  /* Mensajes de error */
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .seguimientos-table th,
+    .seguimientos-table td {
+      font-size: 13px;
+      padding: 8px;
+    }
+  
+    .venta-card {
+      padding: 15px;
+    }
+  
+    .venta-card h2 {
+      font-size: 20px;
+    }
+  
+    .venta-card h3 {
+      font-size: 16px;
+    }
+  }
+  
