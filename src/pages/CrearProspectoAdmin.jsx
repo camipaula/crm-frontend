@@ -22,7 +22,7 @@ const CrearProspectoAdmin = () => {
     const cargarVendedoras = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/usuarios/vendedoras", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -58,7 +58,7 @@ const CrearProspectoAdmin = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://localhost:5000/api/prospectos", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

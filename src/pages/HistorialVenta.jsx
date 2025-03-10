@@ -12,7 +12,7 @@ const HistorialVenta = () => {
     const obtenerHistorial = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/seguimientos/venta/${id_venta}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/venta/${id_venta}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -39,6 +39,7 @@ const HistorialVenta = () => {
         <thead>
           <tr>
             <th>Fecha</th>
+            <th>Motivo</th>
             <th>Tipo</th>
             <th>Estado</th>
             <th>Resultado</th>
@@ -49,7 +50,8 @@ const HistorialVenta = () => {
           {historial.map((h) => (
             <tr key={h.id_seguimiento}>
               <td>{new Date(h.fecha_programada).toLocaleDateString()}</td>
-              <td>{h.tipo}</td>
+              <td>{h.motivo}</td>
+              <td>{h.tipo_seguimiento?.descripcion ?? "Sin tipo"}</td>
               <td>{h.estado}</td>
               <td>{h.resultado}</td>
               <td>{h.nota}</td>

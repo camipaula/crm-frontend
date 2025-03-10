@@ -17,7 +17,7 @@ const EditarVendedora = () => {
   const obtenerVendedora = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/usuarios/vendedoras/${cedula_ruc}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -35,7 +35,7 @@ const EditarVendedora = () => {
   const guardarCambios = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/usuarios/vendedoras/${cedula_ruc}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

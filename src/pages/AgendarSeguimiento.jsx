@@ -17,12 +17,12 @@ const AgendarSeguimiento = () => {
   const cedula_vendedora = obtenerCedulaDesdeToken();
 
 
-  // 🔹 Obtener tipos de seguimiento desde el backend
+  // Obtener tipos de seguimiento desde el backend
   useEffect(() => {
     const obtenerTiposSeguimiento = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/seguimientos/tipos-seguimiento", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/tipos-seguimiento`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -41,7 +41,7 @@ const AgendarSeguimiento = () => {
     e.preventDefault();
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/seguimientos", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -57,11 +57,11 @@ const AgendarSeguimiento = () => {
           }),
         });
       
-        const data = await res.json(); // 👈 Para ver el error del backend
-        if (!res.ok) throw new Error(data.message || "holi Error al agendar seguimiento");
+        const data = await res.json(); 
+        if (!res.ok) throw new Error(data.message || "Error al agendar seguimiento");
       
         alert("Seguimiento agendado con éxito");
-        navigate("/seguimientos-vendedora");
+        navigate(-1);
       } catch (err) {
         console.error("Error:", err);
         setError(err.message);

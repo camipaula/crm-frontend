@@ -18,7 +18,7 @@ const SeguimientosVendedora = () => {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/ventas", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -88,6 +88,7 @@ const SeguimientosVendedora = () => {
                   <th>Tipo</th>
                   <th>Estado</th>
                   <th>Resultado</th>
+                  <th>Motivo</th>
                   <th>Nota</th>
                   <th>Acción</th>
                 </tr>
@@ -99,6 +100,7 @@ const SeguimientosVendedora = () => {
                     <td>{s.tipo_seguimiento.descripcion}</td>
                     <td>{s.estado}</td>
                     <td>{s.resultado ?? "Pendiente"}</td>
+                    <td>{s.motivo ?? "Sin motivo"}</td>
                     <td>{s.nota ?? "Sin nota"}</td>
                     <td>
                       <button

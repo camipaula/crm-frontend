@@ -31,12 +31,34 @@ const ProspectosAdmin = () => {
   }, []);
 
   useEffect(() => {
-    buscarProspectos();
+    obtenerVendedoras();
+    obtenerSectores();
+    establecerFechasUltimos6Meses();  
+  }, []);
+
+  // Establece automáticamente las fechas del mes actual
+  const establecerFechasUltimos6Meses = () => {
+    const fechaActual = new Date();
+    const fechaFin = fechaActual.toISOString().split("T")[0];
+  
+    const fechaInicio = new Date();
+    fechaInicio.setMonth(fechaInicio.getMonth() - 3);
+    const fechaInicioFormateada = fechaInicio.toISOString().split("T")[0];
+  
+    setFechaInicio(fechaInicioFormateada);
+    setFechaFin(fechaFin);
+  };
+  
+
+  useEffect(() => {
+    if (fechaInicio && fechaFin) {
+      buscarProspectos();
+    }
   }, [cedulaVendedora, estadoFiltro, fechaInicio, fechaFin, sectorFiltro]);
 
   const obtenerVendedoras = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/usuarios/vendedoras");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`);
       if (!res.ok) throw new Error("Error cargando vendedoras");
       const data = await res.json();
       setVendedoras(data);
@@ -48,7 +70,7 @@ const ProspectosAdmin = () => {
   const obtenerSectores = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/prospectos/sectores", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/sectores`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -61,13 +83,12 @@ const ProspectosAdmin = () => {
     }
   };
 
-
   const buscarProspectos = async () => {
     try {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/prospectos?`;
+      let url = `${import.meta.env.VITE_API_URL}/api/prospectos?`;
 
       if (cedulaVendedora) url += `cedula_vendedora=${cedulaVendedora}&`;
       if (estadoFiltro.length > 0) {
@@ -96,7 +117,7 @@ const ProspectosAdmin = () => {
   const eliminarProspecto = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/prospectos/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

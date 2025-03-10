@@ -18,7 +18,7 @@ const RegistrarResultado = () => {
   const obtenerSeguimiento = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/seguimientos/${id_seguimiento}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -38,7 +38,7 @@ const RegistrarResultado = () => {
   const guardarResultado = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/seguimientos/${id_seguimiento}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const RegistrarResultado = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/seguimientos/${id_seguimiento}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

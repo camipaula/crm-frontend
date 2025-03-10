@@ -19,7 +19,7 @@ const SeguimientosProspecto = () => {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/ventas/prospecto/${id_prospecto}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/prospecto/${id_prospecto}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

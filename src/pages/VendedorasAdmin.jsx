@@ -15,7 +15,7 @@ const VendedorasAdmin = () => {
   const obtenerVendedoras = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/usuarios/vendedoras", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al obtener vendedoras");
@@ -34,7 +34,7 @@ const VendedorasAdmin = () => {
       if (!confirmar) return;
 
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/usuarios/vendedoras/${cedula_ruc}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

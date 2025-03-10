@@ -29,10 +29,25 @@ const ProspectosVendedora = () => {
     const cedula = obtenerCedulaDesdeToken();
     setCedulaVendedora(cedula);
     obtenerSectores();
+    establecerFechasUltimos6Meses(); // Aquí agregamos el filtro automático del mes actual
   }, []);
 
+  // Definir fechas de 6 meses 
+  const establecerFechasUltimos6Meses = () => {
+    const fechaActual = new Date();
+    const fechaFin = fechaActual.toISOString().split("T")[0];
+
+    const fechaInicio = new Date();
+    fechaInicio.setMonth(fechaInicio.getMonth() - 3);
+    const fechaInicioFormateada = fechaInicio.toISOString().split("T")[0];
+
+    setFechaInicio(fechaInicioFormateada);
+    setFechaFin(fechaFin);
+  };
+
+
   useEffect(() => {
-    if (cedulaVendedora) {
+    if (cedulaVendedora && fechaInicio && fechaFin) {
       buscarProspectos();
     }
   }, [cedulaVendedora, estadoFiltro, fechaInicio, fechaFin, sectorFiltro]);
@@ -40,7 +55,7 @@ const ProspectosVendedora = () => {
   const obtenerSectores = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/prospectos/sectores", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/sectores`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -57,7 +72,7 @@ const ProspectosVendedora = () => {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/prospectos?vendedora=${cedulaVendedora}`;
+      let url = `${import.meta.env.VITE_API_URL}/api/prospectos?vendedora=${cedulaVendedora}`;
 
       if (estadoFiltro.length > 0) {
         estadoFiltro.forEach((estado) => {
@@ -85,7 +100,7 @@ const ProspectosVendedora = () => {
   const eliminarProspecto = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/prospectos/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -105,7 +120,6 @@ const ProspectosVendedora = () => {
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}
 
-      {/* 🔹 Filtros intactos */}
       <div className="filtros-container">
         <Select
           options={opcionesEstado}
@@ -133,6 +147,10 @@ const ProspectosVendedora = () => {
         </button>
       </div>
 
+      {/* 🔹 Botón para Crear un Nuevo Prospecto */}
+      <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto")}>
+        ➕ Crear Prospecto
+      </button>
       <table className="prospectos-table">
         <thead>
           <tr>
@@ -229,10 +247,6 @@ const ProspectosVendedora = () => {
 
       </table>
 
-      {/* 🔹 Botón para Crear un Nuevo Prospecto */}
-      <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto")}>
-        ➕ Crear Prospecto
-      </button>
     </div>
   );
 };

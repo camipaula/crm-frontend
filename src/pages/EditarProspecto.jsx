@@ -21,7 +21,7 @@ const EditarProspecto = () => {
         if (!token) throw new Error("No estás autenticado. Inicia sesión nuevamente.");
 
         // Cargar datos del prospecto
-        const resProspecto = await fetch(`http://localhost:5000/api/prospectos/${id_prospecto}`, {
+        const resProspecto = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -36,7 +36,7 @@ const EditarProspecto = () => {
 
         // 🔍 Cargar lista de vendedoras solo si el usuario es administrador
         if (rolUsuario === "admin") {
-          const resVendedoras = await fetch("http://localhost:5000/api/usuarios/vendedoras", {
+          const resVendedoras = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -81,7 +81,7 @@ const EditarProspecto = () => {
     try {
       console.log(" Enviando datos al backend:", prospecto);
 
-      const response = await fetch(`http://localhost:5000/api/prospectos/${id_prospecto}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
