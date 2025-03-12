@@ -11,11 +11,14 @@
   flex-grow: 1;
   margin-left: 250px; /* Sidebar abierto */
   margin-top: 60px; /* Navbar fijo */
-  padding: 20px;
+  padding: 20px; 
   overflow-y: auto;
-  background-color: #f8f9fa;
-  min-height: calc(100vh - 60px);
+  background-color: #afc6eb;
+  min-height: calc(100vh - 100px);
+  min-width: 60vw; /* 🔥 Usa "vw" en vez de "vh" */
+  max-width: 1400px; /* 🔥 Para evitar que se haga gigante */
 }
+
 
 /* Ajuste cuando el sidebar está cerrado */
 .sidebar.closed ~ .main-container {

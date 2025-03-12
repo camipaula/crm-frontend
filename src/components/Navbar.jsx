@@ -17,7 +17,7 @@ const Navbar = () => {
           ⬅ 
         </button>
       )}
-      <h2 className="navbar-title">CRM</h2>
+      <h2 className="navbar-title">{/*Titulo */}</h2>
       <div className="navbar-right">
         <button className="logout-btn" onClick={logout}>
           Cerrar Sesión

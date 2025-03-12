@@ -1,68 +1,85 @@
-/* Contenedor principal */
+/* 🎨 Contenedor principal */
 .historial-container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 50px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
+  max-width: 90%;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 🏆 Título */
+h1 {
+  font-size: 28px;
+  color: #0d2a49;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 📝 Mensaje de carga o error */
+.error {
+  color: red;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* 📋 Tabla de historial */
+.historial-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 16px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* 🏅 Encabezados de la tabla */
+.historial-table th {
+  background: #0d2a49;
+  color: white;
+  text-transform: uppercase;
+  padding: 15px;
+}
+
+.historial-table td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: left;
+}
+
+/* 🏷 Resaltar filas alternas */
+.historial-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* 🎬 Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  
-  /* Título */
-  .historial-container h1 {
-    font-size: 28px;
-    color: #333;
-    font-weight: bold;
-    margin-bottom: 30px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Tabla de historial */
-  .historial-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 16px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .historial-table th,
-  .historial-table td {
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .historial-container {
+    width: 95%;
     padding: 15px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
   }
-  
-  .historial-table th {
-    background: #007bff;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .historial-table tr:nth-child(even) {
-    background: #f9f9f9;
-  }
-  
-  .historial-table tr:hover {
-    background: #f1f1f1;
-  }
-  
-  /* Error */
-  .error {
-    color: red;
+
+  .historial-table {
     font-size: 14px;
-    margin-top: 15px;
   }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .historial-table th,
-    .historial-table td {
-      font-size: 14px;
-      padding: 10px;
-    }
+
+  th,
+  td {
+    padding: 10px;
   }
-  
+}

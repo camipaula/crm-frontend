@@ -32,8 +32,6 @@ const AbrirVenta = () => {
   return (
     <div className="abrir-venta-container">
       <h1>Abrir Nueva Venta</h1>
-      <p><strong>Prospecto ID:</strong> {id_prospecto}</p>
-
       <textarea
         placeholder="Objetivo de la venta"
         value={objetivo}

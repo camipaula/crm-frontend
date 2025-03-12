@@ -1,54 +1,141 @@
+/* 📌 Contenedor Principal */
 .crear-prospecto-container {
-    max-width: 400px;
-    margin: 20px auto;
+  width: 100%;
+  max-width: 800px; /* 🔥 Ajusta el ancho máximo */
+  min-width: 60vw;  /* 🔥 Asegura que no sea muy estrecho */
+  margin: 50px auto; /* 🔥 Centra el contenedor */
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  animation: fadeIn 0.5s ease-in-out; /* 🔥 Animación de entrada */
+}
+
+/* 📌 Título */
+h1 {
+  font-size: 26px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 📌 Formularios */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 📌 Estilos de las etiquetas */
+label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #444;
+}
+
+/* 📌 Estilos de los inputs y selects */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+/* 📌 Área de texto */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* 📌 Contenedor de botones */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* 📌 Botón de Guardar */
+.btn-guardar {
+  padding: 12px 20px;
+  background: #28a745; /* Verde */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-guardar:hover {
+  background: #218838;
+}
+
+/* 📌 Botón de Cancelar */
+.btn-cerrar {
+  padding: 12px 20px;
+  background: #dc3545; /* Rojo */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cerrar:hover {
+  background: #c82333;
+}
+
+/* 📌 Mensajes de éxito y error */
+.success {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* 📌 Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .crear-prospecto-container {
+    min-width: 90vw; /* 🔥 Más ancho en móviles */
     padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  
-  h1 {
-    text-align: center;
-  }
-  
-  form {
-    display: flex;
+
+  .button-container {
     flex-direction: column;
+    gap: 10px;
   }
-  
-  label {
-    font-weight: bold;
-    margin-top: 10px;
+
+  .btn-guardar, .btn-cerrar {
+    width: 100%;
   }
-  
-  input, select {
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    margin-top: 15px;
-    padding: 10px;
-    background: #28a745;
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  } 
-  
-  button:hover {
-    background: #218838;
-  }
-  
-  .success {
-    color: green;
-    text-align: center;
-  }
-  
-  .error {
-    color: red;
-    text-align: center;
-  }
-  
+}

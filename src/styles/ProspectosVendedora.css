@@ -1,135 +1,98 @@
-/* Contenedor principal centrado */
+/* 📌 Contenedor Principal */
 .prospectos-container {
-  width: 90%;
-  max-width: 1000px;
-  margin: 50px auto; /* 🔥 Esto centra horizontalmente */
-  padding: 20px;
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 30px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5; /* 🔹 Color de fondo suave */
-}
-
-/* Título */
-.title {
+/* 🏆 Título */
+h1 {
   font-size: 28px;
-  color: #333;
+  color: #0d2a49;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
-/*Contenedor de filtros con mejor alineación */
+/* 🔍 Contenedor de Filtros (AHORA EN FILA) */
 .filtros-container {
   display: flex;
-  justify-content: center; /* 🔥 Alinea los filtros en el centro */
+  justify-content: space-between; /* 🔥 Espaciado entre filtros */
+  align-items: center;
+  flex-wrap: wrap; /* Si la pantalla es pequeña, se acomoda */
   gap: 10px;
-  flex-wrap: wrap;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Estilos para los filtros */
+/* 📋 Inputs y Selects */
 .filtros-container select,
-.filtros-container input {
+.filtros-container input,
+.filtros-container .select-sector {
+  flex: 1; /* 🔥 Ocupan espacio uniforme */
+  min-width: 150px;
+  max-width: 220px; /* 🔥 Para que no se hagan gigantes */
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
   outline: none;
+  transition: 0.3s;
 }
 
-/* Botón de búsqueda */
+/* 🔘 Botón de Búsqueda */
 .filtros-container button {
-  padding: 10px 15px;
+  padding: 10px 20px;
   background: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 15px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .filtros-container button:hover {
   background: #0056b3;
 }
 
-/* Tabla de prospectos */
+/* 📜 Tabla de Prospectos */
 .prospectos-table {
-  width: 100%;  /* ✅ La tabla ocupa todo el ancho disponible */
+  width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 16px;
   background: white;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
-.prospectos-table th,
+.prospectos-table th {
+  background: #0d2a49;
+  color: white;
+  text-transform: uppercase;
+  padding: 15px;
+}
+
 .prospectos-table td {
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
   padding: 15px;
   text-align: left;
 }
 
-.prospectos-table th {
-  background: #007bff;
-  color: white;
-  font-weight: bold;
-}
-
+/* 📌 Alternar colores en filas */
 .prospectos-table tr:nth-child(even) {
   background: #f9f9f9;
 }
 
-.prospectos-table tr:hover {
-  background: #f1f1f1;
-}
-.btn-agendar {
-  padding: 8px 12px;
-  background: #076eff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-contacto:hover {
-  background: #e0a800;
-}
-
-
-/* Botón "Intento de Contacto" */
-.btn-contacto {
-  padding: 8px 12px;
-  background: #7a42e1;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-contacto:hover {
-  background: #e0a800;
-}
-
-/* Botón "Nuevo Prospecto" */
+/* 📌 Botón de "Nuevo Prospecto" */
 .nuevo-prospecto-btn {
   width: 100%;
   padding: 12px;
@@ -137,8 +100,8 @@ body {
   background: #28a745;
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  border-radius: 8px;
+  font-size: 18px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -147,87 +110,32 @@ body {
   background: #218838;
 }
 
-/* Mensajes de error */
-.error {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
-}
-.select-estado {
-  width: 200px;
-  font-size: 14px;
-}
-
-.select__control {
-  border: 1px solid #ccc;
-  border-radius: 5px;
+/* 🎬 Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.select__menu {
-  background-color: white;
-}
+/* 📱 Responsivo: Se apilan en móviles */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.select__option--is-selected {
-  background-color: #007bff !important;
-  color: white;
-}
-/* Contenedor general de los botones */
-.acciones {
-  display: flex;
-  flex-direction: column;
-  align-items: center;  /* 🔹 Centra los botones */
-  gap: 5px;  /* 🔹 Espacio entre los botones */
-}
+  .filtros-container select,
+  .filtros-container input {
+    width: 100%;
+    max-width: none;
+  }
 
-/* Contenedor de los botones principales y secundarios */
-.botones-principales,
-.botones-secundarios {
-  display: flex;
-  gap: 5px;  /* 🔹 Espaciado uniforme */
-  flex-wrap: wrap; /* 🔹 Permite que los botones se acomoden mejor si hay poco espacio */
-  justify-content: center;  /* 🔹 Centra los botones horizontalmente */
-  width: 100%;  /* 🔹 Hace que ocupen todo el ancho disponible */
-}
-
-/* Tamaño uniforme para todos los botones */
-.botones-principales button,
-.botones-secundarios button {
-  flex: 1;
-  min-width: 120px;  /* 🔹 Tamaño mínimo para que sean uniformes */
-  padding: 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s;
-  text-align: center; /* 🔹 Asegura que el texto dentro esté alineado */
-}
-
-/* Botón Historial */
-.btn-historial {
-  background: #ff9800;
-  color: white;
-}
-
-.btn-historial:hover {
-  background: #e68a00;
-}
-
-/* Botón Agendar Interacción */
-.btn-agendar {
-  background: #076eff;
-  color: white;
-}
-
-.btn-agendar:hover {
-  background: #0056b3;
-}
-
-/* Botón Eliminar */
-.btn-eliminar {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-eliminar:hover {
-  background: #c82333;
+  .filtros-container button {
+    width: 100%;
+  }
 }

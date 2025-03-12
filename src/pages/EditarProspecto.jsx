@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRol } from "../utils/auth"; 
+//import "../styles/editarProspecto.css";
 
 const EditarProspecto = () => {
   const { id_prospecto } = useParams();

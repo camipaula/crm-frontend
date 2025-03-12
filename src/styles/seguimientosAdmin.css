@@ -1,0 +1,183 @@
+/* 📌 Contenedor Principal */
+.seguimientos-container {
+    width: 100%;
+    max-width: 1100px; /* 🔥 Ajusta el ancho máximo */
+    min-width: 60vw;  /* 🔥 Asegura que no sea muy estrecho */
+    margin: 50px auto; /* 🔥 Centra el contenedor */
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: left;
+  }
+  
+  /* 📌 Título */
+  h1 {
+    font-size: 26px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* 📌 Contenedor de filtros */
+  .filtros-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  /* 📌 Estilos del selector */
+  .filtros-container .css-2b097c-container {
+    width: 300px;
+  }
+  
+  /* 📌 Tarjeta de Venta */
+  .venta-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #007bff;
+  }
+  
+  /* 📌 Header de la Venta */
+  .venta-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  /* 📌 Botones de Acciones */
+  .venta-botones {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-historial,
+  .btn-agendar,
+  .btn-abrir-venta,
+  .btn-toggle-tabla,
+  .btn-resultado {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  /* 🎨 Colores de botones */
+  .btn-historial {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .btn-agendar {
+    background: #28a745;
+    color: white;
+  }
+  
+  .btn-abrir-venta {
+    background: #007bff;
+    color: white;
+  }
+  
+  .btn-toggle-tabla {
+    background: #17a2b8;
+    color: white;
+  }
+  
+  .btn-resultado {
+    background: #ede0bb;
+    color: black;
+  }
+  
+  /* 🚀 Hover */
+  .btn-historial:hover {
+    background: #5a6268;
+  }
+  
+  .btn-agendar:hover {
+    background: #218838;
+  }
+  
+  .btn-abrir-venta:hover {
+    background: #0056b3;
+  }
+  
+  .btn-toggle-tabla:hover {
+    background: #138496;
+  }
+  
+  .btn-resultado:hover {
+    background: #e0a800;
+  }
+  
+  /* 📌 Tabla de Seguimientos */
+  .seguimientos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 16px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .seguimientos-table th,
+  .seguimientos-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .seguimientos-table th {
+    background: #343a40;
+    color: white;
+    text-transform: uppercase;
+  }
+  
+  .seguimientos-table tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  
+  /* 📌 Mensajes de error */
+  .error {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  /* 📱 Responsive */
+  @media (max-width: 768px) {
+    .seguimientos-container {
+      min-width: 90vw; /* Se expande más en móviles */
+      padding: 20px;
+    }
+  
+    .venta-botones {
+      flex-direction: column;
+      gap: 5px;
+    }
+  
+    .btn-historial,
+    .btn-agendar,
+    .btn-abrir-venta,
+    .btn-toggle-tabla,
+    .btn-resultado {
+      width: 100%;
+    }
+  
+    .seguimientos-table th,
+    .seguimientos-table td {
+      padding: 8px;
+    }
+  }
+  

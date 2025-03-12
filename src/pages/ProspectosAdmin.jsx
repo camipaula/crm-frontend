@@ -146,7 +146,7 @@ const ProspectosAdmin = () => {
             </option>
           ))}
         </select>
-
+       
         <Select
           options={opcionesEstado}
           isMulti
@@ -168,7 +168,6 @@ const ProspectosAdmin = () => {
           onChange={(e) => setFechaFin(e.target.value)}
           value={fechaFin}
         />
-
         <Select
           options={sectores}
           placeholder="Seleccionar Sector"
@@ -182,7 +181,9 @@ const ProspectosAdmin = () => {
           {loading ? "Cargando..." : "Buscar"}
         </button>
       </div>
-
+      <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto-admin")}>
+        ➕ Crear Prospecto
+      </button>
       <table className="prospectos-table">
         <thead>
           <tr>
@@ -265,6 +266,7 @@ const ProspectosAdmin = () => {
       >
         Cerrar
       </button>
+      
     </div>
   );
 };

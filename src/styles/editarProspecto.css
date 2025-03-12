@@ -1,46 +1,125 @@
+/* 📌 Contenedor Principal */
 .editar-prospecto-container {
-    max-width: 500px;
-    margin: 50px auto;
+  width: 100%;
+  max-width: 800px; /* 🔥 Ajusta el ancho máximo */
+  min-width: 60vw;  /* 🔥 Asegura que no sea muy estrecho */
+  margin: 50px auto; /* 🔥 Centra el contenedor */
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+/* 📌 Título */
+h1 {
+  font-size: 26px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 📌 Formularios */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 📌 Estilos de las etiquetas */
+label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #444;
+}
+
+/* 📌 Estilos de los inputs y selects */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #007bff;
+}
+
+/* 📌 Área de texto */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* 📌 Contenedor de botones */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* 📌 Botón de Guardar */
+.btn-guardar {
+  padding: 10px 20px;
+  background: #28a745; /* Verde */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-guardar:hover {
+  background: #218838;
+}
+
+/* 📌 Botón de Cancelar */
+.btn-cerrar {
+  padding: 10px 20px;
+  background: #dc3545; /* Rojo */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cerrar:hover {
+  background: #c82333;
+}
+
+/* 📌 Mensajes de éxito y error */
+.success {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .editar-prospecto-container {
+    min-width: 90vw; /* 🔥 Más ancho en móviles */
     padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
   }
-  
+
   .button-container {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .btn-guardar {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 48%;
+
+  .btn-guardar, .btn-cerrar {
+    width: 100%;
   }
-  
-  .btn-guardar:hover {
-    background-color: #0056b3;
-  }
-  
-  .btn-cerrar {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 48%;
-  }
-  
-  .btn-cerrar:hover {
-    background-color: #c82333;
-  }
-  
+}

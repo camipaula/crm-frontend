@@ -1,93 +1,121 @@
+/* 📌 Contenedor Principal */
 .vendedoras-container {
-    width: 95%;
-    max-width: 1600px; /* Opcional, para pantallas muy grandes */
-    background-color: #fff;
-    padding: 40px;
-    margin: 20px auto;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    min-height: calc(100vh - 120px); /* Para llenar pantalla */
+  width: 100%;
+  max-width: 1200px; /* 🔥 Ancho máximo */
+  margin: 50px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* 📌 Título */
+.title {
+  font-size: 26px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 📌 Botón Crear Vendedora */
+.btn-crear {
+  padding: 12px 18px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-crear:hover {
+  background: #218838;
+}
+
+/* 📌 Tabla de vendedoras */
+.vendedoras-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 16px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* 📌 Encabezado de la tabla */
+.vendedoras-table th {
+  background: #0d2a49;
+  color: white;
+  text-transform: uppercase;
+  padding: 15px;
+  text-align: left;
+}
+
+/* 📌 Filas de la tabla */
+.vendedoras-table td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: left;
+}
+
+/* 📌 Alternar colores en filas */
+.vendedoras-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* 📌 Botones de acción */
+.btn-editar,
+.btn-eliminar {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* 📌 Botón Editar */
+.btn-editar {
+  background: #007bff;
+  color: white;
+  margin-right: 5px;
+}
+
+.btn-editar:hover {
+  background: #0056b3;
+}
+
+/* 📌 Botón Eliminar */
+.btn-eliminar {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background: #c82333;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .vendedoras-container {
+    width: 90%;
+    padding: 20px;
   }
-  
-  .title {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-  }
-  
-  .btn-crear {
-    display: block;
-    margin: 0 auto 30px auto;
-    padding: 12px 24px;
-    background-color: #4caf50;
-    color: #fff;
-    font-size: 1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-crear:hover {
-    background-color: #45a049;
-  }
-  
+
   .vendedoras-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 30px;
-    font-size: 1rem;
+    font-size: 14px;
   }
-  
-  
-  .vendedoras-table th,
-  .vendedoras-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+
+  .btn-crear {
+    font-size: 14px;
+    padding: 10px 15px;
   }
-  
-  .vendedoras-table th {
-    background-color: #f4f4f4;
-    color: #333;
+
+  .btn-editar, .btn-eliminar {
+    font-size: 12px;
+    padding: 6px 10px;
   }
-  
-  .vendedoras-table tr:hover {
-    background-color: #f9f9f9;
-  }
-  
-  .vendedoras-table button {
-    padding: 6px 12px;
-    margin: 0 5px;
-    font-size: 0.9rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-editar {
-    background-color: #2196f3;
-    color: #fff;
-  }
-  
-  .btn-editar:hover {
-    background-color: #1976d2;
-  }
-  
-  .btn-eliminar {
-    background-color: #f44336;
-    color: #fff;
-  }
-  
-  .btn-eliminar:hover {
-    background-color: #d32f2f;
-  }
-  
-  .error {
-    color: red;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
+}

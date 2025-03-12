@@ -1,25 +1,26 @@
+/* 📌 Sidebar Principal */
 .sidebar {
   width: 250px;
   height: 100vh;
-  background-color: #007bff;
+  background: #111827; /* Azul oscuro casi negro */
   color: white;
   position: fixed;
-  top: 60px;
+  top: 60px; /* Se alinea con el navbar */
   left: 0;
   transition: width 0.3s ease;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding-top: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 📌 Sidebar colapsado */
 .sidebar.closed {
   width: 60px;
 }
 
-/* Botón abrir/cerrar */
-.sidebar .toggle-btn {
+/* ☰ Botón de abrir/cerrar Sidebar */
+.toggle-btn {
   background: none;
   border: none;
   color: white;
@@ -34,11 +35,11 @@
   transition: background 0.3s;
 }
 
-.sidebar .toggle-btn:hover {
+.toggle-btn:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Menú */
+/* 📂 Menú del Sidebar */
 .sidebar-menu {
   list-style: none;
   padding: 0;
@@ -46,10 +47,7 @@
   flex-grow: 1;
 }
 
-.sidebar li {
-  width: 100%;
-}
-
+/* 📌 Estilos de los enlaces del menú */
 .sidebar .nav-link {
   display: flex;
   align-items: center;
@@ -59,9 +57,15 @@
   font-size: 16px;
   text-decoration: none;
   gap: 10px;
-  transition: all 0.3s ease;
+  transition: background 0.3s, transform 0.2s;
 }
 
+.sidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* 👁 Sidebar cuando está cerrado */
 .sidebar.closed .nav-link {
   justify-content: center;
   padding: 12px 0;
@@ -71,8 +75,8 @@
   display: none;
 }
 
-/* Botón logout */
-.sidebar .logout-btn {
+/* 🔑 Botón de cerrar sesión en el Sidebar */
+.logout-btn {
   background: none;
   border: none;
   color: white;
@@ -84,8 +88,8 @@
   justify-content: flex-start;
   gap: 10px;
   cursor: pointer;
-  transition: background 0.3s;
-  margin-top: auto; /* lo baja al fondo */
+  transition: background 0.3s, transform 0.2s;
+  margin-top: auto; /* Lo baja al fondo */
 }
 
 .sidebar.closed .logout-btn {
@@ -96,7 +100,22 @@
   display: none;
 }
 
-.sidebar .logout-btn:hover {
+.logout-btn:hover {
   background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
+/* 📱 Responsive: Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .sidebar .nav-link span {
+    display: none;
+  }
+
+  .main-container {
+    margin-left: 60px;
+  }
+}
