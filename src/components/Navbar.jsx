@@ -6,7 +6,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const rutasSinFlecha = ["/admin", "/vendedora"]; // Aquí defines las rutas donde NO quieres la flecha
+  const rutasSinFlecha = ["/admin", "/vendedora"]; //sin flecha
 
   const mostrarFlecha = !rutasSinFlecha.includes(location.pathname);
 
@@ -17,7 +17,7 @@ const Navbar = () => {
           ⬅ 
         </button>
       )}
-      <h2 className="navbar-title">{/*Titulo */}</h2>
+      <h2 className="navbar-title">Santos Distibuidores</h2>
       <div className="navbar-right">
         <button className="logout-btn" onClick={logout}>
           Cerrar Sesión

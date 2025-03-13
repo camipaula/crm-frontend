@@ -13,7 +13,7 @@
   margin-top: 60px; /* Navbar fijo */
   padding: 20px; 
   overflow-y: auto;
-  background-color: #afc6eb;
+  background-color: #bac7f9;
   min-height: calc(100vh - 100px);
   min-width: 60vw; /* 🔥 Usa "vw" en vez de "vh" */
   max-width: 1400px; /* 🔥 Para evitar que se haga gigante */
