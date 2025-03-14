@@ -8,13 +8,19 @@ const SeguimientosAdmin = () => {
   const [vendedoras, setVendedoras] = useState([]);
   const [vendedoraSeleccionada, setVendedoraSeleccionada] = useState(null);
   const [ventas, setVentas] = useState([]);
+  const [ventasFiltradas, setVentasFiltradas] = useState([]); // 🔹 Ventas después del filtro
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [ventasAbiertas, setVentasAbiertas] = useState({});
+  const [filtroEstado, setFiltroEstado] = useState("todas"); // 🔹 Estado del filtro
 
   useEffect(() => {
     obtenerVendedoras();
   }, []);
+
+  useEffect(() => {
+    filtrarVentas(); // 🔹 Filtrar cuando cambie el estado
+  }, [filtroEstado, ventas]);
 
   const obtenerVendedoras = async () => {
     try {
@@ -48,6 +54,15 @@ const SeguimientosAdmin = () => {
     }
   };
 
+  const filtrarVentas = () => {
+    if (filtroEstado === "todas") {
+      setVentasFiltradas(ventas);
+    } else {
+      const abiertas = filtroEstado === "abiertas";
+      setVentasFiltradas(ventas.filter(venta => venta.abierta === (abiertas ? 1 : 0)));
+    }
+  };
+
   const handleVendedoraChange = (selectedOption) => {
     setVendedoraSeleccionada(selectedOption);
     if (selectedOption) {
@@ -64,10 +79,50 @@ const SeguimientosAdmin = () => {
     }));
   };
 
+  const exportarExcel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      let url = `${import.meta.env.VITE_API_URL}/api/seguimientos/exportar?`;
+
+      if (vendedoraSeleccionada) url += `cedula_vendedora=${vendedoraSeleccionada.value}&`;
+      if (filtroEstado === "abiertas" || filtroEstado === "cerradas") url += `estado_venta=${filtroEstado}&`;
+
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        alert(data.message);
+        return;
+      }
+
+      if (!res.ok) throw new Error("Error al exportar seguimientos");
+
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "seguimientos.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error al exportar:", error);
+    }
+  };
+
   return (
     <div className="seguimientos-container">
       <h1 className="title">Seguimientos por Vendedora</h1>
 
+      <button className="exportar-btn" onClick={exportarExcel}>
+        📥 Exportar Seguimientos a Excel
+      </button>
+
+      {/* 🔹 Filtros */}
       <div className="filtros-container">
         <Select
           options={vendedoras}
@@ -75,27 +130,28 @@ const SeguimientosAdmin = () => {
           onChange={handleVendedoraChange}
           isClearable
         />
+
+        <label>Filtrar ventas:</label>
+        <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+          <option value="todas">Todas</option>
+          <option value="abiertas">Abiertas</option>
+          <option value="cerradas">Cerradas</option>
+        </select>
       </div>
 
       {loading && <p>Cargando seguimientos...</p>}
       {error && <p className="error">{error}</p>}
-      {!loading && ventas.length === 0 && vendedoraSeleccionada && (
+      {!loading && ventasFiltradas.length === 0 && vendedoraSeleccionada && (
         <p>No hay seguimientos para esta vendedora.</p>
       )}
 
-      {ventas.map((venta) => (
+      {ventasFiltradas.map((venta) => (
         <div key={venta.id_venta} className="venta-card">
           <div className="venta-header">
             <h2>📌 Prospecto: {venta.prospecto.nombre}</h2>
             <h3>🛒 Venta: {venta.objetivo}</h3>
+            <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
             <div className="venta-botones">
-                 {/* Selector de Vendedora
-              <button
-                className="btn-historial"
-                onClick={() => navigate(`/historial-venta/${venta.id_venta}`)}
-              >
-                📜 Ver Historial
-              </button> */}
               <button
                 className="btn-agendar"
                 onClick={() => navigate(`/agendar-seguimiento/${venta.id_venta}`)}
@@ -104,9 +160,7 @@ const SeguimientosAdmin = () => {
               </button>
               <button
                 className="btn-abrir-venta"
-                onClick={() =>
-                  navigate(`/abrir-venta/${venta.prospecto.id_prospecto}`)
-                }
+                onClick={() => navigate(`/abrir-venta/${venta.prospecto.id_prospecto}`)}
               >
                 🛒 Abrir Nueva Venta
               </button>
@@ -142,9 +196,7 @@ const SeguimientosAdmin = () => {
                     <td>
                       <button
                         className="btn-resultado"
-                        onClick={() =>
-                          navigate(`/registrar-resultado/${s.id_seguimiento}`)
-                        }
+                        onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
                       >
                         ✍️ Registrar Resultado
                       </button>

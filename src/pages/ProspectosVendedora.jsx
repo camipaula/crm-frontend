@@ -29,7 +29,7 @@ const ProspectosVendedora = () => {
     const cedula = obtenerCedulaDesdeToken();
     setCedulaVendedora(cedula);
     obtenerSectores();
-    establecerFechasUltimos6Meses(); // Aquí agregamos el filtro automático del mes actual
+    establecerFechasUltimos6Meses(); 
   }, []);
 
   // Definir fechas de 6 meses 
@@ -114,6 +114,51 @@ const ProspectosVendedora = () => {
     }
   };
 
+  const exportarExcel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+  
+      let url = `${import.meta.env.VITE_API_URL}/api/prospectos/exportar?vendedora=${cedulaVendedora}`;
+  
+      if (estadoFiltro.length > 0) {
+        estadoFiltro.forEach((estado) => {
+          url += `&estado=${estado.value}`;
+        });
+      }
+      if (fechaInicio) url += `&fechaInicio=${fechaInicio}`;
+      if (fechaFin) url += `&fechaFin=${fechaFin}`;
+      if (sectorFiltro) url += `&sector=${sectorFiltro.value}`;
+  
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const contentType = res.headers.get("content-type");
+  
+      // 🔹 Si la respuesta es JSON en lugar de un archivo, mostrar mensaje
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        alert(data.message);
+        return;
+      }
+  
+      if (!res.ok) throw new Error("Error al exportar prospectos");
+  
+      // Convertir la respuesta en un blob y descargar el archivo
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "prospectos.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error al exportar:", error);
+    }
+  };
+  
+  
+
   return (
     <div className="prospectos-container">
       <h1 className="title">Mis Prospectos</h1>
@@ -146,6 +191,9 @@ const ProspectosVendedora = () => {
           {loading ? "Cargando..." : "Buscar"}
         </button>
       </div>
+      <button className="exportar-btn" onClick={exportarExcel}>
+      📥 Exportar a Excel
+      </button>
 
       {/* 🔹 Botón para Crear un Nuevo Prospecto */}
       <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto")}>

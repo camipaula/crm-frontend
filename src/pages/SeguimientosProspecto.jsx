@@ -5,14 +5,20 @@ import "../styles/seguimientosVendedora.css";
 const SeguimientosProspecto = () => {
   const { id_prospecto } = useParams();
   const navigate = useNavigate();
-  const [ventas, setVentas] = useState([]);
+  const [ventas, setVentas] = useState([]); // Ventas traídas del backend
+  const [ventasFiltradas, setVentasFiltradas] = useState([]); // Ventas después del filtro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [ventasAbiertas, setVentasAbiertas] = useState({}); 
+  const [ventasAbiertas, setVentasAbiertas] = useState({});
+  const [filtroEstado, setFiltroEstado] = useState("todas"); // Estado del filtro
 
   useEffect(() => {
     buscarSeguimientos();
   }, []);
+
+  useEffect(() => {
+    filtrarVentas(); // Filtrar ventas cuando cambia el filtro
+  }, [filtroEstado, ventas]);
 
   const buscarSeguimientos = async () => {
     try {
@@ -33,6 +39,15 @@ const SeguimientosProspecto = () => {
     }
   };
 
+  const filtrarVentas = () => {
+    if (filtroEstado === "todas") {
+      setVentasFiltradas(ventas);
+    } else {
+      const abiertas = filtroEstado === "abiertas";
+      setVentasFiltradas(ventas.filter(venta => venta.abierta === (abiertas ? 1 : 0)));
+    }
+  };
+
   const toggleTablaSeguimientos = (id_venta) => {
     setVentasAbiertas((prev) => ({
       ...prev,
@@ -43,13 +58,25 @@ const SeguimientosProspecto = () => {
   return (
     <div className="seguimientos-container">
       <h1 className="title">Seguimientos del Prospecto</h1>
+
+      {/* 🔹 Filtro de Ventas Abiertas / Cerradas / Todas */}
+      <div className="filtros-container">
+        <label>Filtrar ventas:</label>
+        <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+          <option value="todas">Todas</option>
+          <option value="abiertas">Abiertas</option>
+          <option value="cerradas">Cerradas</option>
+        </select>
+      </div>
+
       {loading && <p>Cargando seguimientos...</p>}
       {error && <p className="error">{error}</p>}
 
-      {ventas.map((venta) => (
+      {ventasFiltradas.map((venta) => (
         <div key={venta.id_venta} className="venta-card">
           <div className="venta-header">
             <h3>🛒 Venta: {venta.objetivo}</h3>
+            <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
             <div className="venta-botones">
               <button
                 className="btn-historial"
@@ -95,9 +122,7 @@ const SeguimientosProspecto = () => {
                     <td>
                       <button
                         className="btn-resultado"
-                        onClick={() =>
-                          navigate(`/registrar-resultado/${s.id_seguimiento}`)
-                        }
+                        onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
                       >
                         ✍️ Registrar Resultado
                       </button>

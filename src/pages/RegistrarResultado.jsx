@@ -2,12 +2,20 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/registrarResultado.css";
 
+const opcionesEstado = [
+  { value: "interesado", label: "Interesado" },
+  { value: "ganado", label: "Ganado" },
+  { value: "perdido", label: "Perdido" },
+  { value: "archivado", label: "Archivado" }
+];
+
 const RegistrarResultado = () => {
   const { id_seguimiento } = useParams();
   const navigate = useNavigate();
   const [seguimiento, setSeguimiento] = useState(null);
   const [resultado, setResultado] = useState("");
   const [nota, setNota] = useState("");
+  const [estadoProspecto, setEstadoProspecto] = useState("interesado"); // 🔹 Estado inicial como "interesado"
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +36,12 @@ const RegistrarResultado = () => {
       setSeguimiento(data);
       setResultado(data.resultado || "");
       setNota(data.nota || "");
+
+      // 🔹 Asegurar que el estado del prospecto se establezca correctamente
+      if (data.venta && data.venta.prospecto) {
+        setEstadoProspecto(data.venta.prospecto.estado);
+      }
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -38,16 +52,24 @@ const RegistrarResultado = () => {
   const guardarResultado = async () => {
     try {
       const token = localStorage.getItem("token");
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ resultado, nota }),
+        body: JSON.stringify({ 
+          resultado, 
+          nota, 
+          estado: estadoProspecto // 🔹 Enviar el estado correctamente
+        }),
       });
 
       if (!res.ok) throw new Error("Error guardando resultado");
+
+      // 🔹 Obtener nuevamente el seguimiento para reflejar cambios
+      await obtenerSeguimiento();
 
       alert("Resultado guardado correctamente");
       navigate("/seguimientos-vendedora");
@@ -64,6 +86,7 @@ const RegistrarResultado = () => {
 
     try {
       const token = localStorage.getItem("token");
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
@@ -107,6 +130,19 @@ const RegistrarResultado = () => {
         value={nota}
         onChange={(e) => setNota(e.target.value)}
       />
+
+      {/* 🔹 Selector para cambiar el estado del prospecto */}
+      <label>Estado del Prospecto:</label>
+      <select 
+        value={estadoProspecto} 
+        onChange={(e) => setEstadoProspecto(e.target.value)}
+      >
+        {opcionesEstado.map((estado) => (
+          <option key={estado.value} value={estado.value}>
+            {estado.label}
+          </option>
+        ))}
+      </select>
 
       <button onClick={guardarResultado}>
         {seguimiento.estado === "pendiente" ? "Guardar Resultado" : "Actualizar Resultado"}

@@ -33,22 +33,22 @@ const ProspectosAdmin = () => {
   useEffect(() => {
     obtenerVendedoras();
     obtenerSectores();
-    establecerFechasUltimos6Meses();  
+    establecerFechasUltimos6Meses();
   }, []);
 
   // Establece automáticamente las fechas del mes actual
   const establecerFechasUltimos6Meses = () => {
     const fechaActual = new Date();
     const fechaFin = fechaActual.toISOString().split("T")[0];
-  
+
     const fechaInicio = new Date();
     fechaInicio.setMonth(fechaInicio.getMonth() - 3);
     const fechaInicioFormateada = fechaInicio.toISOString().split("T")[0];
-  
+
     setFechaInicio(fechaInicioFormateada);
     setFechaFin(fechaFin);
   };
-  
+
 
   useEffect(() => {
     if (fechaInicio && fechaFin) {
@@ -128,6 +128,52 @@ const ProspectosAdmin = () => {
     }
   };
 
+  const exportarExcel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+  
+      let url = `${import.meta.env.VITE_API_URL}/api/prospectos/exportar?`;
+  
+      if (cedulaVendedora) url += `cedula_vendedora=${cedulaVendedora}&`;
+      if (estadoFiltro.length > 0) {
+        estadoFiltro.forEach((estado) => {
+          url += `estado=${estado.value}&`;
+        });
+      }
+      if (fechaInicio) url += `fechaInicio=${fechaInicio}&`;
+      if (fechaFin) url += `fechaFin=${fechaFin}&`;
+      if (sectorFiltro) url += `sector=${sectorFiltro.value}&`;
+  
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const contentType = res.headers.get("content-type");
+  
+      // 🔹 Si la respuesta es JSON en lugar de un archivo, significa que no hay prospectos
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        alert(data.message);
+        return;
+      }
+  
+      if (!res.ok) throw new Error("Error al exportar prospectos");
+  
+      // Convertir la respuesta en un blob y descargar el archivo
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "prospectos.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error al exportar:", error);
+    }
+  };
+  
+  
+
   return (
     <div className="prospectos-admin-container">
       <h1 className="title">Gestión de Prospectos</h1>
@@ -146,7 +192,7 @@ const ProspectosAdmin = () => {
             </option>
           ))}
         </select>
-       
+
         <Select
           options={opcionesEstado}
           isMulti
@@ -180,6 +226,11 @@ const ProspectosAdmin = () => {
         <button onClick={buscarProspectos} disabled={loading}>
           {loading ? "Cargando..." : "Buscar"}
         </button>
+
+        <button className="exportar-btn" onClick={exportarExcel}>
+        📥 Exportar Prospectos a Excel
+      </button>
+
       </div>
       <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto-admin")}>
         ➕ Crear Prospecto
@@ -266,7 +317,7 @@ const ProspectosAdmin = () => {
       >
         Cerrar
       </button>
-      
+
     </div>
   );
 };
