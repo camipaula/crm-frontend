@@ -30,9 +30,6 @@ const App = () => {
     const checkAuth = () => {
       const token = localStorage.getItem("token");
 
-      console.log("Verificando autenticación...");
-      console.log("Token actual:", token);
-
       if (token) {
         setIsAuth(true);
       } else {

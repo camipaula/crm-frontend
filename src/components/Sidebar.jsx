@@ -17,8 +17,8 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
           <>
             <li><NavLink to="/prospectos-vendedora" className="nav-link">📋 <span className={isOpen ? "show" : "hide"}>Prospectos</span></NavLink></li>
             <li><NavLink to="/seguimientos-vendedora" className="nav-link">🛠 <span className={isOpen ? "show" : "hide"}>Seguimientos</span></NavLink></li>
-            <li><NavLink to="/vendedora" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
-            <li><NavLink to="/vendedora" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>
+            {/* <li><NavLink to="/vendedora" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
+            <li><NavLink to="/vendedora" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>*/}
             <li><NavLink to="/calendario-vendedora" className="nav-link">📅 <span className={isOpen ? "show" : "hide"}>Calendario</span></NavLink></li>
           </>
         ) : rol === "admin" ? (
@@ -26,8 +26,8 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
             <li><NavLink to="/vendedoras-admin" className="nav-link">👩‍💼 <span className={isOpen ? "show" : "hide"}>Vendedoras</span></NavLink></li>
             <li><NavLink to="/prospectos-admin" className="nav-link">📋 <span className={isOpen ? "show" : "hide"}>Prospectos</span></NavLink></li>
             <li><NavLink to="/seguimientos-admin" className="nav-link"> 🛠 <span className={isOpen ? "show" : "hide"}>Seguimientos</span></NavLink></li>
-            <li><NavLink to="/admin" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
-            <li><NavLink to="/admin" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>
+            {/*<li><NavLink to="/admin" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
+            <li><NavLink to="/admin" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>*/}
           </>
         ) : null}
       </ul>
