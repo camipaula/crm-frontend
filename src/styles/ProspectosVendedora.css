@@ -1,30 +1,49 @@
-/* 📌 Contenedor Principal */
+/* 📌 Contenedor principal */
 .prospectos-container {
-  max-width: 1200px;
-  margin: 50px auto;
-  padding: 30px;
+  width: 100%;
+  height: calc(100vh - 60px); /* ✅ Ocupa toda la pantalla menos el navbar */
+  padding: 20px;
+  overflow-y: auto; /* ✅ Permite hacer scroll si hay muchos prospectos */
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
 }
 
-/* 🏆 Título */
-h1 {
-  font-size: 28px;
+/* 📌 Título */
+.title {
+  font-size: 26px;
   color: #0d2a49;
   font-weight: bold;
+  text-align: center;
   margin-bottom: 20px;
 }
 
-/* 🔍 Contenedor de Filtros (AHORA EN FILA) */
+/* 📌 Botón "Nuevo Prospecto" */
+.nuevo-prospecto-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.3s;
+  margin-bottom: 15px;
+}
+
+.nuevo-prospecto-btn:hover {
+  background: #218838;
+}
+
+/* 📌 Contenedor de filtros */
 .filtros-container {
   display: flex;
-  justify-content: space-between; /* 🔥 Espaciado entre filtros */
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Si la pantalla es pequeña, se acomoda */
-  gap: 10px;
+  flex-wrap: wrap;
   margin-bottom: 20px;
   padding: 20px;
   background: #f5f5f5;
@@ -32,13 +51,13 @@ h1 {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* 📋 Inputs y Selects */
+/* 📌 Estilos para los filtros */
 .filtros-container select,
 .filtros-container input,
 .filtros-container .select-sector {
-  flex: 1; /* 🔥 Ocupan espacio uniforme */
+  flex: 1;
   min-width: 150px;
-  max-width: 220px; /* 🔥 Para que no se hagan gigantes */
+  max-width: 220px;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -47,10 +66,10 @@ h1 {
   transition: 0.3s;
 }
 
-/* 🔘 Botón de Búsqueda */
+/* 📌 Botón de búsqueda */
 .filtros-container button {
   padding: 10px 20px;
-  background: #007bff;
+  background: #0d2a49;
   color: white;
   border: none;
   border-radius: 6px;
@@ -60,10 +79,10 @@ h1 {
 }
 
 .filtros-container button:hover {
-  background: #0056b3;
+  background: #0b1f35;
 }
 
-/* 📜 Tabla de Prospectos */
+/* 📌 Tabla de prospectos */
 .prospectos-table {
   width: 100%;
   border-collapse: collapse;
@@ -74,17 +93,17 @@ h1 {
   overflow: hidden;
 }
 
-.prospectos-table th {
-  background: #0d2a49;
-  color: white;
-  text-transform: uppercase;
-  padding: 15px;
-}
-
+.prospectos-table th,
 .prospectos-table td {
   border: 1px solid #ddd;
   padding: 15px;
   text-align: left;
+}
+
+.prospectos-table th {
+  background: #0d2a49 !important;
+  color: white;
+  text-transform: uppercase;
 }
 
 /* 📌 Alternar colores en filas */
@@ -92,50 +111,83 @@ h1 {
   background: #f9f9f9;
 }
 
-/* 📌 Botón de "Nuevo Prospecto" */
-.nuevo-prospecto-btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 20px;
-  background: #28a745;
-  color: white;
+/* 📌 Botón de acción */
+button {
+  padding: 8px 12px;
+  margin: 5px;
   border: none;
-  border-radius: 8px;
-  font-size: 18px;
+  border-radius: 6px;
   cursor: pointer;
   transition: 0.3s;
+  font-size: 14px;
 }
 
-.nuevo-prospecto-btn:hover {
-  background: #218838;
+button:hover {
+  opacity: 0.8;
 }
 
-/* 🎬 Animaciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* 📌 Botones específicos */
+button:nth-child(1) {
+  background: #1f2937;
+  color: white;
 }
 
-/* 📱 Responsivo: Se apilan en móviles */
+button:nth-child(2) {
+  background: #50b45a;
+  color: black;
+}
+
+button:nth-child(3) {
+  background: #269e49;
+  color: white;
+}
+
+button:nth-child(4) {
+  background: #50b45a;
+  color: white;
+}
+
+/* 📱 Responsive */
 @media (max-width: 768px) {
+  .prospectos-container {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
   .filtros-container {
     flex-direction: column;
-    align-items: stretch;
+    gap: 10px;
+    padding: 15px;
   }
 
+  /* 🔹 Selects e inputs más pequeños */
   .filtros-container select,
   .filtros-container input {
-    width: 100%;
-    max-width: none;
+    font-size: 12px;
+    padding: 6px;
   }
 
   .filtros-container button {
-    width: 100%;
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+
+  /* 🔹 Tabla más pequeña */
+  .prospectos-table {
+    font-size: 12px;
+  }
+
+  .prospectos-table th,
+  .prospectos-table td {
+    padding: 8px;
+  }
+
+  /* 🔹 Botones más pequeños */
+  button {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 }

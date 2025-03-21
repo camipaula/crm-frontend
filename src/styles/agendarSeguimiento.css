@@ -74,8 +74,8 @@ button:hover {
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .agendar-container {
-    min-width: 90vw; /* 🔥 Se expande en móviles */
-    padding: 20px;
+    min-width: 71vw; /* 🔥 Se expande en móviles */
+    padding: 10%;
   }
 
   input, textarea {

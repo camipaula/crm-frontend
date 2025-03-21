@@ -1,22 +1,23 @@
 /* 📌 Sidebar Principal */
 .sidebar {
-  width: 250px;
+  width: 250px;  /* Ancho normal en escritorio */
   height: 100vh;
-  background: #111827; /* Azul oscuro casi negro */
+  background: #111827; /* Color oscuro elegante */
   color: white;
   position: fixed;
   top: 60px; /* Se alinea con el navbar */
-  left: 0;
-  transition: width 0.3s ease;
+  left: -250px; /* 🔥 Oculto en móviles */
+  transition: left 0.3s ease;
   display: flex;
   flex-direction: column;
   padding-top: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000; 
 }
 
-/* 📌 Sidebar colapsado */
-.sidebar.closed {
-  width: 60px;
+/* 🔥 Cuando el sidebar está abierto (en cualquier pantalla) */
+.sidebar.open {
+  left: 0;
 }
 
 /* ☰ Botón de abrir/cerrar Sidebar */
@@ -35,10 +36,6 @@
   transition: background 0.3s;
 }
 
-.toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
 /* 📂 Menú del Sidebar */
 .sidebar-menu {
   list-style: none;
@@ -49,6 +46,7 @@
 
 /* 📌 Estilos de los enlaces del menú */
 .sidebar .nav-link {
+  
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -65,16 +63,6 @@
   transform: scale(1.05);
 }
 
-/* 👁 Sidebar cuando está cerrado */
-.sidebar.closed .nav-link {
-  justify-content: center;
-  padding: 12px 0;
-}
-
-.sidebar.closed .nav-link span {
-  display: none;
-}
-
 /* 🔑 Botón de cerrar sesión en el Sidebar */
 .logout-btn {
   background: none;
@@ -89,33 +77,50 @@
   gap: 10px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
-  margin-top: auto; /* Lo baja al fondo */
+  margin-top: auto;
 }
 
-.sidebar.closed .logout-btn {
-  justify-content: center;
-}
-
-.sidebar.closed .logout-btn span {
-  display: none;
-}
-
-.logout-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
-}
-
-/* 📱 Responsive: Ajustes para pantallas pequeñas */
+/* 📱 Sidebar en Móviles */
 @media (max-width: 768px) {
   .sidebar {
-    width: 60px;
+    width: 50%; /* 🔥 Ahora ocupa toda la pantalla en móviles */
+    left: -40%; /* Oculto completamente */
   }
 
-  .sidebar .nav-link span {
-    display: none;
+  .sidebar.open {
+    left: 0; /* ✅ Aparece completamente */
   }
 
   .main-container {
-    margin-left: 60px;
+    margin-left: 0; /* Evita que el contenido se mueva */
+  }
+
+  /* ☰ Botón de abrir sidebar (siempre visible) */
+  .toggle-btn {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 1100;
+    background-color: cadetblue;
+  }
+
+  .sidebar-menu {
+    margin-top: 30%; /* Baja los enlaces para que no se tapen */
+  }
+}
+
+/* 📌 Sidebar cerrado en pantallas grandes (solo iconos) */
+@media (min-width: 769px) {
+  .sidebar.closed {
+    width: 60px;
+    left: 0;
+  }
+
+  .sidebar.closed .nav-link span {
+    display: none;
+  }
+
+  .sidebar.closed .logout-btn span {
+    display: none;
   }
 }

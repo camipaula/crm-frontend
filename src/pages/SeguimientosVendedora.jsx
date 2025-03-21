@@ -1,42 +1,34 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/seguimientosVendedora.css";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
+import "../styles/seguimientosVendedora.css";
 
 const SeguimientosVendedora = () => {
   const navigate = useNavigate();
-  const [ventas, setVentas] = useState([]); // Ventas traídas del backend
-  const [ventasFiltradas, setVentasFiltradas] = useState([]); // Ventas después del filtro
-  const [loading, setLoading] = useState(true);
+  const [prospecciones, setProspecciones] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [ventasAbiertas, setVentasAbiertas] = useState({}); // Estado para controlar qué ventas están abiertas
-  const [filtroEstado, setFiltroEstado] = useState("todas"); // Estado del filtro
+  const [filtroEstado, setFiltroEstado] = useState("todas");
 
   useEffect(() => {
     buscarSeguimientos();
-  }, []);
-
-  useEffect(() => {
-    filtrarVentas(); // Filtrar ventas cuando cambia el filtro
-  }, [filtroEstado, ventas]);
+  }, [filtroEstado]);
 
   const buscarSeguimientos = async () => {
     try {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-
-      // Obtener la cédula de la vendedora logueada
       const cedulaVendedora = obtenerCedulaDesdeToken();
-      if (!cedulaVendedora) throw new Error("No se pudo obtener la cédula del usuario.");
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/vendedora/${cedulaVendedora}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?cedula_vendedora=${cedulaVendedora}`;
+      if (filtroEstado !== "todas") url += `&estado_prospeccion=${filtroEstado}`;
 
-      if (!res.ok) throw new Error("Error obteniendo seguimientos");
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+
+      if (!res.ok) throw new Error("Error obteniendo prospecciones");
       const data = await res.json();
-      setVentas(data);
+      setProspecciones(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,38 +36,18 @@ const SeguimientosVendedora = () => {
     }
   };
 
-  const filtrarVentas = () => {
-    if (filtroEstado === "todas") {
-      setVentasFiltradas(ventas);
-    } else {
-      const abiertas = filtroEstado === "abiertas";
-      setVentasFiltradas(ventas.filter(venta => venta.abierta === (abiertas ? 1 : 0)));
-    }
-  };
-
-  const toggleTablaSeguimientos = (id_venta) => {
-    setVentasAbiertas((prev) => ({
-      ...prev,
-      [id_venta]: !prev[id_venta],
-    }));
-  };
-
   const exportarExcel = async () => {
     try {
       const token = localStorage.getItem("token");
       const cedulaVendedora = obtenerCedulaDesdeToken();
+      let url = `${import.meta.env.VITE_API_URL}/api/seguimientos/exportar?cedula_vendedora=${cedulaVendedora}`;
 
-      let url = `${import.meta.env.VITE_API_URL}/api/seguimientos/exportar?cedula_vendedora=${cedulaVendedora}&`;
+      if (filtroEstado !== "todas") url += `&estado_prospeccion=${filtroEstado}`;
 
-      if (filtroEstado === "abiertas" || filtroEstado === "cerradas") url += `estado_venta=${filtroEstado}&`;
-
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const contentType = res.headers.get("content-type");
 
-      if (contentType && contentType.includes("application/json")) {
+      if (contentType.includes("application/json")) {
         const data = await res.json();
         alert(data.message);
         return;
@@ -97,80 +69,78 @@ const SeguimientosVendedora = () => {
 
   return (
     <div className="seguimientos-container">
-      <h1 className="title">Seguimientos de Prospectos</h1>
+      <h1 className="title">Mis Seguimientos de Prospectos</h1>
 
       <button className="exportar-btn" onClick={exportarExcel}>
-        📥 Exportar Seguimientos a Excel
+        📥 Exportar a Excel
       </button>
-      {/* 🔹 Filtro de Ventas Abiertas / Cerradas / Todas */}
+
       <div className="filtros-container">
-        <label>Filtrar ventas:</label>
-        <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+        <label>Filtrar por estado:</label>
+        <select
+          value={filtroEstado}
+          onChange={(e) => setFiltroEstado(e.target.value)}
+        >
           <option value="todas">Todas</option>
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
         </select>
       </div>
 
-      {loading && <p>Cargando seguimientos...</p>}
+      {loading && <p>Cargando...</p>}
       {error && <p className="error">{error}</p>}
 
-      {ventasFiltradas.map((venta) => (
-        <div key={venta.id_venta} className="venta-card">
-          <div className="venta-header">
-            <h2>{venta.prospecto.nombre}</h2>
-            <h3>🛒 Venta: {venta.objetivo}</h3>
-            <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
-            <div className="venta-botones">
-              <button className="btn-historial" onClick={() => navigate(`/historial-venta/${venta.id_venta}`)}>
-                📜 Ver Historial
-              </button>
-              <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${venta.id_venta}`)}>
-                ➕ Agendar Seguimiento
-              </button>
-              <button className="btn-abrir-venta" onClick={() => navigate(`/abrir-venta/${venta.prospecto.id_prospecto}`)}>
-                🛒 Abrir Nueva Venta
-              </button>
-              <button className="btn-toggle-tabla" onClick={() => toggleTablaSeguimientos(venta.id_venta)}>
-                {ventasAbiertas[venta.id_venta] ? "🔼 Ocultar Seguimientos" : "🔽 Ver Seguimientos"}
-              </button>
-            </div>
-          </div>
+      <table className="seguimientos-table">
+        <thead>
+          <tr>
+            <th>Prospecto</th>
+            <th>Objetivo</th>
+            <th>Estado del Prospecto</th>
+            <th>Estado de la Venta</th>
+            <th>Última Fecha</th>
+            <th>Último Tipo</th>
+            <th>Último Resultado</th>
+            <th>Última Nota</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {prospecciones.map((p) => {
+            const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
+            const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
 
-          {ventasAbiertas[venta.id_venta] && (
-            <table className="seguimientos-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Tipo</th>
-                  <th>Estado</th>
-                  <th>Resultado</th>
-                  <th>Motivo</th>
-                  <th>Nota</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {venta.seguimientos.map((s) => (
-                  <tr key={s.id_seguimiento}>
-                    <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
-                    <td>{s.tipo_seguimiento.descripcion}</td>
-                    <td>{s.estado}</td>
-                    <td>{s.resultado ?? "Pendiente"}</td>
-                    <td>{s.motivo ?? "Sin motivo"}</td>
-                    <td>{s.nota ?? "Sin nota"}</td>
-                    <td>
-                      <button className="btn-resultado" onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}>
-                        ✍️ Registrar Resultado
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      ))}
+            return (
+              <tr key={p.id_venta}>
+                <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
+                <td>{p.objetivo || "Sin Objetivo"}</td>
+                <td>{p.prospecto?.estado || "No definido"}</td>
+                <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
+                <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
+                <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
+                <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                <td>
+                  {!tieneSeguimientos ? (
+                    <button
+                      className="btn-agendar"
+                      onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
+                    >
+                      📅 Agendar Primer Seguimiento
+                    </button>
+                  ) : (
+                    <button
+                      className="btn-ver-seguimientos"
+                      onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
+                    >
+                      📜 Ver Seguimientos
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

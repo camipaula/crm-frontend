@@ -136,7 +136,7 @@ const CrearProspecto = () => {
         </select>
 
         <button type="submit">Crear Prospecto</button>
-        <button type="button" className="btn-cerrar" onClick={() => navigate("/prospectos-vendedora")}>
+        <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>
           Cerrar
         </button>
       </form>

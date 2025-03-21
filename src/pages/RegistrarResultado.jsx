@@ -3,11 +3,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../styles/registrarResultado.css";
 
 const opcionesEstado = [
+  { value: "nuevo", label: "Nuevo" },
+  { value: "contactar", label: "Contactar" },
+  { value: "cita", label: "Cita Programada" },
+  { value: "visita", label: "Visita Realizada" },
+  { value: "proformado", label: "Proforma Enviada" },
+  { value: "no interesado", label: "No Interesado" },
   { value: "interesado", label: "Interesado" },
-  { value: "ganado", label: "Ganado" },
-  { value: "perdido", label: "Perdido" },
-  { value: "archivado", label: "Archivado" }
+  { value: "ganado", label: "Ganado" }, // Este cerrará la venta
+  { value: "perdido", label: "Perdido" }, // Este cerrará la venta
 ];
+
 
 const RegistrarResultado = () => {
   const { id_seguimiento } = useParams();
@@ -72,7 +78,7 @@ const RegistrarResultado = () => {
       await obtenerSeguimiento();
 
       alert("Resultado guardado correctamente");
-      navigate("/seguimientos-vendedora");
+      navigate(-1);
     } catch (err) {
       setError(err.message);
     }
@@ -99,7 +105,7 @@ const RegistrarResultado = () => {
       if (!res.ok) throw new Error("Error cancelando seguimiento");
 
       alert("Seguimiento cancelado correctamente");
-      navigate("/seguimientos-vendedora");
+      navigate(-1);
     } catch (err) {
       setError(err.message);
     }

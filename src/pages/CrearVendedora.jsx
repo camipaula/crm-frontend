@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "../styles/crearVendedora.css";
+import {useNavigate } from "react-router-dom";
 
 const CrearVendedora = () => {
+  const navigate = useNavigate();
   const [cedula_ruc, setCedulaRuc] = useState("");
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
@@ -35,6 +37,7 @@ const CrearVendedora = () => {
       }
 
       setMensaje("Vendedora creada exitosamente");
+      navigate(-1)
       setCedulaRuc("");
       setNombre("");
       setEmail("");

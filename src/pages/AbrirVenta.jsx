@@ -23,7 +23,7 @@ const AbrirVenta = () => {
       if (!res.ok) throw new Error("Error creando la venta");
 
       alert("Venta creada exitosamente");
-      navigate("/seguimientos-vendedora");
+      navigate(-1);
     } catch (err) {
       setError(err.message);
     }
@@ -31,14 +31,14 @@ const AbrirVenta = () => {
 
   return (
     <div className="abrir-venta-container">
-      <h1>Abrir Nueva Venta</h1>
+      <h1>Abrir Nueva Prospección</h1>
       <textarea
-        placeholder="Objetivo de la venta"
+        placeholder="Objetivo de la prospección"
         value={objetivo}
         onChange={(e) => setObjetivo(e.target.value)}
       />
 
-      <button onClick={crearVenta}>Abrir Venta</button>
+      <button onClick={crearVenta}>Abrir Prospección</button>
 
       {error && <p className="error">{error}</p>}
     </div>

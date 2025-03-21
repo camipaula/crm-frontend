@@ -6,11 +6,12 @@ const VendedorasAdmin = () => {
   const [vendedoras, setVendedoras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("todas"); // ✅ Por defecto, "todas"
   const navigate = useNavigate();
 
   useEffect(() => {
     obtenerVendedoras();
-  }, []);
+  }, [filtroEstado]); // ✅ Recargar lista al cambiar filtro
 
   const obtenerVendedoras = async () => {
     try {
@@ -20,7 +21,12 @@ const VendedorasAdmin = () => {
       });
       if (!res.ok) throw new Error("Error al obtener vendedoras");
       const data = await res.json();
-      setVendedoras(data);
+
+      // ✅ Filtrar según estado: "todas", 1 (activa), 0 (inactiva)
+      const filtradas =
+        filtroEstado === "todas" ? data : data.filter((v) => v.estado === parseInt(filtroEstado, 10));
+      
+      setVendedoras(filtradas);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -52,10 +58,16 @@ const VendedorasAdmin = () => {
       <div className="vendedoras-container">
         <h1 className="title">Vendedoras</h1>
 
-        <button
-          className="btn-crear"
-          onClick={() => navigate("/crear-vendedora")}
-        >
+        <div className="filtros">
+          <label>Filtrar por estado:</label>
+          <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+            <option value="todas">Todas</option>
+            <option value="1">Activas</option>
+            <option value="0">Inactivas</option>
+          </select>
+        </div>
+
+        <button className="btn-crear" onClick={() => navigate("/crear-vendedora")}>
           ➕ Crear Vendedora
         </button>
 
@@ -68,6 +80,7 @@ const VendedorasAdmin = () => {
               <th>Cédula</th>
               <th>Nombre</th>
               <th>Email</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -77,17 +90,12 @@ const VendedorasAdmin = () => {
                 <td>{v.cedula_ruc}</td>
                 <td>{v.nombre}</td>
                 <td>{v.email}</td>
+                <td>{v.estado === 1 ? "✅ Activa" : "❌ Inactiva"}</td>
                 <td>
-                  <button
-                    className="btn-editar"
-                    onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}
-                  >
+                  <button className="btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>
                     ✏️ Editar
                   </button>
-                  <button
-                    className="btn-eliminar"
-                    onClick={() => eliminarVendedora(v.cedula_ruc)}
-                  >
+                  <button className="btn-eliminar" onClick={() => eliminarVendedora(v.cedula_ruc)}>
                     🗑️ Eliminar
                   </button>
                 </td>
@@ -95,6 +103,10 @@ const VendedorasAdmin = () => {
             ))}
           </tbody>
         </table>
+
+        {vendedoras.length === 0 && !loading && (
+          <p>No hay vendedoras {filtroEstado === "1" ? "activas" : filtroEstado === "0" ? "inactivas" : "registradas"}.</p>
+        )}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import Select from "react-select";
-import "../styles/calendarioVendedora.css";
+import "../styles/calendarioAdmin.css";
 
 const CalendarioVendedora = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const CalendarioVendedora = () => {
   const [tiposSeguimiento, setTiposSeguimiento] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(null);
-  const [prospectoSeleccionado, setProspectoSeleccionado] = useState(null);
+  const [ setProspectoSeleccionado] = useState(null);
   const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [fechaSeguimiento, setFechaSeguimiento] = useState("");
@@ -155,26 +155,34 @@ const CalendarioVendedora = () => {
       <button className="btn-agendar" onClick={() => setMostrarModal(true)}>➕ Agendar Cita</button>
 
       <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-        locale="es"
-        events={eventos}
-        eventClick={({ event }) =>
-          setModalDetalle({
-            motivo: event.title,
-            tipo: event.extendedProps.tipo,
-            objetivo: event.extendedProps.objetivo,
-            prospecto: event.extendedProps.prospecto,
-            fecha: new Date(event.extendedProps.fecha).toLocaleString("es-EC"),
-          })
-        }
-        height="auto"
-      />
+  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+  initialView="timeGridWeek"
+  headerToolbar={{
+    left: "prev,next today",
+    center: "title",
+    right: "dayGridMonth,timeGridWeek,timeGridDay",
+  }}
+  locale="es"
+  slotLabelFormat={{
+    hour: "2-digit",
+    minute: "2-digit",
+    meridiem: "short",
+  }} // 🔹 Muestra las horas en formato HH:mm AM/PM
+  slotMinTime="06:00:00" // Opcional: Define la primera hora visible
+  slotMaxTime="24:00:00" // Opcional: Define la última hora visible
+  events={eventos}
+  eventClick={({ event }) =>
+    setModalDetalle({
+      motivo: event.title,
+      tipo: event.extendedProps.tipo,
+      objetivo: event.extendedProps.objetivo,
+      prospecto: event.extendedProps.prospecto,
+      fecha: new Date(event.extendedProps.fecha).toLocaleString("es-EC"),
+    })
+  }
+  height="auto"
+/>
+
 
       {mostrarModal && (
         <div className="modal">

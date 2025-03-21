@@ -73,8 +73,8 @@ button:hover {
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .abrir-venta-container {
-    min-width: 90vw; /* 🔥 Se adapta en móviles */
-    padding: 20px;
+    min-width: 30vw; /* 🔥 Se adapta en móviles */
+    padding: 27px;
   }
 
   textarea {

@@ -1,125 +1,156 @@
-/* 📌 Contenedor Principal */
+/********* 📌 CONTENEDOR PRINCIPAL *********/
 .editar-prospecto-container {
   width: 100%;
-  max-width: 800px; /* 🔥 Ajusta el ancho máximo */
-  min-width: 60vw;  /* 🔥 Asegura que no sea muy estrecho */
-  margin: 50px auto; /* 🔥 Centra el contenedor */
-  padding: 30px;
-  background: white;
+  max-width: 700px; /* 🔹 Limita el ancho en pantallas grandes */
+  margin: 0 auto; /* Centrado */
+  background: #fff;
+  padding: 20px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  text-align: left;
 }
 
-/* 📌 Título */
-h1 {
-  font-size: 26px;
-  color: #333;
-  font-weight: bold;
-  margin-bottom: 20px;
+/********* 📌 TÍTULO *********/
+.editar-prospecto-container h1 {
   text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
 }
 
-/* 📌 Formularios */
+/********* 📌 MENSAJES *********/
+.success {
+  color: #28a745;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/********* 📌 FORMULARIO *********/
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
-/* 📌 Estilos de las etiquetas */
+/********* 📌 LABELS *********/
 label {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
+  margin-top: 15px;
   color: #444;
 }
 
-/* 📌 Estilos de los inputs y selects */
-input, select, textarea {
+/********* 📌 INPUTS, TEXTAREAS Y SELECTS *********/
+input,
+textarea,
+select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  font-size: 14px;
+  border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 16px;
   outline: none;
-  transition: border-color 0.3s;
+  transition: border 0.3s;
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: #007bff;
+input:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #007bff;
 }
 
-/* 📌 Área de texto */
+/* 🔹 Textarea más alto */
 textarea {
-  resize: vertical;
   min-height: 80px;
+  resize: vertical;
 }
 
-/* 📌 Contenedor de botones */
+/* 🔹 Inputs deshabilitados */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/********* 📌 BOTONES *********/
 .button-container {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
 
-/* 📌 Botón de Guardar */
-.btn-guardar {
-  padding: 10px 20px;
-  background: #28a745; /* Verde */
-  color: white;
+button {
+  padding: 10px 15px;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-editar {
+  background: #ffc107;
+  color: black;
+}
+
+.btn-editar:hover {
+  background: #e0a800;
+}
+
+.btn-guardar {
+  background: #28a745;
+  color: white;
 }
 
 .btn-guardar:hover {
   background: #218838;
 }
 
-/* 📌 Botón de Cancelar */
 .btn-cerrar {
-  padding: 10px 20px;
-  background: #dc3545; /* Rojo */
+  background: #dc3545;
   color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
 }
 
 .btn-cerrar:hover {
   background: #c82333;
 }
 
-/* 📌 Mensajes de éxito y error */
-.success {
-  color: green;
-  font-weight: bold;
-  text-align: center;
-}
-
-.error {
-  color: red;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* 📱 Responsive */
+/********* 📱 RESPONSIVE PARA MÓVILES *********/
 @media (max-width: 768px) {
   .editar-prospecto-container {
-    min-width: 90vw; /* 🔥 Más ancho en móviles */
-    padding: 20px;
+    width: 90%; /* 🔹 Más compacto */
+    padding: 10%;
+  }
+
+  .editar-prospecto-container h1 {
+    font-size: 20px;
+  }
+
+  label {
+    font-size: 13px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  button {
+    font-size: 13px;
+    padding: 8px;
   }
 
   .button-container {
     flex-direction: column;
     gap: 10px;
-  }
-
-  .btn-guardar, .btn-cerrar {
-    width: 100%;
   }
 }

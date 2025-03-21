@@ -1,64 +1,68 @@
-/* 📌 Contenedor Principal */
+/* 📌 Contenedor principal */
 .vendedoras-container {
-  width: 100%;
-  max-width: 1200px; /* 🔥 Ancho máximo */
-  margin: 50px auto;
-  padding: 30px;
+  width: 100%; /* ✅ Ocupa toda la pantalla */
+  height: calc(90vh - 60px); /* ✅ Ocupa toda la altura menos el navbar */
+  padding: 20px;
+  overflow-y: auto; /* ✅ Permite hacer scroll si hay muchas vendedoras */
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
 }
 
-/* 📌 Título */
+/* 🏆 Título */
 .title {
-  font-size: 26px;
-  color: #333;
+  font-size: 24px;
+  color: #0d2a49;
   font-weight: bold;
+  text-align: center;
   margin-bottom: 20px;
 }
 
-/* 📌 Botón Crear Vendedora */
-.btn-crear {
-  padding: 12px 18px;
-  background: #28a745;
-  color: white;
-  border: none;
-  border-radius: 8px;
+/* 🔍 Filtros */
+.filtros {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* ✅ Se acomoda en pantallas pequeñas */
+}
+
+.filtros label {
   font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
-.btn-crear:hover {
-  background: #218838;
+.filtros select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
 }
 
-/* 📌 Tabla de vendedoras */
+/* 📋 Tabla */
 .vendedoras-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 10px;
   font-size: 16px;
   background: white;
   border-radius: 10px;
   overflow: hidden;
 }
 
-/* 📌 Encabezado de la tabla */
 .vendedoras-table th {
   background: #0d2a49;
   color: white;
   text-transform: uppercase;
   padding: 15px;
-  text-align: left;
 }
 
-/* 📌 Filas de la tabla */
 .vendedoras-table td {
   border: 1px solid #ddd;
-  padding: 15px;
-  text-align: left;
+  padding: 12px;
+  text-align: center;
 }
 
 /* 📌 Alternar colores en filas */
@@ -66,32 +70,49 @@
   background: #f9f9f9;
 }
 
-/* 📌 Botones de acción */
-.btn-editar,
-.btn-eliminar {
-  padding: 8px 12px;
+/* 🔘 Botones */
+.btn-crear {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #28a745;
+  color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 18px;
   cursor: pointer;
+  text-align: center;
   transition: 0.3s;
+  margin-bottom: 15px;
 }
 
-/* 📌 Botón Editar */
+.btn-crear:hover {
+  background: #218838;
+}
+
 .btn-editar {
+  padding: 8px 12px;
   background: #007bff;
   color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   margin-right: 5px;
+  transition: 0.3s;
 }
 
 .btn-editar:hover {
   background: #0056b3;
 }
 
-/* 📌 Botón Eliminar */
 .btn-eliminar {
+  padding: 8px 12px;
   background: #dc3545;
   color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .btn-eliminar:hover {
@@ -101,21 +122,36 @@
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .vendedoras-container {
-    width: 90%;
-    padding: 20px;
+    padding: 10px; /* ✅ Menos padding en móviles */
   }
 
-  .vendedoras-table {
-    font-size: 14px;
+  .title {
+    font-size: 20px; /* 🔥 Texto más pequeño */
+  }
+
+  .filtros {
+    flex-direction: column; /* 🔥 Se apilan en pantallas pequeñas */
+    align-items: stretch;
+  }
+
+  .filtros label {
+    margin-bottom: 5px;
+  }
+
+  .filtros select {
+    width: 100%;
   }
 
   .btn-crear {
-    font-size: 14px;
-    padding: 10px 15px;
+    font-size: 16px;
+    padding: 10px;
   }
 
-  .btn-editar, .btn-eliminar {
-    font-size: 12px;
-    padding: 6px 10px;
+  .vendedoras-table {
+    font-size: 14px; /* 🔥 Letra más pequeña en la tabla */
+  }
+
+  .vendedoras-table th, .vendedoras-table td {
+    padding: 8px;
   }
 }

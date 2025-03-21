@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
-import { useNavigate } from "react-router-dom";
 import "../styles/prospectosVendedora.css";
 
 const ProspectosVendedora = () => {
@@ -12,6 +12,7 @@ const ProspectosVendedora = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // 🔹 Filtros
   const [estadoFiltro, setEstadoFiltro] = useState([]);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
@@ -19,21 +20,26 @@ const ProspectosVendedora = () => {
 
   const opcionesEstado = [
     { value: "nuevo", label: "Nuevo" },
+    { value: "contactar", label: "Contactar" },
+    { value: "cita", label: "Cita" },
+    { value: "visita", label: "Visita" },
+    { value: "proformado", label: "Proformado" },
+    { value: "no interesado", label: "No Interesado" },
     { value: "interesado", label: "Interesado" },
     { value: "ganado", label: "Ganado" },
-    { value: "archivado", label: "Archivado" },
     { value: "perdido", label: "Perdido" },
+    { value: "archivado", label: "Archivado" }
   ];
 
   useEffect(() => {
     const cedula = obtenerCedulaDesdeToken();
     setCedulaVendedora(cedula);
     obtenerSectores();
-    establecerFechasUltimos6Meses(); 
+    establecerFechasUltimos3Meses();
   }, []);
 
-  // Definir fechas de 6 meses 
-  const establecerFechasUltimos6Meses = () => {
+  // 🔹 Fechas de últimos 3 meses
+  const establecerFechasUltimos3Meses = () => {
     const fechaActual = new Date();
     const fechaFin = fechaActual.toISOString().split("T")[0];
 
@@ -44,7 +50,6 @@ const ProspectosVendedora = () => {
     setFechaInicio(fechaInicioFormateada);
     setFechaFin(fechaFin);
   };
-
 
   useEffect(() => {
     if (cedulaVendedora && fechaInicio && fechaFin) {
@@ -64,6 +69,20 @@ const ProspectosVendedora = () => {
       setSectores(data.map((s) => ({ value: s, label: s })));
     } catch (err) {
       console.error("Error obteniendo sectores:", err);
+    }
+  };
+
+  const eliminarProspecto = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Error eliminando prospecto");
+      setProspectos((prev) => prev.filter((p) => p.id_prospecto !== id));
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -97,92 +116,42 @@ const ProspectosVendedora = () => {
     }
   };
 
-  const eliminarProspecto = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Error eliminando prospecto");
-      setProspectos((prev) => prev.filter((p) => p.id_prospecto !== id));
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const exportarExcel = async () => {
-    try {
-      const token = localStorage.getItem("token");
-  
-      let url = `${import.meta.env.VITE_API_URL}/api/prospectos/exportar?vendedora=${cedulaVendedora}`;
-  
-      if (estadoFiltro.length > 0) {
-        estadoFiltro.forEach((estado) => {
-          url += `&estado=${estado.value}`;
-        });
-      }
-      if (fechaInicio) url += `&fechaInicio=${fechaInicio}`;
-      if (fechaFin) url += `&fechaFin=${fechaFin}`;
-      if (sectorFiltro) url += `&sector=${sectorFiltro.value}`;
-  
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      const contentType = res.headers.get("content-type");
-  
-      // 🔹 Si la respuesta es JSON en lugar de un archivo, mostrar mensaje
-      if (contentType && contentType.includes("application/json")) {
-        const data = await res.json();
-        alert(data.message);
-        return;
-      }
-  
-      if (!res.ok) throw new Error("Error al exportar prospectos");
-  
-      // Convertir la respuesta en un blob y descargar el archivo
-      const blob = await res.blob();
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "prospectos.xlsx";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error al exportar:", error);
-    }
-  };
-  
-  
-
   return (
     <div className="prospectos-container">
       <h1 className="title">Mis Prospectos</h1>
-      {loading && <p>Cargando prospectos...</p>}
-      {error && <p className="error">{error}</p>}
 
+      {/* 🔹 Botón para crear prospecto */}
+      <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto")}>
+        ➕ Crear Prospecto
+      </button>
+
+      {/* 🔹 Filtros */}
       <div className="filtros-container">
         <Select
           options={opcionesEstado}
           isMulti
           placeholder="Seleccionar Estado(s)"
           className="select-estado"
-          classNamePrefix="select"
           onChange={setEstadoFiltro}
         />
 
-        <input type="date" name="fechaInicio" onChange={(e) => setFechaInicio(e.target.value)} value={fechaInicio} />
-        <input type="date" name="fechaFin" onChange={(e) => setFechaFin(e.target.value)} value={fechaFin} />
+        <input
+          type="date"
+          name="fechaInicio"
+          onChange={(e) => setFechaInicio(e.target.value)}
+          value={fechaInicio}
+        />
+        <input
+          type="date"
+          name="fechaFin"
+          onChange={(e) => setFechaFin(e.target.value)}
+          value={fechaFin}
+        />
 
         <Select
           options={sectores}
           placeholder="Seleccionar Sector"
           className="select-sector"
-          classNamePrefix="select"
           onChange={setSectorFiltro}
           isClearable
         />
@@ -191,40 +160,32 @@ const ProspectosVendedora = () => {
           {loading ? "Cargando..." : "Buscar"}
         </button>
       </div>
-      <button className="exportar-btn" onClick={exportarExcel}>
-      📥 Exportar a Excel
-      </button>
 
-      {/* 🔹 Botón para Crear un Nuevo Prospecto */}
-      <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto")}>
-        ➕ Crear Prospecto
-      </button>
+      {loading && <p>Cargando prospectos...</p>}
+      {error && <p className="error">{error}</p>}
+
+      {/* 🔹 Tabla de prospectos */}
       <table className="prospectos-table">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Teléfono</th>
-            <th>Sector</th>
-            <th>Dirección</th>
+            <th>Prospecto</th>
             <th>Estado</th>
-            <th>Última Nota</th>
             <th>Próximo Contacto</th>
+            <th>Última Nota</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {prospectos.map((p) => {
-            const ultimaNota = p.contactos?.[0]?.nota ?? "Sin nota";
+            const ultimaNota = p.ventas
+              ?.flatMap((v) => v.seguimientos)
+              .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
 
-            // Buscar la fecha del próximo contacto (estado pendiente)
             const proximoContacto = p.ventas
-              ?.flatMap((venta) => venta.seguimientos || [])
+              ?.flatMap((v) => v.seguimientos)
               .filter((s) => s.estado === "pendiente")
-              .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]
-              ?.fecha_programada;
+              .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
 
-            // Formatear la fecha a 2/1/2024
             const proximoContactoFormateado = proximoContacto
               ? new Date(proximoContacto).toLocaleDateString("es-EC")
               : "Sin programar";
@@ -234,67 +195,37 @@ const ProspectosVendedora = () => {
             return (
               <tr key={p.id_prospecto}>
                 <td>{p.nombre}</td>
-                <td>{p.correo ?? "No registrado"}</td>
-                <td>{p.telefono}</td>
-                <td>{p.sector ?? "No registrado"}</td>
-                <td>{p.direccion ?? "No registrada"}</td>
                 <td>{p.estado}</td>
-                <td>{ultimaNota}</td>
                 <td>{proximoContactoFormateado}</td>
-                <td className="acciones">
-                  <div className="botones-principales">
-                    <button
-                      className="btn-detalles"
-                      onClick={() =>
-                        navigate(`/detalle-prospecto/${p.id_prospecto}`)
-                      }
-                    >
-                      Ver Detalles
+                <td>{ultimaNota}</td>
+                <td>
+
+                  {tieneVentas ? (
+                    <button onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
+                      🔍 Ver Seguimientos
                     </button>
-                    <button
-                      className="btn-editar"
-                      onClick={() =>
-                        navigate(`/editar-prospecto/${p.id_prospecto}`)
-                      }
-                    >
-                      Editar
+                  ) : (
+                    <button onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
+                      ➕ Abrir Prospección
                     </button>
-                    <button
-                      className="btn-eliminar"
-                      onClick={() => eliminarProspecto(p.id_prospecto)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                  <div className="botones-secundarios">
-                    {tieneVentas ? (
-                      <button
-                        className="btn-ventas"
-                        onClick={() =>
-                          navigate(`/seguimientos-prospecto/${p.id_prospecto}`)
-                        }
-                      >
-                        🔍 Ver Seguimientos
-                      </button>
-                    ) : (
-                      <button
-                        className="btn-crear-venta"
-                        onClick={() =>
-                          navigate(`/abrir-venta/${p.id_prospecto}`)
-                        }
-                      >
-                        ➕ Crear Venta
-                      </button>
-                    )}
-                  </div>
+                  )}
+
+                  <button onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
+                    Editar
+                  </button>
+
+
+
+                  <button className="btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
+                    Eliminar
+                  </button>
                 </td>
+
               </tr>
             );
           })}
         </tbody>
-
       </table>
-
     </div>
   );
 };

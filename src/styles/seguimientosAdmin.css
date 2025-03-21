@@ -1,14 +1,14 @@
 /* 📌 Contenedor Principal */
 .seguimientos-container {
-    width: 100%;
-    max-width: 1100px; /* 🔥 Ajusta el ancho máximo */
-    min-width: 60vw;  /* 🔥 Asegura que no sea muy estrecho */
-    margin: 50px auto; /* 🔥 Centra el contenedor */
-    padding: 30px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    text-align: left;
+  width: 100%; /* ✅ Ocupa toda la pantalla */
+  height: calc(90vh - 60px); /* ✅ Ocupa toda la altura menos el navbar */
+  padding: 20px;
+  overflow-y: auto; /* ✅ Permite hacer scroll si hay muchas vendedoras */
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-left: 11%;
   }
   
   /* 📌 Título */

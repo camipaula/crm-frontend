@@ -1,13 +1,13 @@
 /* 📌 Contenedor principal */
 .prospectos-admin-container {
-  width: 100%;
-  max-width: 1200px; /* 🔥 Tamaño óptimo */
-  margin: 50px auto; /* 🔥 Centrado */
-  padding: 30px;
+
+  width: 100%; /* ✅ Ocupa toda la pantalla */
+  height: calc(90vh - 60px); /* Ocupa toda la altura menos el navbar */
+  padding: 20px;
+  overflow-y: auto; 
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
 }
 
 /* 📌 Título */
@@ -172,25 +172,55 @@
 }
 
 /* 📱 Responsive */
+/* 📱 Responsive - Ajustar tabla en pantallas pequeñas */
 @media (max-width: 768px) {
   .prospectos-admin-container {
     width: 95%;
-    padding: 20px;
+    padding: 15px;
   }
 
-  .filtros-container {
-    flex-direction: column;
-    gap: 10px;
-  }
-
+  /* 🔹 La tabla ahora es más compacta */
   .prospectos-table {
-    font-size: 14px;
+    font-size: 12px; /* 🔥 Letra más pequeña */
   }
 
+  .prospectos-table th,
+  .prospectos-table td {
+    padding: 8px; /* 🔥 Menos espacio en celdas */
+  }
+
+  /* 🔹 Los botones también más pequeños */
   .btn-detalle,
   .btn-editar,
   .btn-eliminar {
-    padding: 6px 10px;
+    padding: 5px 8px;
+    font-size: 12px; /* 🔥 Texto más pequeño */
+  }
+
+  /* 🔹 Botón de "Nuevo Prospecto" más compacto */
+  .nuevo-prospecto-btn {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  /* 🔹 Los filtros se apilan */
+  .filtros-container {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  /* 🔹 Selects e inputs más pequeños */
+  .filtros-container select,
+  .filtros-container input {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  /* 🔹 Botón de búsqueda más pequeño */
+  .filtros-container button {
     font-size: 14px;
+    padding: 8px 15px;
   }
 }
+

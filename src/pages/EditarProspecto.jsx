@@ -1,56 +1,48 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRol } from "../utils/auth"; 
-//import "../styles/editarProspecto.css";
+import { getRol } from "../utils/auth";
+import "../styles/editarProspecto.css";
 
 const EditarProspecto = () => {
   const { id_prospecto } = useParams();
-  console.log(" ID del prospecto recibido en el frontend:", id_prospecto);
   const navigate = useNavigate();
   const [prospecto, setProspecto] = useState(null);
   const [vendedoras, setVendedoras] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(true);
+  const [modoEdicion, setModoEdicion] = useState(false); // ✅ Estado para alternar entre vista y edición
 
-  const rolUsuario = getRol(); // Obtener el rol del usuario
+  const rolUsuario = getRol();
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const token = localStorage.getItem("token");  
+        const token = localStorage.getItem("token");
         if (!token) throw new Error("No estás autenticado. Inicia sesión nuevamente.");
 
-        // Cargar datos del prospecto
         const resProspecto = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         if (!resProspecto.ok) throw new Error("Error al cargar el prospecto.");
         const dataProspecto = await resProspecto.json();
-        console.log(" Prospecto cargado:", dataProspecto);
         setProspecto(dataProspecto);
 
-        // 🔍 Cargar lista de vendedoras solo si el usuario es administrador
         if (rolUsuario === "admin") {
           const resVendedoras = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           });
-
           if (!resVendedoras.ok) throw new Error("Error al cargar vendedoras.");
-          const dataVendedoras = await resVendedoras.json();
-          setVendedoras(dataVendedoras);
+          setVendedoras(await resVendedoras.json());
         }
+
+        const resCategorias = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resCategorias.ok) throw new Error("Error al cargar categorías.");
+        setCategorias(await resCategorias.json());
       } catch (err) {
-        console.error(" Error en la carga:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -60,84 +52,71 @@ const EditarProspecto = () => {
     cargarDatos();
   }, [id_prospecto, rolUsuario]);
 
-  // 🔹 Manejo de cambios en los inputs
   const handleChange = (e) => {
     if (!prospecto) return;
-    setProspecto((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value || "",
-    }));
+    setProspecto((prev) => ({ ...prev, [e.target.name]: e.target.value || "" }));
   };
 
-  // 🔹 Enviar datos al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setMensaje("");
-
+  
     if (!prospecto) return;
-
+  
     const token = localStorage.getItem("token");
-
+  
     try {
-      console.log(" Enviando datos al backend:", prospecto);
-
+      // 🔹 Filtramos valores vacíos y los convertimos en `null`
+      const prospectoFiltrado = Object.fromEntries(
+        Object.entries(prospecto).map(([key, value]) => [key, value === "" ? null : value])
+      );
+  
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(prospecto),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(prospectoFiltrado),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al actualizar el prospecto.");
       }
-
+  
       setMensaje("Prospecto actualizado con éxito.");
-      setTimeout(() => navigate(-1), 1000);
+      setModoEdicion(false);
     } catch (err) {
-      console.error(" Error al actualizar:", err);
       setError(err.message);
     }
   };
+  
 
-  // 🔹 Muestra mensaje de carga
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="editar-prospecto-container">
-      <h1>Editar Prospecto</h1>
+      <h1>Información del Prospecto</h1>
       {mensaje && <p className="success">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
 
       <form onSubmit={handleSubmit}>
         <label>Nombre:</label>
-        <input type="text" name="nombre" value={prospecto?.nombre || ""} onChange={handleChange} required />
+        <input type="text" name="nombre" value={prospecto?.nombre || ""} onChange={handleChange} disabled={!modoEdicion} />
 
-        <label>Correo:</label>
-        <input type="email" name="correo" value={prospecto?.correo || ""} onChange={handleChange} required />
+        <label>Descripción:</label>
+        <textarea name="descripcion" value={prospecto?.descripcion || ""} onChange={handleChange} disabled={!modoEdicion} />
 
-        <label>Teléfono:</label>
-        <input type="text" name="telefono" value={prospecto?.telefono || ""} onChange={handleChange} required />
-
-        <label>Dirección:</label>
-        <input type="text" name="direccion" value={prospecto?.direccion || ""} onChange={handleChange} />
-
-        <label>Provincia:</label>
-        <input type="text" name="provincia" value={prospecto?.provincia || ""} onChange={handleChange} />
-
-        <label>Ciudad:</label>
-        <input type="text" name="ciudad" value={prospecto?.ciudad || ""} onChange={handleChange} />
-
-        <label>Sector:</label>
-        <input type="text" name="sector" value={prospecto?.sector || ""} onChange={handleChange} />
+        <label>Categoría:</label>
+        <select name="id_categoria" value={prospecto?.id_categoria || ""} onChange={handleChange} disabled={!modoEdicion}>
+          <option value="">Seleccione...</option>
+          {categorias.map((c) => (
+            <option key={c.id_categoria} value={c.id_categoria}>{c.nombre}</option>
+          ))}
+        </select>
 
         <label>Origen:</label>
-        <select name="origen" value={prospecto?.origen || ""} onChange={handleChange}>
+        <select name="id_origen" value={prospecto?.id_origen || ""} onChange={handleChange} disabled={!modoEdicion}>
           <option value="publicidad">Publicidad</option>
           <option value="referencias">Referencias</option>
           <option value="online">Online</option>
@@ -148,10 +127,10 @@ const EditarProspecto = () => {
         </select>
 
         <label>Nota:</label>
-        <textarea name="nota" value={prospecto?.nota || ""} onChange={handleChange} />
+        <textarea name="nota" value={prospecto?.nota || ""} onChange={handleChange} disabled={!modoEdicion} />
 
         <label>Estado:</label>
-        <select name="estado" value={prospecto?.estado || ""} onChange={handleChange}>
+        <select name="estado" value={prospecto?.estado || ""} onChange={handleChange} disabled={!modoEdicion}>
           <option value="nuevo">Nuevo</option>
           <option value="interesado">Interesado</option>
           <option value="proformado">Proformado</option>
@@ -160,11 +139,19 @@ const EditarProspecto = () => {
           <option value="perdido">Perdido</option>
         </select>
 
-        {/* Solo mostrar el campo de vendedora si el usuario es admin */}
+        <label>Correo:</label>
+        <input type="email" name="correo" value={prospecto?.correo || ""} onChange={handleChange} disabled={!modoEdicion} />
+
+        <label>Teléfono:</label>
+        <input type="text" name="telefono" value={prospecto?.telefono || ""} onChange={handleChange} disabled={!modoEdicion} />
+
+        <label>Dirección:</label>
+        <input type="text" name="direccion" value={prospecto?.direccion || ""} onChange={handleChange} disabled={!modoEdicion} />
+
         {rolUsuario === "admin" && (
           <>
             <label>Vendedora asignada:</label>
-            <select name="cedula_vendedora" value={prospecto?.cedula_vendedora || ""} onChange={handleChange}>
+            <select name="cedula_vendedora" value={prospecto?.cedula_vendedora || ""} onChange={handleChange} disabled={!modoEdicion}>
               <option value="">Sin asignar</option>
               {vendedoras.map((v) => (
                 <option key={v.cedula_ruc} value={v.cedula_ruc}>
@@ -176,10 +163,15 @@ const EditarProspecto = () => {
         )}
 
         <div className="button-container">
-          <button type="submit" className="btn-guardar">Guardar Cambios</button>
-          <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>
-            Cancelar
-          </button>
+          {modoEdicion ? (
+            <>
+              <button type="submit" className="btn-guardar">Guardar Cambios</button>
+              <button type="button" className="btn-cerrar" onClick={() => setModoEdicion(false)}>Cancelar</button>
+            </>
+          ) : (
+            <button type="button" className="btn-editar" onClick={() => setModoEdicion(true)}>✏️ Editar</button>
+          )}
+          <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>Volver</button>
         </div>
       </form>
     </div>

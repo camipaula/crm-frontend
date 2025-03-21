@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-left: 250px; /* Sidebar abierto */
+  margin-left: 10%;  /* Sidebar abierto */
   margin-top: 60px; /* Navbar fijo */
   padding: 20px; 
   overflow-y: auto;
@@ -22,12 +22,12 @@
 
 /* Ajuste cuando el sidebar está cerrado */
 .sidebar.closed ~ .main-container {
-  margin-left: 60px;
+  margin-left: 6%;
 }
 
 .content {
   width: 100%;
-  padding: 30px;
+  padding: 2px;
   display: flex;
   justify-content: center;
 }

@@ -40,33 +40,49 @@ const AgendarSeguimiento = () => {
   const agendar = async (e) => {
     e.preventDefault();
     try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id_venta,
-            cedula_vendedora,
-            fecha_programada,
-            id_tipo: id_tipo?.value,
-            motivo,
-            nota,
-          }),
-        });
-      
-        const data = await res.json(); 
-        if (!res.ok) throw new Error(data.message || "Error al agendar seguimiento");
-      
-        alert("Seguimiento agendado con éxito");
-        navigate(-1);
-      } catch (err) {
-        console.error("Error:", err);
-        setError(err.message);
-      }      
+      const token = localStorage.getItem("token");
+  
+      // 🔍 OBTENER INFORMACIÓN DE LA VENTA Y LA VENDEDO🛑RA ASOCIADA AL PROSPECTO
+      const resProspecto = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${id_venta}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!resProspecto.ok) throw new Error("Error obteniendo datos del prospecto");
+  
+      const venta = await resProspecto.json();
+      const cedulaVendedoraAsignada = venta.prospecto?.cedula_vendedora; 
+  
+      if (!cedulaVendedoraAsignada) throw new Error("No se encontró vendedora asignada al prospecto");
+  
+      // 📌 AGENDAR LA CITA PARA LA VENDEDO🛑RA ASIGNADA
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id_venta,
+          cedula_vendedora: cedulaVendedoraAsignada, // 👈 Ahora la cita se asigna correctamente
+          fecha_programada,
+          id_tipo: id_tipo?.value,
+          motivo,
+          nota,
+        }),
+      });
+  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error al agendar seguimiento");
+  
+      alert("Seguimiento agendado con éxito para la vendedora correcta");
+      navigate(-1);
+    } catch (err) {
+      console.error("Error:", err);
+      setError(err.message);
+    }
   };
+  
+  
 
   return (
     <div className="agendar-container">
