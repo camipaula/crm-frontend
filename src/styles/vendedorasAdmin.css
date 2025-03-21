@@ -123,10 +123,12 @@
 @media (max-width: 768px) {
   .vendedoras-container {
     padding: 10px; /* ✅ Menos padding en móviles */
+    margin-left: 20%;
+
   }
 
   .title {
-    font-size: 20px; /* 🔥 Texto más pequeño */
+    font-size: 20px !important; /* 🔥 Texto más pequeño */
   }
 
   .filtros {

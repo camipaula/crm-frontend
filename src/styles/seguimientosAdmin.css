@@ -160,7 +160,8 @@
     .seguimientos-container {
       min-width: 90vw; /* Se expande más en móviles */
       padding: 20px;
-    }
+      margin-left: 30%;
+        }
   
     .venta-botones {
       flex-direction: column;
