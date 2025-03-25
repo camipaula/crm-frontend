@@ -12,7 +12,7 @@ const EditarProspecto = () => {
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(true);
-  const [modoEdicion, setModoEdicion] = useState(false); // ✅ Estado para alternar entre vista y edición
+  const [modoEdicion, setModoEdicion] = useState(false);
 
   const rolUsuario = getRol();
 
@@ -61,35 +61,33 @@ const EditarProspecto = () => {
     e.preventDefault();
     setError("");
     setMensaje("");
-  
+
     if (!prospecto) return;
-  
+
     const token = localStorage.getItem("token");
-  
+
     try {
-      // 🔹 Filtramos valores vacíos y los convertimos en `null`
       const prospectoFiltrado = Object.fromEntries(
         Object.entries(prospecto).map(([key, value]) => [key, value === "" ? null : value])
       );
-  
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(prospectoFiltrado),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al actualizar el prospecto.");
       }
-  
+
       setMensaje("Prospecto actualizado con éxito.");
       setModoEdicion(false);
     } catch (err) {
       setError(err.message);
     }
   };
-  
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="error">{error}</p>;
@@ -104,6 +102,9 @@ const EditarProspecto = () => {
         <label>Nombre:</label>
         <input type="text" name="nombre" value={prospecto?.nombre || ""} onChange={handleChange} disabled={!modoEdicion} />
 
+        <label>Nombre del Contacto:</label>
+        <input type="text" name="nombre_contacto" value={prospecto?.nombre_contacto || ""} onChange={handleChange} disabled={!modoEdicion} />
+
         <label>Descripción:</label>
         <textarea name="descripcion" value={prospecto?.descripcion || ""} onChange={handleChange} disabled={!modoEdicion} />
 
@@ -117,13 +118,14 @@ const EditarProspecto = () => {
 
         <label>Origen:</label>
         <select name="id_origen" value={prospecto?.id_origen || ""} onChange={handleChange} disabled={!modoEdicion}>
-          <option value="publicidad">Publicidad</option>
-          <option value="referencias">Referencias</option>
-          <option value="online">Online</option>
-          <option value="evento">Evento</option>
-          <option value="contacto_directo">Contacto Directo</option>
-          <option value="visita">Visita</option>
-          <option value="otros">Otros</option>
+          <option value="">Seleccione...</option>
+          <option value="1">Publicidad</option>
+          <option value="2">Referencias</option>
+          <option value="3">Online</option>
+          <option value="4">Evento</option>
+          <option value="5">Contacto Directo</option>
+          <option value="6">Visita</option>
+          <option value="7">Otros</option>
         </select>
 
         <label>Nota:</label>
@@ -132,12 +134,18 @@ const EditarProspecto = () => {
         <label>Estado:</label>
         <select name="estado" value={prospecto?.estado || ""} onChange={handleChange} disabled={!modoEdicion}>
           <option value="nuevo">Nuevo</option>
-          <option value="interesado">Interesado</option>
+          <option value="contactar">Contactar</option>
+          <option value="cita">Cita</option>
+          <option value="visita">Visita</option>
+          <option value="en_prueba">En prueba</option>
           <option value="proformado">Proformado</option>
+          <option value="no_interesado">No interesado</option>
+          <option value="interesado">Interesado</option>
           <option value="ganado">Ganado</option>
-          <option value="archivado">Archivado</option>
           <option value="perdido">Perdido</option>
+          <option value="archivado">Archivado</option>
         </select>
+
 
         <label>Correo:</label>
         <input type="email" name="correo" value={prospecto?.correo || ""} onChange={handleChange} disabled={!modoEdicion} />

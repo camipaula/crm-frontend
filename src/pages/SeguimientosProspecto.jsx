@@ -29,7 +29,7 @@ const SeguimientosProspecto = () => {
       const data = await res.json();
 
       if (data.length === 0) {
-        // 🔹 Si el prospecto no tiene ventas, redirigir a "AbrirVenta"
+        //Si el prospecto no tiene ventas, redirigir a "AbrirVenta"
         navigate(`/abrir-venta/${id_prospecto}`);
         return;
       }

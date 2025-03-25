@@ -23,12 +23,13 @@ const ProspectosVendedora = () => {
     { value: "contactar", label: "Contactar" },
     { value: "cita", label: "Cita" },
     { value: "visita", label: "Visita" },
+    { value: "en_prueba", label: "En Prueba" },       
     { value: "proformado", label: "Proformado" },
-    { value: "no interesado", label: "No Interesado" },
+    { value: "no_interesado", label: "No Interesado" }, 
     { value: "interesado", label: "Interesado" },
     { value: "ganado", label: "Ganado" },
     { value: "perdido", label: "Perdido" },
-    { value: "archivado", label: "Archivado" }
+    { value: "archivado", label: "Archivado" },
   ];
 
   useEffect(() => {

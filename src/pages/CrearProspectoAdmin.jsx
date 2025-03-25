@@ -5,9 +5,10 @@ import "../styles/crearProspecto.css";
 const CrearProspectoAdmin = () => {
   const navigate = useNavigate();
   const [vendedoras, setVendedoras] = useState([]);
-  const [categorias, setCategorias] = useState([]); 
+  const [categorias, setCategorias] = useState([]);
   const [formData, setFormData] = useState({
     nombre: "",
+    nombre_contacto: "",
     descripcion: "",
     id_categoria: null,
     origen: "",
@@ -23,7 +24,7 @@ const CrearProspectoAdmin = () => {
     cedula_vendedora: "",
     created_at: new Date().toISOString().split("T")[0], // ✅ Fecha de hoy por defecto
   });
-  
+
 
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
@@ -61,13 +62,13 @@ const CrearProspectoAdmin = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     setFormData((prev) => ({
       ...prev,
       [name]: name === "id_categoria" ? (value ? Number(value) : null) : value,
     }));
   };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,6 +122,10 @@ const CrearProspectoAdmin = () => {
         <label>Nombre <span className="required">*</span>:</label>
         <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
 
+        {/* Nombre de contacto */}
+        <label>Nombre del contacto:</label>
+        <input type="text" name="nombre_contacto" value={formData.nombre_contacto} onChange={handleChange} />
+
         {/* Descripción */}
         <label>Descripción:</label>
         <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} />
@@ -158,6 +163,7 @@ const CrearProspectoAdmin = () => {
           <option value="contactar">Contactar</option>
           <option value="cita">Cita</option>
           <option value="visita">Visita</option>
+          <option value="en_prueba">En prueba</option>
           <option value="proformado">Proformado</option>
           <option value="no_interesado">No Interesado</option>
           <option value="interesado">Interesado</option>
@@ -203,14 +209,14 @@ const CrearProspectoAdmin = () => {
           ))}
         </select>
 
-{/* Fecha de Creación */}
-<label>Fecha de Creación:</label>
-<input 
-  type="date" 
-  name="created_at" 
-  value={formData.created_at} 
-  onChange={handleChange} 
-/>
+        {/* Fecha de Creación */}
+        <label>Fecha de Creación:</label>
+        <input
+          type="date"
+          name="created_at"
+          value={formData.created_at}
+          onChange={handleChange}
+        />
 
         <button type="submit">Crear Prospecto</button>
         <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>

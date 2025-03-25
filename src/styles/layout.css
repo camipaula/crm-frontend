@@ -4,25 +4,28 @@
   overflow: hidden;
 }
 
-/* Ajusta el espacio del contenido */
+/* Ajuste del contenido según el sidebar */
 .main-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-left: 10%;  /* Sidebar abierto */
-  margin-top: 60px; /* Navbar fijo */
-  padding: 20px; 
+  margin-top: 60px; /* navbar fijo */
+  padding: 20px;
   overflow-y: auto;
   background-color: #bac7f9;
   min-height: calc(100vh - 100px);
-  min-width: 60vw; /* 🔥 Usa "vw" en vez de "vh" */
-  max-width: 1400px; /* 🔥 Para evitar que se haga gigante */
+  min-width: 60vw;
+  max-width: 1400px;
 }
 
+/* Sidebar abierto */
+.main-container.sidebar-open {
+  margin-left: 250px; /* igual al ancho de .sidebar */
+}
 
-/* Ajuste cuando el sidebar está cerrado */
-.sidebar.closed ~ .main-container {
-  margin-left: 6%;
+/* Sidebar cerrado */
+.main-container.sidebar-closed {
+  margin-left: 60px; /* igual al ancho de .sidebar.closed */
 }
 
 .content {

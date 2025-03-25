@@ -21,10 +21,16 @@ const ProspectosAdmin = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState(null);
   const opcionesEstado = [
     { value: "nuevo", label: "Nuevo" },
+    { value: "contactar", label: "Contactar" },
+    { value: "cita", label: "Cita" },
+    { value: "visita", label: "Visita" },
+    { value: "en_prueba", label: "En Prueba" },       
+    { value: "proformado", label: "Proformado" },
+    { value: "no_interesado", label: "No Interesado" }, 
     { value: "interesado", label: "Interesado" },
     { value: "ganado", label: "Ganado" },
-    { value: "archivado", label: "Archivado" },
     { value: "perdido", label: "Perdido" },
+    { value: "archivado", label: "Archivado" },
   ];
 
   useEffect(() => {

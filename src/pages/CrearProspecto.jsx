@@ -9,6 +9,7 @@ const CrearProspecto = () => {
   const [formData, setFormData] = useState({
     cedula_ruc: "",
     nombre: "",
+    nombre_contacto: "",
     correo: "",
     telefono: "",
     direccion: "",
@@ -16,8 +17,11 @@ const CrearProspecto = () => {
     ciudad: "",
     sector: "",
     origen: "",
+    id_categoria: null,
+    descripcion: "",
     nota: "",
     estado: "nuevo",
+    created_at: new Date().toISOString().split("T")[0],
   });
 
   const [mensaje, setMensaje] = useState(null);
@@ -32,7 +36,10 @@ const CrearProspecto = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "id_categoria" ? (value ? Number(value) : null) : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -92,6 +99,9 @@ const CrearProspecto = () => {
         <label>Nombre <span className="required">*</span>:</label>
         <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
 
+        <label>Nombre del Contacto:</label>
+        <input type="text" name="nombre_contacto" value={formData.nombre_contacto} onChange={handleChange} />
+
         <label>Correo:</label>
         <input type="email" name="correo" value={formData.correo} onChange={handleChange} />
 
@@ -122,18 +132,34 @@ const CrearProspecto = () => {
           <option value="otros">Otros</option>
         </select>
 
+        <label>Descripción:</label>
+        <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} />
+
         <label>Nota:</label>
         <textarea name="nota" value={formData.nota} onChange={handleChange} />
 
         <label>Estado <span className="required">*</span>:</label>
         <select name="estado" value={formData.estado} onChange={handleChange} required>
           <option value="nuevo">Nuevo</option>
+          <option value="contactar">Contactar</option>
+          <option value="cita">Cita</option>
+          <option value="visita">Visita</option>
+          <option value="en_prueba">En prueba</option>
+          <option value="proformado">Proformado</option>
+          <option value="no_interesado">No Interesado</option>
           <option value="interesado">Interesado</option>
-          <option value="propuesta">Propuesta</option>
           <option value="ganado">Ganado</option>
           <option value="perdido">Perdido</option>
           <option value="archivado">Archivado</option>
         </select>
+
+        <label>Fecha de Creación:</label>
+        <input 
+          type="date" 
+          name="created_at" 
+          value={formData.created_at} 
+          onChange={handleChange} 
+        />
 
         <button type="submit">Crear Prospecto</button>
         <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>

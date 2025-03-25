@@ -13,29 +13,29 @@ const Layout = ({ children }) => {
   useEffect(() => {
     const userRol = getRol();
     setRol(userRol);
+    setIsSidebarOpen(true); // Sidebar abierto por defecto al detectar rol
     setLoading(false);
   }, []);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen((prev) => !prev);
   };
 
-  // Para que el sidebar esta bien 
   if (loading) {
     return <div className="loading">Cargando...</div>;
-  }  
+  }
 
   return (
     <div className="layout">
       <Navbar />
-      {rol && (
-        <Sidebar
-          isOpen={isSidebarOpen}
-          toggleSidebar={toggleSidebar}
-          rol={rol}
-        />
-      )}
-      <div className="main-container">
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        rol={rol}
+      />
+
+      <div className={`main-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
         <div className="content">{children}</div>
       </div>
     </div>

@@ -15,6 +15,8 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
       <ul className="sidebar-menu">
         {rol === "vendedora" ? (
           <>
+            <li><NavLink to="/vendedora" className="nav-link">👩 <span className={isOpen ? "show" : "hide"}>home</span></NavLink></li>
+
             <li><NavLink to="/prospectos-vendedora" className="nav-link">📋 <span className={isOpen ? "show" : "hide"}>Prospectos</span></NavLink></li>
             <li><NavLink to="/seguimientos-vendedora" className="nav-link">🛠 <span className={isOpen ? "show" : "hide"}>Seguimientos</span></NavLink></li>
             {/* <li><NavLink to="/vendedora" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
@@ -38,7 +40,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
 
       {/* Botón de cerrar sesión */}
       <button className="logout-btn" onClick={logout}>
-          <span className={isOpen ? "show" : "hide"}>Cerrar Sesión</span>
+        <span className={isOpen ? "show" : "hide"}>Cerrar Sesión</span>
       </button>
     </div>
   );
