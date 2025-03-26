@@ -118,42 +118,75 @@
 .btn-eliminar:hover {
   background: #c82333;
 }
+.cards-mobile {
+  display: none;
+}
 
-/* 📱 Responsive */
 @media (max-width: 768px) {
-  .vendedoras-container {
-    padding: 10px; /* ✅ Menos padding en móviles */
-    margin-left: 20%;
-
-  }
-
-  .title {
-    font-size: 20px !important; /* 🔥 Texto más pequeño */
-  }
-
-  .filtros {
-    flex-direction: column; /* 🔥 Se apilan en pantallas pequeñas */
-    align-items: stretch;
-  }
-
-  .filtros label {
-    margin-bottom: 5px;
-  }
-
-  .filtros select {
-    width: 100%;
-  }
-
-  .btn-crear {
-    font-size: 16px;
-    padding: 10px;
-  }
-
   .vendedoras-table {
-    font-size: 14px; /* 🔥 Letra más pequeña en la tabla */
+    display: none;
   }
 
-  .vendedoras-table th, .vendedoras-table td {
-    padding: 8px;
+  .cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .vendedora-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .vendedora-card .info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .vendedora-card h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0d2a49;
+  }
+
+  .vendedora-card p {
+    margin: 0;
+    font-size: 13px;
+    color: #444;
+  }
+
+  .vendedora-card .acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-left: 10px;
+  }
+
+  .vendedora-card .acciones button {
+    font-size: 12px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-editar {
+    background-color: #ffc107;
+    color: black;
+  }
+
+  .btn-eliminar {
+    background-color: #dc3545;
+    color: white;
   }
 }

@@ -36,4 +36,27 @@ button:hover {
   body {
     font-size: 14px;
   }
+  .btn-volver {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+/* 📌 Volver */
+.btn-volver {
+  margin: 18px -8px;
+  padding: 4px 1px;
+  background: #0d2a49;
+  color: white;
+  border: none;
+  border-radius: 13px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: center;
+  width: 31%;
+}
+
+.btn-volver:hover {
+  background: #0b1f35;
 }

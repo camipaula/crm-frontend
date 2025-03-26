@@ -29,7 +29,7 @@ const EditarVendedora = () => {
       setVendedora(data);
       setNombre(data.nombre);
       setEmail(data.email);
-      setEstado(data.estado); // ✅ Guardar estado actual (activa/inactiva)
+      setEstado(data.estado); // Guardar estado actual (activa/inactiva)
     } catch (err) {
       setError(err.message);
     }
@@ -41,7 +41,7 @@ const EditarVendedora = () => {
       const bodyData = { nombre, email, estado };
 
       if (password.trim()) {
-        bodyData.password = password; // ✅ Solo se envía si el usuario cambia la contraseña
+        bodyData.password = password; // Solo se envía si el usuario cambia la contraseña
       }
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
@@ -95,6 +95,8 @@ const EditarVendedora = () => {
 
   return (
     <div className="editar-vendedora-container">
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       <h1>Editar Vendedora</h1>
 
       <div className="form-group">

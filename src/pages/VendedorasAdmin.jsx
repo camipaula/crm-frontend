@@ -56,6 +56,8 @@ const VendedorasAdmin = () => {
   return (
     <div className="content">
       <div className="vendedoras-container">
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
         <h1 className="title">Vendedoras</h1>
 
         <div className="filtros">
@@ -103,6 +105,28 @@ const VendedorasAdmin = () => {
             ))}
           </tbody>
         </table>
+{/* 🔹 Tarjetas para móviles */}
+<div className="cards-mobile">
+  {vendedoras.map((v) => (
+    <div className="vendedora-card" key={v.cedula_ruc}>
+      <div className="info">
+        <h3>{v.nombre}</h3>
+        <p><strong>Cédula:</strong> {v.cedula_ruc}</p>
+        <p><strong>Email:</strong> {v.email}</p>
+        <p><strong>Estado:</strong> {v.estado === 1 ? "✅ Activa" : "❌ Inactiva"}</p>
+      </div>
+      <div className="acciones">
+        <button className="btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>
+          ✏️
+        </button>
+        <button className="btn-eliminar" onClick={() => eliminarVendedora(v.cedula_ruc)}>
+          🗑️
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {vendedoras.length === 0 && !loading && (
           <p>No hay vendedoras {filtroEstado === "1" ? "activas" : filtroEstado === "0" ? "inactivas" : "registradas"}.</p>

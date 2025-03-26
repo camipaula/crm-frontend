@@ -1,23 +1,33 @@
 import { logout } from "../utils/auth";
 import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import "../styles/navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const rutasSinFlecha = ["/admin", "/vendedora"]; //sin flecha
-
+  const rutasSinFlecha = ["/admin", "/vendedora"];
   const mostrarFlecha = !rutasSinFlecha.includes(location.pathname);
 
   return (
     <nav className="navbar">
-      {mostrarFlecha && (
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          ⬅ 
+      <div className="navbar-left">
+        {/* ☰ Solo en móviles */}
+        <button className="mobile-menu-btn" onClick={toggleSidebar}>
+          ☰
         </button>
-      )}
-      <h2 className="navbar-title">Santos Distibuidores</h2>
+
+        {/* ⬅️ Solo si aplica */}
+        {mostrarFlecha && (
+          <button className="back-btn" onClick={() => navigate(-1)}>
+            ⬅
+          </button>
+        )}
+      </div>
+
+      <h2 className="navbar-title">Santos Distribuidores</h2>
+
       <div className="navbar-right">
         <button className="logout-btn" onClick={logout}>
           Cerrar Sesión
@@ -25,6 +35,10 @@ const Navbar = () => {
       </div>
     </nav>
   );
+};
+
+Navbar.propTypes = {
+  toggleSidebar: PropTypes.func.isRequired,
 };
 
 export default Navbar;

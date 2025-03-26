@@ -18,24 +18,6 @@
   margin-bottom: 20px;
 }
 
-/* 📥 Botón Exportar */
-.exportar-btn {
-  background: #0d2a49;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.3s;
-  margin: 0 auto 20px;
-  display: block;
-}
-
-.exportar-btn:hover {
-  background: #0b1f35;
-}
-
 /* 🎯 Filtros */
 .filtros-container {
   display: flex;
@@ -52,33 +34,38 @@
   border-radius: 6px;
 }
 
-/* 📋 Tabla */
-.seguimientos-table {
+/* 📋 Tabla (solo escritorio) */
+.tabla-seguimientos-prospecto-wrapper {
   width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-seguimientos-prospecto {
+  width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
   font-size: 15px;
   background: white;
   border-radius: 10px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.seguimientos-table th,
-.seguimientos-table td {
+.tabla-seguimientos-prospecto th,
+.tabla-seguimientos-prospecto td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
   vertical-align: top;
 }
 
-.seguimientos-table th {
+.tabla-seguimientos-prospecto th {
   background: #0d2a49;
   color: white;
   text-transform: uppercase;
   font-size: 14px;
 }
 
-.seguimientos-table tr:nth-child(even) {
+.tabla-seguimientos-prospecto tr:nth-child(even) {
   background: #f9f9f9;
 }
 
@@ -92,8 +79,6 @@
   cursor: pointer;
   transition: 0.3s;
   margin: 2px;
-  display: inline-block;
-  width: 100%;
   white-space: nowrap;
 }
 
@@ -115,7 +100,7 @@
   background: #0056b3;
 }
 
-/* ❗ Error */
+/* ❗ Mensaje de error */
 .error {
   color: red;
   text-align: center;
@@ -123,31 +108,13 @@
   margin-top: 10px;
 }
 
-/* ✅ Responsive: tarjetas en móviles, tabla oculta */
+/* 📱 Móviles: Tarjetas */
 @media (max-width: 768px) {
-  .seguimientos-container {
-    padding: 15px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .filtros-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filtros-container select {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .seguimientos-table-vendedora-wrapper {
+  .tabla-seguimientos-prospecto {
     display: none;
   }
 
-  .tarjetas-seguimientos-vendedora {
+  .tarjetas-seguimientos-prospecto {
     display: block;
     margin-top: 20px;
   }
@@ -164,7 +131,6 @@
   .card-seguimiento h3 {
     margin-bottom: 10px;
     color: #0d2a49;
-    font-size: 18px;
   }
 
   .card-seguimiento p {
@@ -175,13 +141,14 @@
   .card-seguimiento .acciones {
     margin-top: 10px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 8px;
   }
 
   .card-seguimiento .acciones button {
-    font-size: 13px;
+    flex: 1;
     padding: 8px 10px;
+    font-size: 13px;
     border-radius: 6px;
     border: none;
     cursor: pointer;
@@ -198,9 +165,9 @@
   }
 }
 
-/* ✅ Ocultar tarjetas en escritorio */
+/* 🖥️ Escritorio: Ocultar tarjetas */
 @media (min-width: 769px) {
-  .tarjetas-seguimientos-vendedora {
+  .tarjetas-seguimientos-prospecto {
     display: none;
   }
 }

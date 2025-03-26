@@ -42,7 +42,6 @@ const AgendarSeguimiento = () => {
     try {
       const token = localStorage.getItem("token");
   
-      // 🔍 OBTENER INFORMACIÓN DE LA VENTA Y LA VENDEDO🛑RA ASOCIADA AL PROSPECTO
       const resProspecto = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${id_venta}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -54,7 +53,6 @@ const AgendarSeguimiento = () => {
   
       if (!cedulaVendedoraAsignada) throw new Error("No se encontró vendedora asignada al prospecto");
   
-      // 📌 AGENDAR LA CITA PARA LA VENDEDO🛑RA ASIGNADA
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
         headers: {
@@ -63,7 +61,7 @@ const AgendarSeguimiento = () => {
         },
         body: JSON.stringify({
           id_venta,
-          cedula_vendedora: cedulaVendedoraAsignada, // 👈 Ahora la cita se asigna correctamente
+          cedula_vendedora: cedulaVendedoraAsignada, 
           fecha_programada,
           id_tipo: id_tipo?.value,
           motivo,
@@ -86,6 +84,8 @@ const AgendarSeguimiento = () => {
 
   return (
     <div className="agendar-container">
+            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       <h1>➕ Agendar Seguimiento</h1>
       {error && <p className="error">{error}</p>}
       <form onSubmit={agendar}>
@@ -118,6 +118,7 @@ const AgendarSeguimiento = () => {
         />
         <button type="submit">Agendar Seguimiento</button>
       </form>
+    
     </div>
   );
 };

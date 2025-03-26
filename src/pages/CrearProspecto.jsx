@@ -87,6 +87,8 @@ const CrearProspecto = () => {
 
   return (
     <div className="crear-prospecto-container">
+            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       <h1>Crear Prospecto</h1>
 
       {mensaje && <p className="success">{mensaje}</p>}

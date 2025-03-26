@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
-import "../styles/prospectosVendedora.css";
+import "../styles/prospectosAdmin.css";
 
 const ProspectosVendedora = () => {
   const navigate = useNavigate();
@@ -118,8 +118,10 @@ const ProspectosVendedora = () => {
   };
 
   return (
-    <div className="prospectos-container">
+    <div className="prospectos-admin-container">
       <h1 className="title">Mis Prospectos</h1>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
 
       {/* 🔹 Botón para crear prospecto */}
       <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto")}>
@@ -227,6 +229,54 @@ const ProspectosVendedora = () => {
           })}
         </tbody>
       </table>
+
+      {/* 🔹 Tarjetas para celulares */}
+<div className="cards-mobile">
+  {prospectos.map((p) => {
+    const ultimaNota = p.ventas
+      ?.flatMap((v) => v.seguimientos)
+      .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
+
+    const proximoContacto = p.ventas
+      ?.flatMap((v) => v.seguimientos)
+      .filter((s) => s.estado === "pendiente")
+      .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
+
+    const proximoContactoFormateado = proximoContacto
+      ? new Date(proximoContacto).toLocaleDateString("es-EC")
+      : "Sin programar";
+
+    const tieneVentas = p.ventas?.length > 0;
+
+    return (
+      <div className="prospecto-card" key={p.id_prospecto}>
+        <h3>{p.nombre}</h3>
+        <p><strong>Estado:</strong> {p.estado}</p>
+        <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>
+        <p><strong>Última Nota:</strong> {ultimaNota}</p>
+        <div className="acciones">
+          {tieneVentas ? (
+            <button className="btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
+              Ver Seguimientos
+            </button>
+          ) : (
+            <button className="btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
+              Abrir Prospección
+            </button>
+          )}
+          <button className="btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
+            Editar
+          </button>
+          <button className="btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+
     </div>
   );
 };

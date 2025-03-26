@@ -49,6 +49,8 @@ const CrearVendedora = () => {
 
   return (
     <div className="crear-vendedora-container">
+            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       <h1>Crear Nueva Vendedora</h1>
 
       <input

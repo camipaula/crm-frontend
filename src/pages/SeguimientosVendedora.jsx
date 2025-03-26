@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
-import "../styles/seguimientosVendedora.css";
+import "../styles/seguimientosProspecto.css";
 
 const SeguimientosVendedora = () => {
   const navigate = useNavigate();
@@ -69,7 +69,9 @@ const SeguimientosVendedora = () => {
 
   return (
     <div className="seguimientos-container">
+
       <h1 className="title">Mis Seguimientos de Prospectos</h1>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <button className="exportar-btn" onClick={exportarExcel}>
         📥 Exportar a Excel
@@ -85,62 +87,92 @@ const SeguimientosVendedora = () => {
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
         </select>
+
       </div>
 
       {loading && <p>Cargando...</p>}
       {error && <p className="error">{error}</p>}
+      <div className="seguimientos-table-vendedora-wrapper">
 
-      <table className="seguimientos-table">
-        <thead>
-          <tr>
-            <th>Prospecto</th>
-            <th>Objetivo</th>
-            <th>Estado del Prospecto</th>
-            <th>Estado de la Venta</th>
-            <th>Última Fecha</th>
-            <th>Último Tipo</th>
-            <th>Último Resultado</th>
-            <th>Última Nota</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {prospecciones.map((p) => {
-            const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
-            const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
+        <table className="seguimientos-table">
+          <thead>
+            <tr>
+              <th>Prospecto</th>
+              <th>Objetivo</th>
+              <th>Estado del Prospecto</th>
+              <th>Estado de la Venta</th>
+              <th>Última Fecha</th>
+              <th>Último Tipo</th>
+              <th>Último Resultado</th>
+              <th>Última Nota</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {prospecciones.map((p) => {
+              const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
+              const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
 
-            return (
-              <tr key={p.id_venta}>
-                <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
-                <td>{p.objetivo || "Sin Objetivo"}</td>
-                <td>{p.prospecto?.estado || "No definido"}</td>
-                <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
-                <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
-                <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
-                <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
-                <td>
-                  {!tieneSeguimientos ? (
-                    <button
-                      className="btn-agendar"
-                      onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
-                    >
-                      📅 Agendar Primer Seguimiento
-                    </button>
-                  ) : (
-                    <button
-                      className="btn-ver-seguimientos"
-                      onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
-                    >
-                      📜 Ver Seguimientos
-                    </button>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              return (
+                <tr key={p.id_venta}>
+                  <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
+                  <td>{p.objetivo || "Sin Objetivo"}</td>
+                  <td>{p.prospecto?.estado || "No definido"}</td>
+                  <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
+                  <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
+                  <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
+                  <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                  <td>
+                    {!tieneSeguimientos ? (
+                      <button
+                        className="btn-agendar"
+                        onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
+                      >
+                        📅 Agendar Primer Seguimiento
+                      </button>
+                    ) : (
+                      <button
+                        className="btn-ver-seguimientos"
+                        onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
+                      >
+                        📜 Ver Seguimientos
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="tarjetas-seguimientos-vendedora">
+        {prospecciones.map((p) => {
+          const tieneSeguimientos = p.seguimientos?.length > 0;
+          const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
+
+          return (
+            <div key={p.id_venta} className="card-seguimiento">
+              <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
+              <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
+              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado || "No definido"}</p>
+              <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+              <p><strong>Última Fecha:</strong> {ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</p>
+              <p><strong>Último Tipo:</strong> {ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</p>
+              <p><strong>Último Resultado:</strong> {ultimoSeguimiento?.resultado || "Pendiente"}</p>
+              <p><strong>Última Nota:</strong> {ultimoSeguimiento?.nota || "Sin nota"}</p>
+              <div className="acciones">
+                {!tieneSeguimientos ? (
+                  <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>📅 Agendar Primer Seguimiento</button>
+                ) : (
+                  <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>📜 Ver Seguimientos</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
     </div>
   );
 };

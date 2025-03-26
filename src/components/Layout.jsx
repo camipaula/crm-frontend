@@ -13,7 +13,13 @@ const Layout = ({ children }) => {
   useEffect(() => {
     const userRol = getRol();
     setRol(userRol);
-    setIsSidebarOpen(true); // Sidebar abierto por defecto al detectar rol
+
+    // ✅ Por defecto:
+    // - Sidebar abierto en escritorio
+    // - Sidebar cerrado en móvil
+    const isMobile = window.innerWidth <= 768;
+    setIsSidebarOpen(!isMobile);
+
     setLoading(false);
   }, []);
 
@@ -21,13 +27,11 @@ const Layout = ({ children }) => {
     setIsSidebarOpen((prev) => !prev);
   };
 
-  if (loading) {
-    return <div className="loading">Cargando...</div>;
-  }
+  if (loading) return <div className="loading">Cargando...</div>;
 
   return (
     <div className="layout">
-      <Navbar />
+      <Navbar toggleSidebar={toggleSidebar} />
 
       <Sidebar
         isOpen={isSidebarOpen}

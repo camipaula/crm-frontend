@@ -68,7 +68,7 @@ const VerSeguimientos = () => {
     </button>
   </div>
 ) : (
-  <table className="seguimientos-table">
+  <table className="ver-seguimientos-table">
     <thead>
       <tr>
         <th>Fecha</th>

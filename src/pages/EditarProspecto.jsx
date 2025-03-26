@@ -94,6 +94,8 @@ const EditarProspecto = () => {
 
   return (
     <div className="editar-prospecto-container">
+            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       <h1>Información del Prospecto</h1>
       {mensaje && <p className="success">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
@@ -141,8 +143,8 @@ const EditarProspecto = () => {
           <option value="proformado">Proformado</option>
           <option value="no_interesado">No interesado</option>
           <option value="interesado">Interesado</option>
-          <option value="ganado">Ganado</option>
-          <option value="perdido">Perdido</option>
+          {/*<option value="ganado">Ganado</option>
+          <option value="perdido">Perdido</option>*/}
           <option value="archivado">Archivado</option>
         </select>
 
@@ -179,7 +181,6 @@ const EditarProspecto = () => {
           ) : (
             <button type="button" className="btn-editar" onClick={() => setModoEdicion(true)}>✏️ Editar</button>
           )}
-          <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>Volver</button>
         </div>
       </form>
     </div>

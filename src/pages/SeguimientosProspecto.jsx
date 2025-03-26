@@ -44,7 +44,9 @@ const SeguimientosProspecto = () => {
 
   return (
     <div className="seguimientos-container">
+
       <h1 className="title">Seguimientos del Prospecto</h1>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <div className="filtros-container">
         <label>Filtrar por estado:</label>
@@ -61,8 +63,8 @@ const SeguimientosProspecto = () => {
       {loading && <p>Cargando...</p>}
       {error && <p className="error">{error}</p>}
 
-      <table className="seguimientos-table">
-        <thead>
+      <table className="tabla-seguimientos-prospecto">
+      <thead>
           <tr>
             <th>Objetivo</th>
             <th>Estado de la Venta</th>
@@ -103,6 +105,32 @@ const SeguimientosProspecto = () => {
           })}
         </tbody>
       </table>
+      <div className="tarjetas-seguimientos-prospecto">
+  {prospecciones.map((p) => {
+    const s = p.seguimientos?.[0] || {};
+    return (
+      <div className="card-seguimiento" key={p.id_venta}>
+        <h3>🎯 Objetivo: {p.objetivo || "No definido"}</h3>
+        <p><strong>Estado Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+        <p><strong>Fecha:</strong> {s.fecha_programada ? new Date(s.fecha_programada).toLocaleDateString() : "Sin fecha"}</p>
+        <p><strong>Tipo:</strong> {s.tipo_seguimiento?.descripcion || "No registrado"}</p>
+        <p><strong>Resultado:</strong> {s.resultado || "Pendiente"}</p>
+        <p><strong>Nota:</strong> {s.nota || "Sin nota"}</p>
+
+        <div className="acciones">
+          <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
+            📜 Ver Seguimientos
+          </button>
+          <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>
+            ➕ Agendar
+          </button>
+
+        </div>
+      </div>
+    );
+  })}
+</div>
+
     </div>
   );
 };

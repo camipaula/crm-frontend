@@ -1,15 +1,15 @@
+/* ✅ layout.css completo actualizado */
 .layout {
   display: flex;
   height: 100vh;
   overflow: hidden;
 }
 
-/* Ajuste del contenido según el sidebar */
 .main-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-top: 60px; /* navbar fijo */
+  margin-top: 60px;
   padding: 20px;
   overflow-y: auto;
   background-color: #bac7f9;
@@ -18,14 +18,12 @@
   max-width: 1400px;
 }
 
-/* Sidebar abierto */
 .main-container.sidebar-open {
-  margin-left: 250px; /* igual al ancho de .sidebar */
+  margin-left: 250px;
 }
 
-/* Sidebar cerrado */
 .main-container.sidebar-closed {
-  margin-left: 60px; /* igual al ancho de .sidebar.closed */
+  margin-left: 60px;
 }
 
 .content {
@@ -33,4 +31,24 @@
   padding: 2px;
   display: flex;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .main-container.sidebar-open,
+  .main-container.sidebar-closed {
+    margin-left: 0;
+  }
+
+  .sidebar {
+    width: 75%;
+    left: -100%;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .toggle-btn {
+    display: block;
+  }
 }

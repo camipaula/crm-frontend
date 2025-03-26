@@ -19,7 +19,7 @@
 }
 
 /* 📅 Botones */
-.btn-agendar, .btn-volver {
+.btn-agendar {
   background: #007bff;
   color: white;
   padding: 8px 12px;
@@ -35,13 +35,6 @@
   background: #0056b3;
 }
 
-.btn-volver {
-  background: #6c757d;
-}
-
-.btn-volver:hover {
-  background: #5a6268;
-}
 
 /* 📅 Estilos del Calendario */
 .fc {
@@ -134,8 +127,7 @@
     margin-bottom: 10px;
   }
 
-  .btn-agendar,
-  .btn-volver {
+  .btn-agendar{
     font-size: 12px;
     padding: 6px 10px;
   }
