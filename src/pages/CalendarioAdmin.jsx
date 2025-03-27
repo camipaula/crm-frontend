@@ -304,6 +304,15 @@ const CalendarioAdmin = () => {
     }
   };
 
+  const formatearFechaExacta = (fechaStr) => {
+    const fecha = new Date(fechaStr);
+    return new Intl.DateTimeFormat("es-EC", {
+      dateStyle: "short",
+      timeStyle: "short",
+      timeZone: "UTC" // 👈 esto evita conversión a la zona del navegador
+    }).format(fecha);
+  };
+  
 
   const limpiarCampos = () => {
     setVendedoraNueva(null);
@@ -409,12 +418,8 @@ const CalendarioAdmin = () => {
             ) : (
               <>
                 <p><b>Tipo:</b> {modalDetalle.tipo}</p>
-                <p><b>Fecha y Hora:</b> {
-  new Date(modalDetalle.fecha).toLocaleString("es-EC", {
-    dateStyle: "short",
-    timeStyle: "short",
-  })
-}</p>
+                <p><b>Fecha y Hora:</b> {formatearFechaExacta(modalDetalle.fecha)}</p>
+
                 <p><b>Motivo:</b> {modalDetalle.motivo}</p>
               </>
             )}
