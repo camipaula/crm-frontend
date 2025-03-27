@@ -147,6 +147,12 @@
   margin-top: 10px !important;
 }
 
+/* ❌ Ocultar tarjetas en escritorio */
+.vendedora-cards-mobile {
+  display: none !important;
+}
+
+
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .vendedora-prospectos-page {

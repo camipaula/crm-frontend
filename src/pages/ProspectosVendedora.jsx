@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
-import "../styles/prospectosVendedora2.css";
+import "../styles/prospectosVendedora3.css";
 
 const ProspectosVendedora = () => {
   const navigate = useNavigate();
