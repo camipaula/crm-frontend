@@ -12,6 +12,12 @@ const SeguimientosAdmin = () => {
   const [error, setError] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("todas");
 
+  const [modalEditar, setModalEditar] = useState(false);
+  const [modalEliminar, setModalEliminar] = useState(false);
+  const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
+  const [nuevoObjetivo, setNuevoObjetivo] = useState("");
+
+
   useEffect(() => {
     obtenerVendedoras();
     buscarSeguimientos();
@@ -91,6 +97,56 @@ const SeguimientosAdmin = () => {
     }
   };
 
+  const abrirModalEditar = (id_venta, objetivoActual) => {
+    setIdVentaSeleccionada(id_venta);
+    setNuevoObjetivo(objetivoActual);
+    setModalEditar(true);
+  };
+
+  const guardarObjetivo = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}/objetivo`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ objetivo: nuevoObjetivo }),
+      });
+
+      if (!res.ok) throw new Error("Error actualizando objetivo");
+      alert("Objetivo actualizado correctamente");
+      setModalEditar(false);
+      buscarSeguimientos(vendedoraSeleccionada?.value || "");
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
+  const abrirModalEliminar = (id_venta) => {
+    setIdVentaSeleccionada(id_venta);
+    setModalEliminar(true);
+  };
+
+  const confirmarEliminar = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Error al eliminar venta");
+      alert("Venta eliminada correctamente");
+      setModalEliminar(false);
+      buscarSeguimientos(vendedoraSeleccionada?.value || "");
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
+
   return (
     <div className="seguimientos-container">
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
@@ -169,47 +225,107 @@ const SeguimientosAdmin = () => {
                       📜 Ver Seguimientos
                     </button>
                   )}
+
+                  {/* Botón pequeño Editar */}
+                  <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+
+
+                  {/* Botón pequeño Eliminar */}
+                  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+
                 </td>
+
               </tr>
             );
           })}
         </tbody>
       </table>
       {/* 📱 Vista en móviles - tarjetas compactas */}
-<div className="seguimientos-cards">
-  {prospecciones.map((p) => {
-    const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
-    const ultimo = tieneSeguimientos ? p.seguimientos[0] : null;
+      <div className="seguimientos-cards">
+        {prospecciones.map((p) => {
+          const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
+          const ultimo = tieneSeguimientos ? p.seguimientos[0] : null;
 
-    return (
-      <div className="seguimiento-card" key={p.id_venta}>
-        <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
-        <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
-        <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado || "No definido"}</p>
-        <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
-        <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
-        <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
-        <p><strong>Resultado:</strong> {ultimo?.resultado || "Pendiente"}</p>
-        <p><strong>Nota:</strong> {ultimo?.nota || "Sin nota"}</p>
+          return (
+            <div className="seguimiento-card" key={p.id_venta}>
+              <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
+              <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
+              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado || "No definido"}</p>
+              <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+              <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
+              <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
+              <p><strong>Resultado:</strong> {ultimo?.resultado || "Pendiente"}</p>
+              <p><strong>Nota:</strong> {ultimo?.nota || "Sin nota"}</p>
 
-        <div className="acciones">
-          {!tieneSeguimientos ? (
-            <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>
-              📅 Agendar
-            </button>
-          ) : (
-            <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
-              📜 Ver
-            </button>
-          )}
-        </div>
+              <div className="acciones">
+                {!tieneSeguimientos ? (
+                  <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>
+                    📅 Agendar
+                  </button>
+                ) : (
+                  <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
+                    📜 Ver
+                  </button>
+                )}
+                {/* 👉 Botón pequeño para editar */}
+                <button
+                  className="btn-mini"
+                  onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}
+                >
+                  ✏️
+                </button>
+
+
+                {/* 👉 Botón pequeño para eliminar */}
+                <button
+                  className="btn-mini red"
+                  onClick={() => abrirModalEliminar(p.id_venta)}
+                >
+                  🗑️
+                </button>
+
+
+              </div>
+            </div>
+
+
+          );
+        })}
       </div>
-    );
-  })}
-</div>
+      {/* 🟩 Modal para editar objetivo */}
+      {modalEditar && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>Editar Objetivo</h3>
+            <textarea
+              value={nuevoObjetivo}
+              onChange={(e) => setNuevoObjetivo(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={guardarObjetivo}>Guardar</button>
+              <button onClick={() => setModalEditar(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🟥 Modal para confirmar eliminación */}
+      {modalEliminar && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>¿Eliminar esta venta?</h3>
+            <p>🟥 Se eliminarán también los seguimientos relacionados.</p>
+            <div className="modal-buttons">
+              <button className="btn-mini red" onClick={confirmarEliminar}>Eliminar</button>
+              <button onClick={() => setModalEliminar(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
+
 };
 
 export default SeguimientosAdmin;

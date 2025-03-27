@@ -36,7 +36,7 @@ const CalendarioVendedora = () => {
 
   //Modal nueva propseccion
   const [mostrarModalNuevaVenta, setMostrarModalNuevaVenta] = useState(false);
-const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
+  const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
 
 
   const colores = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad", "#16a085"];
@@ -119,11 +119,11 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
       const data = await res.json();
       const ventasMapeadas = data.map((v) => ({ value: v.id_venta, label: v.objetivo }));
       setVentas(ventasMapeadas);
-  
+
       if (ventasMapeadas.length === 0) {
         setMostrarModalNuevaVenta(true); //  Mostrar modal si no tiene ventas
       }
-  
+
       return ventasMapeadas;
     } catch (err) {
       console.error("Error cargando ventas:", err);
@@ -145,7 +145,7 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
           objetivo: objetivoNuevaVenta,
         }),
       });
-  
+
       const { venta } = await res.json();
       const nuevaVenta = { value: venta.id_venta, label: venta.objetivo };
       setVentas([nuevaVenta]);
@@ -156,8 +156,8 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
       console.error("Error creando venta:", err);
     }
   };
-  
-  
+
+
 
   const cargarTiposSeguimiento = async () => {
     try {
@@ -252,10 +252,10 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
   const editarSeguimientoDesdeModal = async (detalle) => {
     try {
       const token = localStorage.getItem("token");
-  
+
       const tipo = detalle.tipoSeleccionado || tiposSeguimiento.find(t => t.label === detalle.tipo);
       const id_tipo = tipo?.value;
-  
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${detalle.id}/editar`, {
         method: "PUT",
         headers: {
@@ -268,9 +268,9 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
           motivo: detalle.motivo,
         }),
       });
-  
+
       if (!res.ok) throw new Error("No se pudo editar el seguimiento");
-  
+
       alert("Seguimiento actualizado correctamente");
       setModalDetalle(null);
       setModoEdicion(false);
@@ -284,16 +284,16 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
   const eliminarSeguimientoDesdeModal = async (id) => {
     const confirmar = confirm("¿Estás seguro de que deseas eliminar esta cita?");
     if (!confirmar) return;
-  
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (!res.ok) throw new Error("No se pudo eliminar el seguimiento");
-  
+
       alert("Seguimiento eliminado correctamente");
       setModalDetalle(null);
       setModoEdicion(false);
@@ -303,8 +303,8 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
       alert("Ocurrió un error al eliminar el seguimiento");
     }
   };
-  
-  
+
+
   return (
     <div className="calendario-container">
       <h2>📅 Mi Agenda</h2>
@@ -356,7 +356,7 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
                   setMostrarModalNuevaVenta(true); // solo si realmente no hay ventas
                 }
               }}
-              
+
             />
             <Select
               options={ventas}
@@ -383,9 +383,13 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
             <h3>➕ Nuevo Prospecto</h3>
             <input type="text" placeholder="Nombre del Prospecto" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
             <select value={nuevoEstado} onChange={(e) => setNuevoEstado(e.target.value)}>
+              <option value="nuevo">Nuevo</option>
+              <option value="contactar">Contactar</option>
               <option value="interesado">Interesado</option>
-              <option value="no_interesado">No Interesado</option>
-              <option value="archivado">Archivado</option>
+              <option value="cita">Cita</option>
+              <option value="visita">Visita</option>
+              <option value="en_prueba">En Prueba</option>
+
             </select>
             <input type="text" placeholder="Objetivo de la Prospección" value={nuevoObjetivo} onChange={(e) => setNuevoObjetivo(e.target.value)} />
             <button onClick={crearProspectoYVenta}>Crear y Usar</button>
@@ -394,82 +398,87 @@ const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
         </div>
       )}
 
-{mostrarModalNuevaVenta && (
-  <div className="modal modal-small">
-    <div className="modal-content">
-      <h3>➕ Nueva Venta</h3>
-      <input
-        type="text"
-        placeholder="Objetivo de la prospección"
-        value={objetivoNuevaVenta}
-        onChange={(e) => setObjetivoNuevaVenta(e.target.value)}
-      />
-      <button onClick={crearVentaParaProspecto}>Crear y Usar</button>
-      <button onClick={() => setMostrarModalNuevaVenta(false)}>Cancelar</button>
-    </div>
-  </div>
-)}
-
-
-{modalDetalle && (
-  <div className="modal">
-    <div className="modal-content">
-      <h3>📌 Detalles de la Cita</h3>
-      <p><b>Prospecto:</b> {modalDetalle.prospecto}</p>
-      <p><b>Objetivo:</b> {modalDetalle.objetivo}</p>
-
-      {modoEdicion ? (
-        <>
-          <label><b>Tipo:</b></label>
-          <Select
-            options={tiposSeguimiento}
-            defaultValue={tiposSeguimiento.find(t => t.label === modalDetalle.tipo)}
-            onChange={(opcion) =>
-              setModalDetalle({ ...modalDetalle, tipoSeleccionado: opcion })
-            }
-          />
-
-          <label><b>Fecha y Hora:</b></label>
-          <input
-            type="datetime-local"
-            value={formatearFechaLocal(new Date(modalDetalle.fecha))}
-            onChange={(e) =>
-              setModalDetalle({ ...modalDetalle, fecha: e.target.value })
-            }
-          />
-
-          <label><b>Motivo:</b></label>
-          <input
-            type="text"
-            value={modalDetalle.motivo}
-            onChange={(e) =>
-              setModalDetalle({ ...modalDetalle, motivo: e.target.value })
-            }
-          />
-        </>
-      ) : (
-        <>
-          <p><b>Tipo:</b> {modalDetalle.tipo}</p>
-          <p><b>Fecha y Hora:</b> {new Date(modalDetalle.fecha).toLocaleString("es-EC")}</p>
-          <p><b>Motivo:</b> {modalDetalle.motivo}</p>
-        </>
+      {mostrarModalNuevaVenta && (
+        <div className="modal modal-small">
+          <div className="modal-content">
+            <h3>➕ Nueva Venta</h3>
+            <input
+              type="text"
+              placeholder="Objetivo de la prospección"
+              value={objetivoNuevaVenta}
+              onChange={(e) => setObjetivoNuevaVenta(e.target.value)}
+            />
+            <button onClick={crearVentaParaProspecto}>Crear y Usar</button>
+            <button onClick={() => setMostrarModalNuevaVenta(false)}>Cancelar</button>
+          </div>
+        </div>
       )}
 
-      <div className="modal-actions">
-        {modoEdicion ? (
-          <>
-            <button onClick={() => editarSeguimientoDesdeModal(modalDetalle)}>💾 Guardar</button>
-            <button onClick={() => setModoEdicion(false)}>Cancelar</button>
-          </>
-        ) : (
-          <button onClick={() => setModoEdicion(true)}>✏️ Editar</button>
-        )}
-        <button onClick={() => eliminarSeguimientoDesdeModal(modalDetalle.id)}>🗑️ Eliminar</button>
-        <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
-      </div>
-    </div>
-  </div>
-)}
+
+      {modalDetalle && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>📌 Detalles de la Cita</h3>
+            <p><b>Prospecto:</b> {modalDetalle.prospecto}</p>
+            <p><b>Objetivo:</b> {modalDetalle.objetivo}</p>
+
+            {modoEdicion ? (
+              <>
+                <label><b>Tipo:</b></label>
+                <Select
+                  options={tiposSeguimiento}
+                  defaultValue={tiposSeguimiento.find(t => t.label === modalDetalle.tipo)}
+                  onChange={(opcion) =>
+                    setModalDetalle({ ...modalDetalle, tipoSeleccionado: opcion })
+                  }
+                />
+
+                <label><b>Fecha y Hora:</b></label>
+                <input
+                  type="datetime-local"
+                  value={formatearFechaLocal(new Date(modalDetalle.fecha))}
+                  onChange={(e) =>
+                    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
+                  }
+                />
+
+                <label><b>Motivo:</b></label>
+                <input
+                  type="text"
+                  value={modalDetalle.motivo}
+                  onChange={(e) =>
+                    setModalDetalle({ ...modalDetalle, motivo: e.target.value })
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <p><b>Tipo:</b> {modalDetalle.tipo}</p>
+                <p><b>Fecha y Hora:</b> {
+  new Date(modalDetalle.fecha).toLocaleString("es-EC", {
+    dateStyle: "short",
+    timeStyle: "short",
+  })
+}</p>
+                <p><b>Motivo:</b> {modalDetalle.motivo}</p>
+              </>
+            )}
+
+            <div className="modal-actions">
+              {modoEdicion ? (
+                <>
+                  <button onClick={() => editarSeguimientoDesdeModal(modalDetalle)}>💾 Guardar</button>
+                  <button onClick={() => setModoEdicion(false)}>Cancelar</button>
+                </>
+              ) : (
+                <button onClick={() => setModoEdicion(true)}>✏️ Editar</button>
+              )}
+              <button onClick={() => eliminarSeguimientoDesdeModal(modalDetalle.id)}>🗑️ Eliminar</button>
+              <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

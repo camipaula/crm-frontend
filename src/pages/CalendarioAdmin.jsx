@@ -409,7 +409,12 @@ const CalendarioAdmin = () => {
             ) : (
               <>
                 <p><b>Tipo:</b> {modalDetalle.tipo}</p>
-                <p><b>Fecha y Hora:</b> {new Date(modalDetalle.fecha).toLocaleString("es-EC")}</p>
+                <p><b>Fecha y Hora:</b> {
+  new Date(modalDetalle.fecha).toLocaleString("es-EC", {
+    dateStyle: "short",
+    timeStyle: "short",
+  })
+}</p>
                 <p><b>Motivo:</b> {modalDetalle.motivo}</p>
               </>
             )}
@@ -476,9 +481,13 @@ const CalendarioAdmin = () => {
             <h3>➕ Nuevo Prospecto</h3>
             <input type="text" placeholder="Nombre del Prospecto" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
             <select value={nuevoEstado} onChange={(e) => setNuevoEstado(e.target.value)}>
+            <option value="nuevo">Nuevo</option>
+              <option value="contactar">Contactar</option>
               <option value="interesado">Interesado</option>
-              <option value="no_interesado">No Interesado</option>
-              <option value="archivado">Archivado</option>
+              <option value="cita">Cita</option>
+              <option value="visita">Visita</option>
+              <option value="en_prueba">En Prueba</option>
+
             </select>
             <input type="text" placeholder="Objetivo de la Prospección" value={nuevoObjetivo} onChange={(e) => setNuevoObjetivo(e.target.value)} />
             <button onClick={crearProspectoYVenta}>Crear y Usar</button>
