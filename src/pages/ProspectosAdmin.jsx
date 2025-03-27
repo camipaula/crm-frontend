@@ -1,6 +1,6 @@
   import { useState, useEffect } from "react";
   import Select from "react-select";
-  import "../styles/prospectosAdmin.css";
+  import "../styles/prospectosAdmin1.css";
   import { useNavigate } from "react-router-dom";
 
   const ProspectosAdmin = () => {

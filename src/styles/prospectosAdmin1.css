@@ -1,6 +1,7 @@
 /* 📌 Contenedor principal */
-.vendedora-prospectos-page {
+.admin-prospectos-page {
   width: 100% !important;
+  height: calc(100vh - 60px) !important;
   padding: 20px !important;
   overflow-y: auto !important;
   background: white !important;
@@ -9,45 +10,20 @@
 }
 
 /* 📌 Título */
-.vendedora-prospectos-title {
+.admin-prospectos-title {
   font-size: 26px !important;
+  color: #0d2a49 !important;
   font-weight: bold !important;
-  color: #333 !important;
+  text-align: center !important;
   margin-bottom: 20px !important;
 }
 
-/* 📌 Botón volver */
-.vendedora-btn-volver {
-  background-color: #6c757d !important;
-  color: white !important;
-  border: none !important;
-  padding: 8px 16px !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  margin-bottom: 15px !important;
-}
-.vendedora-btn-volver:hover {
-  background-color: #5a6268 !important;
-}
-
-/* 📌 Botón nuevo prospecto */
-.vendedora-btn-nuevo-prospecto {
-  width: 100% !important;
-  margin-bottom: 20px !important;
-  padding: 12px !important;
-  font-size: 18px !important;
-  background: #28a745 !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-}
-
-/* 📌 Filtros */
-.vendedora-filtros {
+/* 📌 Contenedor de filtros */
+.admin-prospectos-filtros {
   display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
   flex-wrap: wrap !important;
-  gap: 15px !important;
   margin-bottom: 20px !important;
   padding: 20px !important;
   background: #f5f5f5 !important;
@@ -55,8 +31,8 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
 }
 
-.vendedora-filtros select,
-.vendedora-filtros input {
+.admin-prospectos-filtros select,
+.admin-prospectos-filtros input {
   padding: 10px !important;
   font-size: 15px !important;
   border: 1px solid #ddd !important;
@@ -64,7 +40,8 @@
   outline: none !important;
 }
 
-.vendedora-filtros button {
+/* 📌 Botones dentro de filtros */
+.admin-prospectos-filtros button {
   padding: 10px 20px !important;
   background: #0d2a49 !important;
   color: white !important;
@@ -72,13 +49,14 @@
   border-radius: 6px !important;
   cursor: pointer !important;
 }
-.vendedora-filtros button:hover {
+
+.admin-prospectos-filtros button:hover {
   background: #1a3966 !important;
 }
 
 /* 📌 Tabla */
-.vendedora-prospectos-table {
-  all: unset; /* 🧼 Limpia cualquier estilo heredado */
+.admin-prospectos-table {
+  all: unset; /* 🛡️ Resetea estilos heredados */
   display: table !important;
   width: 100% !important;
   border-collapse: collapse !important;
@@ -89,28 +67,28 @@
   overflow: hidden !important;
 }
 
-.vendedora-prospectos-table th,
-.vendedora-prospectos-table td {
+.admin-prospectos-table th,
+.admin-prospectos-table td {
   border: 1px solid #ddd !important;
   padding: 15px !important;
   text-align: left !important;
 }
 
-.vendedora-prospectos-table th {
+.admin-prospectos-table th {
   background: #0d2a49 !important;
   color: white !important;
   text-transform: uppercase !important;
 }
 
-.vendedora-prospectos-table tr:nth-child(even) {
+.admin-prospectos-table tr:nth-child(even) {
   background: #f9f9f9 !important;
 }
 
-/* 📌 Botones */
-.vendedora-btn-editar,
-.vendedora-btn-eliminar,
-.vendedora-btn-seguimientos,
-.vendedora-btn-abrir-prospeccion {
+/* 📌 Botones generales */
+.admin-btn-editar,
+.admin-btn-eliminar,
+.admin-btn-seguimientos,
+.admin-btn-abrir-prospeccion {
   padding: 8px 12px !important;
   border: none !important;
   border-radius: 6px !important;
@@ -120,24 +98,37 @@
   transition: background 0.3s !important;
 }
 
-.vendedora-btn-editar {
-  background: #ffc107 !important;
+.admin-btn-editar {
+  background: #6e94e6 !important;
   color: black !important;
 }
 
-.vendedora-btn-eliminar {
+.admin-btn-eliminar {
   background: #dc3545 !important;
   color: white !important;
 }
 
-.vendedora-btn-seguimientos {
+.admin-btn-seguimientos {
   background: #17a2b8 !important;
   color: white !important;
 }
 
-.vendedora-btn-abrir-prospeccion {
+.admin-btn-abrir-prospeccion {
   background: #28a745 !important;
   color: white !important;
+}
+
+/* 📌 Botón crear nuevo */
+.admin-btn-nuevo-prospecto {
+  width: 100% !important;
+  margin-top: 20px !important;
+  padding: 12px !important;
+  font-size: 18px !important;
+  background: #28a745 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
 }
 
 /* 📌 Error */
@@ -147,44 +138,66 @@
   margin-top: 10px !important;
 }
 
+/* 📌 Estilos react-select */
+.select-estado {
+  width: 200px !important;
+}
+
+.select__control {
+  border: 1px solid #ccc !important;
+  border-radius: 5px !important;
+}
+
+.select__option--is-selected {
+  background-color: #1e5896 !important;
+  color: white !important;
+}
+
 /* 📱 Responsive */
 @media (max-width: 768px) {
-  .vendedora-prospectos-page {
+  .admin-prospectos-page {
     padding: 15px !important;
   }
 
-  .vendedora-filtros {
+  .admin-prospectos-filtros {
     flex-direction: column !important;
-    align-items: stretch !important;
+    gap: 10px !important;
     padding: 15px !important;
   }
 
-  .vendedora-filtros select,
-  .vendedora-filtros input {
+  .admin-prospectos-filtros select,
+  .admin-prospectos-filtros input {
     font-size: 13px !important;
     padding: 8px !important;
   }
 
-  .vendedora-filtros button {
+  .admin-prospectos-filtros button {
     font-size: 14px !important;
     padding: 8px 12px !important;
   }
 
-  .vendedora-btn-nuevo-prospecto {
+  .admin-btn-nuevo-prospecto {
     font-size: 16px !important;
     padding: 10px !important;
   }
 
-  .vendedora-prospectos-table {
+  .admin-prospectos-table {
     display: none !important;
   }
+}
 
-  .vendedora-cards-mobile {
+/* ✅ Cards para celular */
+.admin-prospectos-cards-mobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .admin-prospectos-cards-mobile {
     display: block !important;
     margin-top: 20px !important;
   }
 
-  .vendedora-prospecto-card {
+  .admin-prospecto-card {
     background: #fff !important;
     border: 1px solid #ccc !important;
     border-radius: 12px !important;
@@ -193,25 +206,25 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
   }
 
-  .vendedora-prospecto-card h3 {
+  .admin-prospecto-card h3 {
     margin: 0 0 8px 0 !important;
     font-size: 18px !important;
     color: #0d2a49 !important;
   }
 
-  .vendedora-prospecto-card p {
+  .admin-prospecto-card p {
     margin: 4px 0 !important;
     font-size: 14px !important;
   }
 
-  .vendedora-prospecto-card .acciones {
+  .admin-prospecto-card .acciones {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
     margin-top: 10px !important;
   }
 
-  .vendedora-prospecto-card .acciones button {
+  .admin-prospecto-card .acciones button {
     font-size: 13px !important;
     padding: 6px 10px !important;
     border: none !important;
