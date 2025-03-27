@@ -97,6 +97,8 @@ const EditarProspecto = () => {
             <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <h1>Información del Prospecto</h1>
+      <button type="button" className="btn-editar" onClick={() => setModoEdicion(true)}>✏️ Editar</button>
+
       {mensaje && <p className="success">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
 
@@ -173,14 +175,13 @@ const EditarProspecto = () => {
         )}
 
         <div className="button-container">
-          {modoEdicion ? (
-            <>
-              <button type="submit" className="btn-guardar">Guardar Cambios</button>
-              <button type="button" className="btn-cerrar" onClick={() => setModoEdicion(false)}>Cancelar</button>
-            </>
-          ) : (
-            <button type="button" className="btn-editar" onClick={() => setModoEdicion(true)}>✏️ Editar</button>
-          )}
+        {modoEdicion && (
+  <div className="button-container">
+    <button type="submit" className="btn-guardar">Guardar Cambios</button>
+    <button type="button" className="btn-cerrar" onClick={() => setModoEdicion(false)}>Cancelar</button>
+  </div>
+)}
+
         </div>
       </form>
     </div>
