@@ -1,26 +1,29 @@
 /* 📌 Contenedor principal */
-.prospectos-admin-container {
+.admin-prospectos-page {
   width: 100%;
+  height: calc(100vh - 60px); /* ✅ Ocupa toda la pantalla menos el navbar */
   padding: 20px;
-  overflow-y: auto;
+  overflow-y: auto; /* ✅ Permite hacer scroll si hay muchos prospectos */
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* 📌 Título */
-.title {
+.admin-prospectos-title {
   font-size: 26px;
+  color: #0d2a49;
   font-weight: bold;
-  color: #333;
+  text-align: center;
   margin-bottom: 20px;
 }
 
 /* 📌 Contenedor de filtros */
-.filtros-container {
+.admin-prospectos-filtros {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 15px;
   margin-bottom: 20px;
   padding: 20px;
   background: #f5f5f5;
@@ -28,8 +31,8 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.filtros-container select,
-.filtros-container input {
+.admin-prospectos-filtros select,
+.admin-prospectos-filtros input {
   padding: 10px;
   font-size: 15px;
   border: 1px solid #ddd;
@@ -38,7 +41,7 @@
 }
 
 /* 📌 Botones dentro de filtros */
-.filtros-container button {
+.admin-prospectos-filtros button {
   padding: 10px 20px;
   background: #0d2a49;
   color: white;
@@ -47,12 +50,12 @@
   cursor: pointer;
 }
 
-.filtros-container button:hover {
+.admin-prospectos-filtros button:hover {
   background: #1a3966;
 }
 
 /* 📌 Tabla normal para escritorio */
-.prospectos-table {
+.admin-prospectos-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
@@ -62,28 +65,28 @@
   overflow: hidden;
 }
 
-.prospectos-table th,
-.prospectos-table td {
+.admin-prospectos-table th,
+.admin-prospectos-table td {
   border: 1px solid #ddd;
   padding: 15px;
   text-align: left;
 }
 
-.prospectos-table th {
+.admin-prospectos-table th {
   background: #0d2a49;
   color: white;
   text-transform: uppercase;
 }
 
-.prospectos-table tr:nth-child(even) {
+.admin-prospectos-table tr:nth-child(even) {
   background: #f9f9f9;
 }
 
 /* 📌 Botones generales */
-.btn-editar,
-.btn-eliminar,
-.btn-seguimientos,
-.btn-abrir-prospeccion {
+.admin-btn-editar,
+.admin-btn-eliminar,
+.admin-btn-seguimientos,
+.admin-btn-abrir-prospeccion {
   padding: 8px 12px;
   border: none;
   border-radius: 6px;
@@ -93,28 +96,28 @@
   transition: background 0.3s;
 }
 
-.btn-editar {
-  background: #ffc107;
+.admin-btn-editar {
+  background: #6e94e6;
   color: black;
 }
 
-.btn-eliminar {
+.admin-btn-eliminar {
   background: #dc3545;
   color: white;
 }
 
-.btn-seguimientos {
+.admin-btn-seguimientos {
   background: #17a2b8;
   color: white;
 }
 
-.btn-abrir-prospeccion {
+.admin-btn-abrir-prospeccion {
   background: #28a745;
   color: white;
 }
 
 /* 📌 Botón de crear nuevo */
-.nuevo-prospecto-btn {
+.admin-btn-nuevo-prospecto {
   width: 100%;
   margin-top: 20px;
   padding: 12px;
@@ -150,50 +153,50 @@
 
 /* 📱 Responsive - Celulares */
 @media (max-width: 768px) {
-  .prospectos-admin-container {
-    width: 100%;
+  .admin-prospectos-page {
     padding: 15px;
+
   }
 
-  .filtros-container {
+  .admin-prospectos-filtros {
     flex-direction: column;
-    align-items: stretch;
+    gap: 10px;
     padding: 15px;
   }
 
-  .filtros-container select,
-  .filtros-container input {
+  .admin-prospectos-filtros select,
+  .admin-prospectos-filtros input {
     font-size: 13px;
     padding: 8px;
   }
 
-  .filtros-container button {
+  .admin-prospectos-filtros button {
     font-size: 14px;
     padding: 8px 12px;
   }
 
-  .nuevo-prospecto-btn {
+  .admin-btn-nuevo-prospecto {
     font-size: 16px;
     padding: 10px;
   }
 
-  .prospectos-table {
+  .admin-prospectos-table {
     display: none;
   }
 }
 
 /* ✅ Cards para celular */
-.cards-mobile {
+.admin-prospectos-cards-mobile {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .cards-mobile {
+  .admin-prospectos-cards-mobile {
     display: block;
     margin-top: 20px;
   }
 
-  .prospecto-card {
+  .admin-prospecto-card {
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 12px;
@@ -202,25 +205,25 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 
-  .prospecto-card h3 {
+  .admin-prospecto-card h3 {
     margin: 0 0 8px 0;
     font-size: 18px;
     color: #0d2a49;
   }
 
-  .prospecto-card p {
+  .admin-prospecto-card p {
     margin: 4px 0;
     font-size: 14px;
   }
 
-  .prospecto-card .acciones {
+  .admin-prospecto-card .acciones {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 10px;
   }
 
-  .prospecto-card .acciones button {
+  .admin-prospecto-card .acciones button {
     font-size: 13px;
     padding: 6px 10px;
     border: none;

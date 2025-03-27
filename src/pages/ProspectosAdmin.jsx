@@ -191,11 +191,11 @@
     
 
     return (
-      <div className="prospectos-admin-container">
-        <h1 className="title">Gestión de Prospectos</h1>
+      <div className="admin-prospectos-page">
+        <h1 className="admin-prospectos-title">Gestión de Prospectos</h1>
         {error && <p className="error">{error}</p>}
 
-        <div className="filtros-container">
+        <div className="admin-prospectos-filtros">
           <select
             name="cedula_vendedora"
             onChange={(e) => setCedulaVendedora(e.target.value)}
@@ -255,10 +255,10 @@
         </button>
 
         </div>
-        <button className="nuevo-prospecto-btn" onClick={() => navigate("/crear-prospecto-admin")}>
+        <button className="admin-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto-admin")}>
           ➕ Crear Prospecto
         </button>
-        <table className="prospectos-table">
+        <table className="admin-prospectos-table">
           <thead>
             <tr>
               <th>Prospecto</th>
@@ -297,20 +297,20 @@
             <td>
               {/* 🔹 Botón dinámico según si tiene ventas o no */}
               {tieneVentas ? (
-                <button className="btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
+                <button className="admin-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
                   🔍 Ver Seguimientos
                 </button>
               ) : (
-                <button className="btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
+                <button className="admin-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
                   ➕ Abrir Prospección
                 </button>
               )}
 
-              <button className="btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
+              <button className="admin-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                 Información del Prospecto
               </button>
 
-              <button className="btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
+              <button className="admin-btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
                 Eliminar
               </button>
             </td>
@@ -330,8 +330,8 @@
 
         </table>
 
-        {/* 🔥 Tarjetas para móvil */}
-<div className="cards-mobile">
+        {/* Tarjetas para móvil */}
+<div className="admin-prospectos-cards-mobile">
   {prospectos.length > 0 ? (
     prospectos.map((p) => {
       const ultimaNota = p.ventas
@@ -350,7 +350,7 @@
       const tieneVentas = p.ventas?.length > 0;
 
       return (
-        <div className="prospecto-card" key={p.id_prospecto}>
+        <div className="admin-prospecto-card" key={p.id_prospecto}>
           <h3>{p.nombre}</h3>
           <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre ?? "Sin asignar"}</p>
           <p><strong>Estado:</strong> {p.estado}</p>

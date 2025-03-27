@@ -2,8 +2,27 @@ import { jwtDecode } from "jwt-decode";
 
 // Verifica si el usuario está autenticado
 export const isAuthenticated = () => {
-  return localStorage.getItem("token") !== null;
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+
+  try {
+    const decoded = jwtDecode(token);
+    const now = Date.now() / 1000; // tiempo actual en segundos
+
+    if (decoded.exp < now) {
+      alert("Tu sesión ha expirado. Por favor inicia sesión de nuevo.");
+      logout();
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error al verificar token:", error);
+    logout();
+    return false;
+  }
 };
+
 
 // Obtiene el rol del usuario desde el token JWT
 export const getRol = () => {

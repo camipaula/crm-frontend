@@ -31,6 +31,8 @@ const AbrirVenta = () => {
 
   return (
     <div className="abrir-venta-container">
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       <h1>Abrir Nueva Prospección</h1>
       <textarea
         placeholder="Objetivo de la prospección"
