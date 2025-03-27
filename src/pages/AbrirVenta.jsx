@@ -9,6 +9,11 @@ const AbrirVenta = () => {
   const [error, setError] = useState("");
 
   const crearVenta = async () => {
+    if (!objetivo.trim()) {
+      setError("Por favor ingresa un objetivo para la prospección.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
@@ -20,14 +25,15 @@ const AbrirVenta = () => {
         body: JSON.stringify({ id_prospecto, objetivo }),
       });
 
-      if (!res.ok) throw new Error("Error creando la venta");
+      if (!res.ok) throw new Error("Error creando la prospección");
 
-      alert("Venta creada exitosamente");
+      alert("Prospección creada exitosamente");
       navigate(-1);
     } catch (err) {
       setError(err.message);
     }
   };
+
 
   return (
     <div className="abrir-venta-container">
@@ -37,8 +43,12 @@ const AbrirVenta = () => {
       <textarea
         placeholder="Objetivo de la prospección"
         value={objetivo}
-        onChange={(e) => setObjetivo(e.target.value)}
+        onChange={(e) => {
+          setObjetivo(e.target.value);
+          setError(""); 
+        }}
       />
+
 
       <button onClick={crearVenta}>Abrir Prospección</button>
 
