@@ -44,14 +44,6 @@ const CalendarioAdmin = () => {
     cargarTiposSeguimiento();
   }, []);
 
-  const formatearFechaLocal = (fecha) => {
-    const fechaLocal = new Date(fecha); // asume que viene en UTC
-    const offset = fechaLocal.getTimezoneOffset();
-    fechaLocal.setMinutes(fechaLocal.getMinutes() - offset); // ajusta a zona local
-    return fechaLocal.toISOString().slice(0, 16); // formato para input datetime-local
-  };
-
-
   const cargarVendedoras = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -192,15 +184,27 @@ const CalendarioAdmin = () => {
     }
   };
 
+  const formatearParaDatetimeLocal = (fechaStr) => {
+    const fecha = new Date(
+      typeof fechaStr === "string" ? fechaStr.replace("Z", "") : fechaStr
+    );
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    const horas = String(fecha.getHours()).padStart(2, "0");
+    const minutos = String(fecha.getMinutes()).padStart(2, "0");
+    return `${año}-${mes}-${dia}T${horas}:${minutos}`;
+  };
+
   const formatearFechaVisual = (fechaStr) => {
-    const fecha = new Date(fechaStr);
+    const fecha = new Date(fechaStr.replace("Z", ""));
     return fecha.toLocaleString("es-EC", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: true, 
+      hour12: false,
     });
   };
   
@@ -375,7 +379,7 @@ const CalendarioAdmin = () => {
 
         dateClick={({ date, view }) => {
           const isSoloFecha = view.type === "dayGridMonth";
-          const fecha = isSoloFecha ? `${date.toISOString().slice(0, 10)}T09:00` : formatearFechaLocal(date);
+          const fecha = isSoloFecha ? `${date.toISOString().slice(0, 10)}T09:00` : formatearParaDatetimeLocal(date);
           setFechaSeleccionada(fecha);
           setMostrarModalNuevo(true);
         }}
@@ -403,7 +407,7 @@ const CalendarioAdmin = () => {
                 <label><b>Fecha y Hora:</b></label>
                 <input
                   type="datetime-local"
-                  value={formatearFechaLocal(new Date(modalDetalle.fecha))}
+                  value={formatearParaDatetimeLocal(new Date(modalDetalle.fecha))}
                   onChange={(e) => setModalDetalle({ ...modalDetalle, fecha: e.target.value })}
                 />
 
