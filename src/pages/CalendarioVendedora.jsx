@@ -56,6 +56,13 @@ const CalendarioVendedora = () => {
     return fechaLocal.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
   };
 
+  const ajustarAFechaLocal = (fechaUTC) => {
+    const fecha = new Date(fechaUTC);
+    const offset = fecha.getTimezoneOffset();
+    fecha.setMinutes(fecha.getMinutes() - offset);
+    return fecha.toISOString();
+  };
+
   const cargarAgenda = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -78,7 +85,7 @@ const CalendarioVendedora = () => {
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: seguimiento.fecha_programada,
+          start: ajustarAFechaLocal(seguimiento.fecha_programada),
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
@@ -313,7 +320,8 @@ const CalendarioVendedora = () => {
     }).format(fecha);
   };
 
-
+  
+  
 
   return (
     <div className="calendario-container">
