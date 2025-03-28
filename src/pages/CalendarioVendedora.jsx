@@ -78,7 +78,7 @@ const CalendarioVendedora = () => {
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: seguimiento.fecha_programada,
+          start: new Date(seguimiento.fecha_programada),
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
