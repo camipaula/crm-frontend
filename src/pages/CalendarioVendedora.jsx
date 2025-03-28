@@ -462,7 +462,7 @@ const CalendarioVendedora = () => {
                 <label><b>Fecha y Hora:</b></label>
                 <input
   type="datetime-local"
-  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
+  value={formatearFechaExacta(modalDetalle.fecha)}
   onChange={(e) =>
     setModalDetalle({ ...modalDetalle, fecha: e.target.value })
   }
