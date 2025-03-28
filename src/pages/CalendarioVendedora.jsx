@@ -59,6 +59,14 @@ const CalendarioVendedora = () => {
     return `${año}-${mes}-${dia}T${horas}:${minutos}`;
   };
 
+  const ajustarUTCaLocal = (fechaUTC) => {
+    const date = new Date(fechaUTC);
+    const offset = date.getTimezoneOffset();
+    date.setMinutes(date.getMinutes() - offset);
+    return date.toISOString().slice(0, 19); // yyyy-MM-ddTHH:mm:ss
+  };
+  
+
   const cargarAgenda = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -81,7 +89,7 @@ const CalendarioVendedora = () => {
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: seguimiento.fecha_programada, // ya viene en UTC, FullCalendar lo adapta solo
+          start: ajustarUTCaLocal(seguimiento.fecha_programada),
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
