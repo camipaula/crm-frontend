@@ -59,6 +59,7 @@ const CalendarioVendedora = () => {
     return `${año}-${mes}-${dia}T${horas}:${minutos}`;
   };
   
+  
 
   const cargarAgenda = async () => {
     try {
@@ -73,16 +74,16 @@ const CalendarioVendedora = () => {
 
       const eventosConvertidos = data.map((seguimiento) => {
         const prospectoNombre = seguimiento.venta.prospecto.nombre;
-
+      
         if (!nuevosColores[prospectoNombre]) {
           nuevosColores[prospectoNombre] = colores[colorIndex % colores.length];
           colorIndex++;
         }
-
+      
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: new Date(seguimiento.fecha_programada + "Z"), // ✅ Esto es clave
+          start: new Date(seguimiento.fecha_programada), 
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
@@ -93,7 +94,7 @@ const CalendarioVendedora = () => {
           textColor: "#fff",
         };
       });
-
+      
       setMapaColoresProspectos(nuevosColores);
       setEventos(eventosConvertidos);
     } catch (err) {
