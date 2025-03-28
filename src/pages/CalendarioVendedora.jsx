@@ -59,6 +59,15 @@ const CalendarioVendedora = () => {
     return `${año}-${mes}-${dia}T${horas}:${minutos}`;
   };
 
+  const convertirUTCaLocalDatetime = (fechaUTC) => {
+    const fecha = new Date(fechaUTC);
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    const horas = String(fecha.getHours()).padStart(2, "0");
+    const minutos = String(fecha.getMinutes()).padStart(2, "0");
+    return `${año}-${mes}-${dia}T${horas}:${minutos}`;
+  };
   
   
 
@@ -84,7 +93,7 @@ const CalendarioVendedora = () => {
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: seguimiento.fecha_programada, 
+          start: convertirUTCaLocalDatetime(seguimiento.fecha_programada),
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
