@@ -45,13 +45,12 @@ const CalendarioAdmin = () => {
   }, []);
 
   const formatearFechaLocal = (fecha) => {
-    const year = fecha.getFullYear();
-    const month = String(fecha.getMonth() + 1).padStart(2, "0");
-    const day = String(fecha.getDate()).padStart(2, "0");
-    const hours = String(fecha.getHours()).padStart(2, "0");
-    const minutes = String(fecha.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    const fechaLocal = new Date(fecha); // asume que viene en UTC
+    const offset = fechaLocal.getTimezoneOffset();
+    fechaLocal.setMinutes(fechaLocal.getMinutes() - offset); // ajusta a zona local
+    return fechaLocal.toISOString().slice(0, 16); // formato para input datetime-local
   };
+
 
   const cargarVendedoras = async () => {
     try {
@@ -312,7 +311,7 @@ const CalendarioAdmin = () => {
       timeZone: "UTC" // 👈 esto evita conversión a la zona del navegador
     }).format(fecha);
   };
-  
+
 
   const limpiarCampos = () => {
     setVendedoraNueva(null);
@@ -401,10 +400,9 @@ const CalendarioAdmin = () => {
                 <input
                   type="datetime-local"
                   value={formatearFechaLocal(new Date(modalDetalle.fecha))}
-                  onChange={(e) =>
-                    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
-                  }
+                  onChange={(e) => setModalDetalle({ ...modalDetalle, fecha: e.target.value })}
                 />
+
 
                 <label><b>Motivo:</b></label>
                 <input
@@ -486,7 +484,7 @@ const CalendarioAdmin = () => {
             <h3>➕ Nuevo Prospecto</h3>
             <input type="text" placeholder="Nombre del Prospecto" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
             <select value={nuevoEstado} onChange={(e) => setNuevoEstado(e.target.value)}>
-            <option value="nuevo">Nuevo</option>
+              <option value="nuevo">Nuevo</option>
               <option value="contactar">Contactar</option>
               <option value="interesado">Interesado</option>
               <option value="cita">Cita</option>

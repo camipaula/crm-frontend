@@ -47,13 +47,13 @@ const CalendarioVendedora = () => {
     cargarTiposSeguimiento();
   }, []);
 
+
+
   const formatearFechaLocal = (fecha) => {
-    const year = fecha.getFullYear();
-    const month = String(fecha.getMonth() + 1).padStart(2, "0");
-    const day = String(fecha.getDate()).padStart(2, "0");
-    const hours = String(fecha.getHours()).padStart(2, "0");
-    const minutes = String(fecha.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    const fechaLocal = new Date(fecha); // Asume que ya es UTC
+    const offset = fechaLocal.getTimezoneOffset();
+    fechaLocal.setMinutes(fechaLocal.getMinutes() - offset); // Ajusta al horario local
+    return fechaLocal.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
   };
 
   const cargarAgenda = async () => {
@@ -78,7 +78,7 @@ const CalendarioVendedora = () => {
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: seguimiento.fecha_programada, 
+          start: seguimiento.fecha_programada,
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
@@ -312,7 +312,7 @@ const CalendarioVendedora = () => {
       timeZone: "UTC" // 👈 esto evita conversión a la zona del navegador
     }).format(fecha);
   };
-  
+
 
 
   return (
@@ -332,7 +332,7 @@ const CalendarioVendedora = () => {
         events={eventos}
         height="auto"
         eventClick={({ event }) => {
-          setModoEdicion(false); // ← Siempre en modo lectura al abrir
+          setModoEdicion(false); //siempre en modo lectura al abrir
           setModalDetalle({
             id: event.id,
             motivo: event.title,
@@ -447,10 +447,9 @@ const CalendarioVendedora = () => {
                 <input
                   type="datetime-local"
                   value={formatearFechaLocal(new Date(modalDetalle.fecha))}
-                  onChange={(e) =>
-                    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
-                  }
+                  onChange={(e) => setModalDetalle({ ...modalDetalle, fecha: e.target.value })}
                 />
+
 
                 <label><b>Motivo:</b></label>
                 <input
