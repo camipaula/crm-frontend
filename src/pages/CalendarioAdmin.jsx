@@ -469,9 +469,18 @@ const CalendarioAdmin = () => {
             {error && <p className="error">{error}</p>}
             <p><b>Fecha:</b></p>
             <input type="datetime-local" value={fechaSeleccionada} onChange={(e) => setFechaSeleccionada(e.target.value)} />
-            <Select options={vendedoras} placeholder="Seleccionar Vendedora" onChange={(vendedora) => {
-              setVendedoraNueva(vendedora);
-            }} />
+
+            <Select
+  options={vendedoras}
+  placeholder="Seleccionar Vendedora"
+  value={vendedoraNueva}
+  onChange={(vendedora) => {
+    setVendedoraNueva(vendedora);
+    cargarProspectos(vendedora.value); 
+  }}
+/>
+
+           
             <Select
               options={[...prospectos, { value: "nuevo", label: "➕ Crear nuevo prospecto" }]}
               placeholder="Seleccionar Prospecto"
