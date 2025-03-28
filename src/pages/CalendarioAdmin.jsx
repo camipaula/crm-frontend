@@ -381,6 +381,10 @@ const CalendarioAdmin = () => {
           const isSoloFecha = view.type === "dayGridMonth";
           const fecha = isSoloFecha ? `${date.toISOString().slice(0, 10)}T09:00` : formatearParaDatetimeLocal(date);
           setFechaSeleccionada(fecha);
+          setVendedoraNueva(vendedoraSeleccionada); // ✅ esto asocia la vendedora seleccionada
+          if (vendedoraSeleccionada) {
+            cargarProspectos(vendedoraSeleccionada.value); // ✅ carga prospectos de esa vendedora
+          }
           setMostrarModalNuevo(true);
         }}
       />
