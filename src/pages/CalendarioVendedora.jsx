@@ -57,19 +57,19 @@ const CalendarioVendedora = () => {
     const horas = String(fecha.getHours()).padStart(2, '0');
     const minutos = String(fecha.getMinutes()).padStart(2, '0');
     return `${año}-${mes}-${dia}T${horas}:${minutos}`;
-  };
-
+  };  
+  
   const formatearFechaVisual = (fechaStr) => {
-    const fecha = new Date(fechaStr.replace("Z", ""));
-    return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
+  const fecha = new Date(fechaStr.replace("Z", ""));
+  return fecha.toLocaleString("es-EC", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
 
 
   const cargarAgenda = async () => {
@@ -85,12 +85,12 @@ const CalendarioVendedora = () => {
 
       const eventosConvertidos = data.map((seguimiento) => {
         const prospectoNombre = seguimiento.venta.prospecto.nombre;
-
+      
         if (!nuevosColores[prospectoNombre]) {
           nuevosColores[prospectoNombre] = colores[colorIndex % colores.length];
           colorIndex++;
         }
-
+      
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
@@ -105,7 +105,7 @@ const CalendarioVendedora = () => {
           textColor: "#fff",
         };
       });
-
+      
       setMapaColoresProspectos(nuevosColores);
       setEventos(eventosConvertidos);
     } catch (err) {
@@ -320,8 +320,8 @@ const CalendarioVendedora = () => {
     }
   };
 
-
-
+  
+  
 
   return (
     <div className="calendario-container">
@@ -387,11 +387,11 @@ const CalendarioVendedora = () => {
               placeholder="Seleccionar Tipo de Seguimiento"
               onChange={setTipoSeleccionado}
             />
-            <input
-              type="datetime-local"
-              value={fechaSeguimiento}
-              onChange={(e) => setFechaSeguimiento(e.target.value)}
-            />
+<input
+  type="datetime-local"
+  value={fechaSeguimiento}
+  onChange={(e) => setFechaSeguimiento(e.target.value)}
+/>
             <input type="text" placeholder="Motivo" value={motivo} onChange={(e) => setMotivo(e.target.value)} />
             <button onClick={agendarSeguimiento}>Agendar</button>
             <button onClick={() => setMostrarModal(false)}>Cancelar</button>
@@ -457,12 +457,12 @@ const CalendarioVendedora = () => {
 
                 <label><b>Fecha y Hora:</b></label>
                 <input
-                  type="datetime-local"
-                  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
-                  onChange={(e) =>
-                    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
-                  }
-                />
+  type="datetime-local"
+  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
+  onChange={(e) =>
+    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
+  }
+/>
 
 
                 <label><b>Motivo:</b></label>
