@@ -207,7 +207,7 @@ const CalendarioAdmin = () => {
       hour12: false,
     });
   };
-  
+
 
   const agendarSeguimiento = async () => {
     if (!vendedoraNueva || !ventaSeleccionada || !tipoSeleccionado) {
@@ -404,13 +404,17 @@ const CalendarioAdmin = () => {
                   }
                 />
 
+
+
+
                 <label><b>Fecha y Hora:</b></label>
                 <input
                   type="datetime-local"
-                  value={formatearParaDatetimeLocal(new Date(modalDetalle.fecha))}
-                  onChange={(e) => setModalDetalle({ ...modalDetalle, fecha: e.target.value })}
+                  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
+                  onChange={(e) =>
+                    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
+                  }
                 />
-
 
                 <label><b>Motivo:</b></label>
                 <input
