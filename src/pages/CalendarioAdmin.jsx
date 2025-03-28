@@ -44,6 +44,13 @@ const CalendarioAdmin = () => {
     cargarTiposSeguimiento();
   }, []);
 
+  useEffect(() => {
+    if (vendedoraNueva) {
+      cargarProspectos(vendedoraNueva.value);
+    }
+  }, [vendedoraNueva]);
+  
+
   const cargarVendedoras = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -464,7 +471,6 @@ const CalendarioAdmin = () => {
             <input type="datetime-local" value={fechaSeleccionada} onChange={(e) => setFechaSeleccionada(e.target.value)} />
             <Select options={vendedoras} placeholder="Seleccionar Vendedora" onChange={(vendedora) => {
               setVendedoraNueva(vendedora);
-              cargarProspectos(vendedora.value);
             }} />
             <Select
               options={[...prospectos, { value: "nuevo", label: "➕ Crear nuevo prospecto" }]}
