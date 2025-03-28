@@ -67,7 +67,7 @@ const CalendarioAdmin = () => {
   const cargarProspectos = async (cedula_vendedora) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?vendedora=${cedula_vendedora}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
