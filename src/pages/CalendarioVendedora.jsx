@@ -315,6 +315,17 @@ const CalendarioVendedora = () => {
     }
   };
 
+  const formatearFechaExacta = (fechaStr) => {
+    const fecha = new Date(fechaStr);
+    return new Intl.DateTimeFormat("es-EC", {
+      dateStyle: "short",
+      timeStyle: "short",
+      timeZone: "UTC" 
+    }).format(fecha);
+  };
+
+  
+  
 
   return (
     <div className="calendario-container">
@@ -451,7 +462,7 @@ const CalendarioVendedora = () => {
                 <label><b>Fecha y Hora:</b></label>
                 <input
   type="datetime-local"
-  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
+  value={formatearFechaExacta(modalDetalle.fecha)}
   onChange={(e) =>
     setModalDetalle({ ...modalDetalle, fecha: e.target.value })
   }
@@ -470,7 +481,7 @@ const CalendarioVendedora = () => {
             ) : (
               <>
                 <p><b>Tipo:</b> {modalDetalle.tipo}</p>
-                <p><b>Fecha y Hora:</b> {formatearParaDatetimeLocal(modalDetalle.fecha)}</p>
+                <p><b>Fecha y Hora:</b> {formatearFechaExacta(modalDetalle.fecha)}</p>
 
                 <p><b>Motivo:</b> {modalDetalle.motivo}</p>
               </>
