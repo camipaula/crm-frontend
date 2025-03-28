@@ -192,6 +192,19 @@ const CalendarioAdmin = () => {
     }
   };
 
+  const formatearFechaVisual = (fechaStr) => {
+    const fecha = new Date(fechaStr);
+    return fecha.toLocaleString("es-EC", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, 
+    });
+  };
+  
+
   const agendarSeguimiento = async () => {
     if (!vendedoraNueva || !ventaSeleccionada || !tipoSeleccionado) {
       setError("Faltan campos requeridos");
@@ -303,15 +316,6 @@ const CalendarioAdmin = () => {
     }
   };
 
-  const formatearFechaExacta = (fechaStr) => {
-    const fecha = new Date(fechaStr);
-    return new Intl.DateTimeFormat("es-EC", {
-      dateStyle: "short",
-      timeStyle: "short",
-      timeZone: "UTC" // 👈 esto evita conversión a la zona del navegador
-    }).format(fecha);
-  };
-
 
   const limpiarCampos = () => {
     setVendedoraNueva(null);
@@ -416,7 +420,7 @@ const CalendarioAdmin = () => {
             ) : (
               <>
                 <p><b>Tipo:</b> {modalDetalle.tipo}</p>
-                <p><b>Fecha y Hora:</b> {formatearFechaExacta(modalDetalle.fecha)}</p>
+                <p><b>Fecha y Hora:</b> {formatearFechaVisual(modalDetalle.fecha)}</p>
 
                 <p><b>Motivo:</b> {modalDetalle.motivo}</p>
               </>
