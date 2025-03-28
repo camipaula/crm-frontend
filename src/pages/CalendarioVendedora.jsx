@@ -49,18 +49,14 @@ const CalendarioVendedora = () => {
 
 
 
-  const formatearFechaLocal = (fecha) => {
-    const fechaLocal = new Date(fecha); // Asume que ya es UTC
-    const offset = fechaLocal.getTimezoneOffset();
-    fechaLocal.setMinutes(fechaLocal.getMinutes() - offset); // Ajusta al horario local
-    return fechaLocal.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
-  };
-
-  const ajustarAFechaLocal = (fechaUTC) => {
-    const fecha = new Date(fechaUTC);
-    const offset = fecha.getTimezoneOffset();
-    fecha.setMinutes(fecha.getMinutes() - offset);
-    return fecha.toISOString();
+  const formatearParaDatetimeLocal = (fechaStr) => {
+    const fecha = new Date(fechaStr);
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const horas = String(fecha.getHours()).padStart(2, '0');
+    const minutos = String(fecha.getMinutes()).padStart(2, '0');
+    return `${año}-${mes}-${dia}T${horas}:${minutos}`;
   };
 
   const cargarAgenda = async () => {
@@ -85,7 +81,7 @@ const CalendarioVendedora = () => {
         return {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
-          start: ajustarAFechaLocal(seguimiento.fecha_programada),
+          start: seguimiento.fecha_programada, // ya viene en UTC, FullCalendar lo adapta solo
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
@@ -352,7 +348,7 @@ const CalendarioVendedora = () => {
         }}
         dateClick={(info) => {
           const isSoloFecha = info.view.type === "dayGridMonth";
-          const fecha = isSoloFecha ? `${info.dateStr}T09:00` : formatearFechaLocal(new Date(info.date));
+          const fecha = isSoloFecha ? `${info.dateStr}T09:00` : formatearParaDatetimeLocal(new Date(info.date));
           setFechaSeguimiento(fecha);
           setMostrarModal(true);
         }}
@@ -387,7 +383,11 @@ const CalendarioVendedora = () => {
               placeholder="Seleccionar Tipo de Seguimiento"
               onChange={setTipoSeleccionado}
             />
-            <input type="datetime-local" value={fechaSeguimiento} onChange={(e) => setFechaSeguimiento(e.target.value)} />
+<input
+  type="datetime-local"
+  value={fechaSeguimiento}
+  onChange={(e) => setFechaSeguimiento(e.target.value)}
+/>
             <input type="text" placeholder="Motivo" value={motivo} onChange={(e) => setMotivo(e.target.value)} />
             <button onClick={agendarSeguimiento}>Agendar</button>
             <button onClick={() => setMostrarModal(false)}>Cancelar</button>
@@ -453,10 +453,12 @@ const CalendarioVendedora = () => {
 
                 <label><b>Fecha y Hora:</b></label>
                 <input
-                  type="datetime-local"
-                  value={formatearFechaLocal(new Date(modalDetalle.fecha))}
-                  onChange={(e) => setModalDetalle({ ...modalDetalle, fecha: e.target.value })}
-                />
+  type="datetime-local"
+  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
+  onChange={(e) =>
+    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
+  }
+/>
 
 
                 <label><b>Motivo:</b></label>
