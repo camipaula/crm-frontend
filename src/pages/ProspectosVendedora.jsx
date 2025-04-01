@@ -16,27 +16,42 @@ const ProspectosVendedora = () => {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [sectorFiltro, setSectorFiltro] = useState(null);
-
-  const opcionesEstado = [
-    { value: "nuevo", label: "Nuevo" },
-    { value: "contactar", label: "Contactar" },
-    { value: "cita", label: "Cita" },
-    { value: "visita", label: "Visita" },
-    { value: "en_prueba", label: "En Prueba" },
-    { value: "proformado", label: "Proformado" },
-    { value: "no_interesado", label: "No Interesado" },
-    { value: "interesado", label: "Interesado" },
-    { value: "ganado", label: "Ganado" },
-    { value: "perdido", label: "Perdido" },
-    { value: "archivado", label: "Archivado" },
-  ];
+  const [estados, setEstados] = useState([]);
 
   useEffect(() => {
     const cedula = obtenerCedulaDesdeToken();
     setCedulaVendedora(cedula);
     obtenerSectores();
+    obtenerEstados();
     establecerFechasUltimos3Meses();
   }, []);
+
+  const obtenerEstados = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+            const data = await res.json();
+  
+      if (!Array.isArray(data)) {
+        throw new Error("La respuesta no es una lista de estados");
+      }
+  
+      const opciones = data.map((e) => ({
+        value: e.id_estado,
+        label: e.nombre.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+      }));
+      setEstados(opciones);
+    } catch (err) {
+      console.error("Error cargando estados:", err);
+      setError("No se pudieron cargar los estados");
+    }
+  };
+  
+  
 
   const establecerFechasUltimos3Meses = () => {
     const fechaActual = new Date();
@@ -70,19 +85,6 @@ const ProspectosVendedora = () => {
     }
   };
 
-  const eliminarProspecto = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Error eliminando prospecto");
-      setProspectos((prev) => prev.filter((p) => p.id_prospecto !== id));
-    } catch (error) {
-      setError(error.message);
-    }
-  };
 
   const buscarProspectos = async () => {
     try {
@@ -106,7 +108,10 @@ const ProspectosVendedora = () => {
 
       if (!res.ok) throw new Error("Error obteniendo prospectos");
       const data = await res.json();
-      setProspectos(data);
+setProspectos(
+  data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -125,12 +130,13 @@ const ProspectosVendedora = () => {
 
       <div className="vendedora-filtros">
         <Select
-          options={opcionesEstado}
+          options={estados}
           isMulti
           placeholder="Seleccionar Estado(s)"
           className="select-estado"
           onChange={setEstadoFiltro}
         />
+
         <input
           type="date"
           name="fechaInicio"
@@ -188,7 +194,7 @@ const ProspectosVendedora = () => {
             return (
               <tr key={p.id_prospecto}>
                 <td>{p.nombre}</td>
-                <td>{p.estado}</td>
+                <td>{p.estado_prospecto?.nombre || "Sin estado"}</td>
                 <td>{proximoContactoFormateado}</td>
                 <td>{ultimaNota}</td>
                 <td>
@@ -202,10 +208,8 @@ const ProspectosVendedora = () => {
                     </button>
                   )}
                   <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                    Editar
-                  </button>
-                  <button className="vendedora-btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
-                    Eliminar
+                    Ver Información
+
                   </button>
                 </td>
               </tr>
@@ -234,7 +238,7 @@ const ProspectosVendedora = () => {
           return (
             <div className="vendedora-prospecto-card" key={p.id_prospecto}>
               <h3>{p.nombre}</h3>
-              <p><strong>Estado:</strong> {p.estado}</p>
+              <p><strong>Estado:</strong> {p.estado_prospecto?.nombre || "Sin estado"}</p>
               <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>
               <p><strong>Última Nota:</strong> {ultimaNota}</p>
               <div className="acciones">
@@ -248,10 +252,7 @@ const ProspectosVendedora = () => {
                   </button>
                 )}
                 <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                  Editar
-                </button>
-                <button className="vendedora-btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
-                  Eliminar
+                  Ver Información
                 </button>
               </div>
             </div>

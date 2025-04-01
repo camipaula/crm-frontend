@@ -6,7 +6,6 @@ import ProspectosAdmin from "./pages/ProspectosAdmin";
 import ProspectosVendedora from "./pages/ProspectosVendedora";
 import CrearProspecto from "./pages/CrearProspecto";
 import EditarProspecto from "./pages/EditarProspecto";
-import CrearProspectoAdmin from "./pages/CrearProspectoAdmin";
 import CalendarioVendedora from "./pages/CalendarioVendedora";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
@@ -54,7 +53,6 @@ const App = () => {
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin" element={<Layout><Home /></Layout>} />
           <Route path="/prospectos-admin" element={<Layout><ProspectosAdmin /></Layout>} />
-          <Route path="/crear-prospecto-admin" element={<Layout><CrearProspectoAdmin /></Layout>} />
           <Route path="/crear-vendedora" element={<Layout><CrearVendedora /></Layout>} />
           <Route path="/vendedoras-admin" element={<Layout><VendedorasAdmin /></Layout>}/>
           <Route path="/editar-vendedora/:cedula_ruc" element={<Layout><EditarVendedora /></Layout>}/>

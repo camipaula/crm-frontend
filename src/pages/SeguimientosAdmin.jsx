@@ -36,8 +36,20 @@ const SeguimientosAdmin = () => {
       setError(err.message);
     }
   };
+  const formatearFechaVisual = (fechaStr) => {
+    const fecha = new Date(fechaStr.replace("Z", ""));
+    return fecha.toLocaleString("es-EC", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
-  const buscarSeguimientos = async (cedula_ruc = "") => {
+  const buscarSeguimientos = async (cedula_ruc = "", estado = filtroEstado) => {
+
     try {
       setLoading(true);
       setError("");
@@ -45,7 +57,7 @@ const SeguimientosAdmin = () => {
 
       let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?`;
       if (cedula_ruc) url += `cedula_vendedora=${cedula_ruc}&`;
-      if (filtroEstado !== "todas") url += `estado_prospeccion=${filtroEstado}`;
+      if (estado !== "todas") url += `estado_prospeccion=${estado}`;
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -166,11 +178,16 @@ const SeguimientosAdmin = () => {
           value={vendedoraSeleccionada}
         />
 
-        <label>Filtrar por estado:</label>
-        <select value={filtroEstado} onChange={(e) => {
-          setFiltroEstado(e.target.value);
-          buscarSeguimientos(vendedoraSeleccionada?.value || "");
-        }}>
+        <label>Filtrar por estado de prospección:</label>
+        <select
+  value={filtroEstado}
+  onChange={(e) => {
+    const nuevoEstado = e.target.value;
+    setFiltroEstado(nuevoEstado);
+    buscarSeguimientos(vendedoraSeleccionada?.value || "", nuevoEstado);
+  }}
+>
+
           <option value="todas">Todas</option>
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
@@ -198,12 +215,16 @@ const SeguimientosAdmin = () => {
           {prospecciones.map((p) => {
             const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
             const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null; // 🔹 Obtener el más reciente
+            const siguienteSeguimiento = p.seguimientos
+            ?.filter((s) => s.estado === "pendiente")
+            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
 
             return (
+              <>
               <tr key={p.id_venta}>
                 <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
                 <td>{p.objetivo || "Sin Objetivo"}</td>
-                <td>{p.prospecto?.estado || "No definido"}</td> {/* 🔹 Estado del prospecto */}
+                <td>{p.prospecto?.estado_prospecto?.nombre || "No definido"}</td>
                 <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
                 <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                 <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
@@ -232,25 +253,46 @@ const SeguimientosAdmin = () => {
 
                   {/* Botón pequeño Eliminar */}
                   <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-
                 </td>
-
               </tr>
+              {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
+              <tr className="fila-info-extra">
+                  <td colSpan="7" style={{ fontStyle: "italic", color: "#555" }}>
+                    <strong>Siguiente fecha programada:</strong>{" "}
+                    {siguienteSeguimiento
+                      ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
+
+                      : "No se ha agendado un seguimiento."}
+                    {siguienteSeguimiento && (
+                      <>
+                        {"  —  "}
+                        <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
+                      </>
+                    )}
+                  </td>
+                </tr>
+              </>
+
             );
           })}
         </tbody>
       </table>
-      {/* 📱 Vista en móviles - tarjetas compactas */}
+
+
+      {/* Vista en móviles - tarjetas compactas */}
       <div className="seguimientos-cards">
         {prospecciones.map((p) => {
           const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
           const ultimo = tieneSeguimientos ? p.seguimientos[0] : null;
-
+          const siguienteSeguimiento = p.seguimientos
+          ?.filter((s) => s.estado === "pendiente")
+          .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+          
           return (
             <div className="seguimiento-card" key={p.id_venta}>
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
-              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado || "No definido"}</p>
+              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado_prospecto?.nombre || "No definido"}</p>
               <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
               <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
@@ -284,6 +326,18 @@ const SeguimientosAdmin = () => {
                   🗑️
                 </button>
 
+                <p style={{ fontStyle: "italic", marginTop: "10px" }}>
+                  <strong>Siguiente fecha programada:</strong>{" "}
+                  {siguienteSeguimiento
+                    ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
+                    : "No se ha agendado un seguimiento."}
+                  {siguienteSeguimiento && (
+                    <>
+                      {"  —  "}
+                      <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
+                    </>
+                  )}
+                </p>
 
               </div>
             </div>

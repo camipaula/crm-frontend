@@ -58,7 +58,7 @@ const VendedorasAdmin = () => {
       <div className="vendedoras-container">
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
-        <h1 className="title">Vendedoras</h1>
+        <h1 className="title">Vendedor/a</h1>
 
         <div className="filtros">
           <label>Filtrar por estado:</label>
@@ -70,7 +70,7 @@ const VendedorasAdmin = () => {
         </div>
 
         <button className="btn-crear" onClick={() => navigate("/crear-vendedora")}>
-          ➕ Crear Vendedora
+          ➕ Crear Vendedor/a
         </button>
 
         {loading && <p>Cargando vendedoras...</p>}

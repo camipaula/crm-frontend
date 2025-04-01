@@ -35,6 +35,10 @@ const CalendarioAdmin = () => {
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
   const [modoEdicion, setModoEdicion] = useState(false);
 
+  const [tipoSeleccionadoTexto, setTipoSeleccionadoTexto] = useState("");
+  const [prospectoDatos, setProspectoDatos] = useState({});
+  const [formDataExtra, setFormDataExtra] = useState({});
+
 
   const colores = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad", "#16a085"];
 
@@ -49,7 +53,7 @@ const CalendarioAdmin = () => {
       cargarProspectos(vendedoraNueva.value);
     }
   }, [vendedoraNueva]);
-  
+
 
   const cargarVendedoras = async () => {
     try {
@@ -224,6 +228,37 @@ const CalendarioAdmin = () => {
 
     try {
       const token = localStorage.getItem("token");
+      if (tipoSeleccionadoTexto === "email" && !prospectoDatos.correo && !formDataExtra.correo) {
+        alert("El prospecto necesita un correo para agendar un Email.");
+        return;
+      }
+      if (["llamada", "whatsapp"].includes(tipoSeleccionadoTexto) && !prospectoDatos.telefono && !formDataExtra.telefono) {
+        alert("El prospecto necesita un teléfono para este tipo de seguimiento.");
+        return;
+      }
+      if (tipoSeleccionadoTexto === "visita" && !prospectoDatos.direccion && !formDataExtra.direccion) {
+        alert("El prospecto necesita una dirección para agendar una visita.");
+        return;
+      }
+
+      // 👉 Si llenamos nuevos datos, actualizamos al prospecto
+      if (Object.keys(formDataExtra).length > 0 && prospectoSeleccionado) {
+        const token = localStorage.getItem("token");
+        const resActualizar = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospectoSeleccionado.value}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formDataExtra),
+        });
+
+        if (!resActualizar.ok) {
+          alert("Error actualizando datos del prospecto");
+          return;
+        }
+      }
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
         headers: {
@@ -467,20 +502,24 @@ const CalendarioAdmin = () => {
           <div className="modal-content">
             <h3>➕ Agendar Cita</h3>
             {error && <p className="error">{error}</p>}
+
             <p><b>Fecha:</b></p>
-            <input type="datetime-local" value={fechaSeleccionada} onChange={(e) => setFechaSeleccionada(e.target.value)} />
+            <input
+              type="datetime-local"
+              value={fechaSeleccionada}
+              onChange={(e) => setFechaSeleccionada(e.target.value)}
+            />
 
             <Select
-  options={vendedoras}
-  placeholder="Seleccionar Vendedora"
-  value={vendedoraNueva}
-  onChange={(vendedora) => {
-    setVendedoraNueva(vendedora);
-    cargarProspectos(vendedora.value); 
-  }}
-/>
+              options={vendedoras}
+              placeholder="Seleccionar Vendedora"
+              value={vendedoraNueva}
+              onChange={(vendedora) => {
+                setVendedoraNueva(vendedora);
+                cargarProspectos(vendedora.value);
+              }}
+            />
 
-           
             <Select
               options={[...prospectos, { value: "nuevo", label: "➕ Crear nuevo prospecto" }]}
               placeholder="Seleccionar Prospecto"
@@ -491,23 +530,87 @@ const CalendarioAdmin = () => {
 
                 setProspectoSeleccionado(prospecto);
 
-                const ventasCargadas = await cargarVentas(prospecto.value);
+                const token = localStorage.getItem("token");
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.value}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                const data = await res.json();
+                setProspectoDatos(data);
 
+                const ventasCargadas = await cargarVentas(prospecto.value);
                 if (ventasCargadas.length === 0) {
                   setMostrarModalNuevaVenta(true);
                 }
               }}
-
               isDisabled={!vendedoraNueva}
             />
-            <Select options={ventas} placeholder="Seleccionar Venta" onChange={setVentaSeleccionada} isDisabled={!prospectoSeleccionado} />
-            <Select options={tiposSeguimiento} placeholder="Tipo de Seguimiento" onChange={setTipoSeleccionado} />
-            <input type="text" placeholder="Motivo" value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+
+            <Select
+              options={ventas}
+              placeholder="Seleccionar Venta"
+              onChange={setVentaSeleccionada}
+              isDisabled={!prospectoSeleccionado}
+            />
+
+            <Select
+              options={tiposSeguimiento}
+              placeholder="Tipo de Seguimiento"
+              onChange={(tipo) => {
+                setTipoSeleccionado(tipo);
+                setTipoSeleccionadoTexto(tipo?.label.toLowerCase());
+              }}
+            />
+
+            <input
+              type="text"
+              placeholder="Motivo"
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+            />
+
+            {/* ✅ Campos adicionales si faltan datos en el prospecto */}
+            {tipoSeleccionadoTexto === "email" && !prospectoDatos.correo && (
+              <>
+                <label>Correo del Prospecto *</label>
+                <input
+                  type="email"
+                  value={formDataExtra.correo || ""}
+                  onChange={(e) => setFormDataExtra({ ...formDataExtra, correo: e.target.value })}
+                  required
+                />
+              </>
+            )}
+
+            {["llamada", "whatsapp"].includes(tipoSeleccionadoTexto) && !prospectoDatos.telefono && (
+              <>
+                <label>Teléfono del Prospecto *</label>
+                <input
+                  type="text"
+                  value={formDataExtra.telefono || ""}
+                  onChange={(e) => setFormDataExtra({ ...formDataExtra, telefono: e.target.value })}
+                  required
+                />
+              </>
+            )}
+
+            {tipoSeleccionadoTexto === "visita" && !prospectoDatos.direccion && (
+              <>
+                <label>Dirección del Prospecto *</label>
+                <input
+                  type="text"
+                  value={formDataExtra.direccion || ""}
+                  onChange={(e) => setFormDataExtra({ ...formDataExtra, direccion: e.target.value })}
+                  required
+                />
+              </>
+            )}
+
             <button onClick={agendarSeguimiento}>Agendar</button>
             <button onClick={() => setMostrarModalNuevo(false)}>Cancelar</button>
           </div>
         </div>
       )}
+
 
       {mostrarModalNuevoProspecto && (
         <div className="modal modal-small">

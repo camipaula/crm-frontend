@@ -13,15 +13,28 @@ const EditarProspecto = () => {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(true);
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [estados, setEstados] = useState([]);
+  const [origenes, setOrigenes] = useState([]);
 
   const rolUsuario = getRol();
 
   useEffect(() => {
+
+
+
     const cargarDatos = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No estás autenticado. Inicia sesión nuevamente.");
 
+        const resOrigenes = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/origenes`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resOrigenes.ok) throw new Error("Error al cargar orígenes.");
+        const dataOrigenes = await resOrigenes.json();
+        setOrigenes(dataOrigenes);
+
+        
         const resProspecto = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -42,6 +55,13 @@ const EditarProspecto = () => {
         });
         if (!resCategorias.ok) throw new Error("Error al cargar categorías.");
         setCategorias(await resCategorias.json());
+        const resEstados = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resEstados.ok) throw new Error("Error al cargar estados.");
+        const dataEstados = await resEstados.json();
+        setEstados(dataEstados);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -94,7 +114,7 @@ const EditarProspecto = () => {
 
   return (
     <div className="editar-prospecto-container">
-            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <h1>Información del Prospecto</h1>
       <button type="button" className="btn-editar" onClick={() => setModoEdicion(true)}>✏️ Editar</button>
@@ -121,34 +141,48 @@ const EditarProspecto = () => {
         </select>
 
         <label>Origen:</label>
-        <select name="id_origen" value={prospecto?.id_origen || ""} onChange={handleChange} disabled={!modoEdicion}>
-          <option value="">Seleccione...</option>
-          <option value="1">Publicidad</option>
-          <option value="2">Referencias</option>
-          <option value="3">Online</option>
-          <option value="4">Evento</option>
-          <option value="5">Contacto Directo</option>
-          <option value="6">Visita</option>
-          <option value="7">Otros</option>
-        </select>
+<select name="id_origen" value={prospecto?.id_origen || ""} onChange={handleChange} disabled={!modoEdicion}>
+  <option value="">Seleccione...</option>
+  {origenes.map((o) => (
+    <option key={o.id_origen} value={o.id_origen}>{o.descripcion}</option>
+  ))}
+</select>
+
 
         <label>Nota:</label>
         <textarea name="nota" value={prospecto?.nota || ""} onChange={handleChange} disabled={!modoEdicion} />
 
-        <label>Estado:</label>
-        <select name="estado" value={prospecto?.estado || ""} onChange={handleChange} disabled={!modoEdicion}>
-          <option value="nuevo">Nuevo</option>
-          <option value="contactar">Contactar</option>
-          <option value="cita">Cita</option>
-          <option value="visita">Visita</option>
-          <option value="en_prueba">En prueba</option>
-          <option value="proformado">Proformado</option>
-          <option value="no_interesado">No interesado</option>
-          <option value="interesado">Interesado</option>
-          {/*<option value="ganado">Ganado</option>
-          <option value="perdido">Perdido</option>*/}
-          <option value="archivado">Archivado</option>
-        </select>
+        {!modoEdicion ? (
+          <div>
+            <label>Estado:</label>
+            <p><strong>
+  {prospecto?.estado_prospecto?.nombre
+    ? prospecto.estado_prospecto.nombre
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+    : "Sin estado"}
+</strong></p>
+          </div>
+        ) : (
+          <>
+            <label>Estado:</label>
+            <select
+              name="id_estado"
+              value={prospecto?.id_estado || ""}
+              onChange={handleChange}
+              disabled={!modoEdicion}
+            >
+              <option value="">Seleccione un estado...</option>
+              {estados.map((e) => (
+                <option key={e.id_estado} value={e.id_estado}>
+                  {e.nombre.charAt(0).toUpperCase() + e.nombre.slice(1).replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
+
+
 
 
         <label>Correo:</label>
@@ -175,12 +209,12 @@ const EditarProspecto = () => {
         )}
 
         <div className="button-container">
-        {modoEdicion && (
-  <div className="button-container">
-    <button type="submit" className="btn-guardar">Guardar Cambios</button>
-    <button type="button" className="btn-cerrar" onClick={() => setModoEdicion(false)}>Cancelar</button>
-  </div>
-)}
+          {modoEdicion && (
+            <div className="button-container">
+              <button type="submit" className="btn-guardar">Guardar Cambios</button>
+              <button type="button" className="btn-cerrar" onClick={() => setModoEdicion(false)}>Cancelar</button>
+            </div>
+          )}
 
         </div>
       </form>

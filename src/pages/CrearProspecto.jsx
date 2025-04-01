@@ -1,38 +1,102 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { obtenerCedulaDesdeToken } from "../utils/auth"; 
-import "../styles/crearProspecto.css"; 
+import { obtenerCedulaDesdeToken, getRol } from "../utils/auth";
+import "../styles/crearProspecto.css";
 
 const CrearProspecto = () => {
-  const navigate = useNavigate(); 
-  const [cedulaVendedora, setCedulaVendedora] = useState(null);
+  const navigate = useNavigate();
+  const [vendedoras, setVendedoras] = useState([]);
+  const [mensaje, setMensaje] = useState(null);
+  const [error, setError] = useState(null);
+  const [esAdmin, setEsAdmin] = useState(false);
+  const [estados, setEstados] = useState([]);
+  const [enviando, setEnviando] = useState(false);
+
+  const [categorias, setCategorias] = useState([]);
+
   const [formData, setFormData] = useState({
-    cedula_ruc: "",
     nombre: "",
     nombre_contacto: "",
+    descripcion: "",
+    id_categoria: null,
+    origen: "",
+    nota: "",
+    id_estado: null, 
     correo: "",
     telefono: "",
     direccion: "",
     provincia: "",
     ciudad: "",
     sector: "",
-    origen: "",
-    id_categoria: null,
-    descripcion: "",
-    nota: "",
-    estado: "nuevo",
+    cedula_ruc: "",
+    cedula_vendedora: "",
     created_at: new Date().toISOString().split("T")[0],
   });
 
-  const [mensaje, setMensaje] = useState(null);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
+
+    obtenerCategorias();
+    cargarEstados(); 
+    const rol = getRol();
     const cedula = obtenerCedulaDesdeToken();
-    if (cedula) {
-      setCedulaVendedora(cedula);
+
+    setEsAdmin(rol === "admin");
+
+    if (rol === "vendedora") {
+      setFormData((prev) => ({ ...prev, cedula_vendedora: cedula }));
+    } else {
+      cargarVendedoras();
     }
   }, []);
+
+  const cargarEstados = async () => {
+    try {
+      const token = localStorage.getItem("token"); //
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      });
+  
+      const data = await res.json();
+      setEstados(data);
+  
+      // Establecer el estado por defecto como "nuevo"
+      const estadoNuevo = data.find((e) => e.nombre === "nuevo");
+      if (estadoNuevo) {
+        setFormData((prev) => ({ ...prev, id_estado: estadoNuevo.id_estado }));
+      }
+    } catch (err) {
+      console.error("Error al cargar estados:", err);
+      setError("No se pudieron cargar los estados.");
+    }
+  };
+  
+  
+  const cargarVendedoras = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setVendedoras(data);
+    } catch (err) {
+      setError("Error al cargar vendedoras");
+      console.error("Error al cargar vendedoras:", err);
+
+    }
+  };
+  const obtenerCategorias = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`);
+      const data = await res.json();
+      setCategorias(data);
+    } catch (err) {
+      console.error("Error al cargar categorías:", err);
+      setError("No se pudieron cargar las categorías.");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,70 +108,92 @@ const CrearProspecto = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMensaje(null);
     setError(null);
-
-    if (!cedulaVendedora) {
-      setError("Error: No se pudo obtener la cédula de la vendedora.");
-      return;
+    setMensaje(null);
+    setEnviando(true); // 🔹 empieza a enviar
+  
+    if (!formData.nombre || !formData.id_estado) {
+      setEnviando(false);
+      return setError("El nombre y el estado son obligatorios.");
     }
-
-    if (!formData.nombre || !formData.estado) {
-      setError("El nombre y el estado son obligatorios.");
-      return;
+  
+    if (!formData.id_categoria) {
+      setEnviando(false);
+      return setError("Debe seleccionar una categoría.");
     }
-
-    const token = localStorage.getItem("token");
-
+  
+    if (!formData.telefono && !formData.correo) {
+      setEnviando(false);
+      return setError("Debe ingresar al menos un teléfono o un correo.");
+    }
+  
+    if (!formData.cedula_vendedora) {
+      setEnviando(false);
+      return setError("Debe asignar una vendedora.");
+    }
+  
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
+      const token = localStorage.getItem("token");
+  
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...formData,
-          cedula_vendedora: cedulaVendedora,
-        }),
+        body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Error al crear prospecto");
-      }
-
+  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error al crear prospecto");
+  
       setMensaje("Prospecto creado exitosamente.");
-      setTimeout(() => navigate("/prospectos-vendedora"), 2000);
-    } catch (error) {
-      setError(error.message);
+      setTimeout(() => {
+        navigate(esAdmin ? "/prospectos-admin" : "/prospectos-vendedora");
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setEnviando(false); // 🔹 termina el envío
     }
   };
+  
 
   return (
     <div className="crear-prospecto-container">
-            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
       <h1>Crear Prospecto</h1>
 
       {mensaje && <p className="success">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
 
       <form onSubmit={handleSubmit}>
-        <label>Cédula/RUC:</label>
-        <input type="text" name="cedula_ruc" value={formData.cedula_ruc} onChange={handleChange} />
-
         <label>Nombre <span className="required">*</span>:</label>
         <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
+
+
+        <label>Categoría <span className="required">*</span>:</label>
+        <select
+          name="id_categoria"
+          value={formData.id_categoria || ""}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Seleccione una categoría...</option>
+          {categorias.map((c) => (
+            <option key={c.id_categoria} value={c.id_categoria}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
 
         <label>Nombre del Contacto:</label>
         <input type="text" name="nombre_contacto" value={formData.nombre_contacto} onChange={handleChange} />
 
-        <label>Correo:</label>
+        <label>Correo <span className="required">*(al menos uno)</span>: </label>
         <input type="email" name="correo" value={formData.correo} onChange={handleChange} />
 
-        <label>Teléfono:</label>
+        <label>Teléfono <span className="required">*(al menos uno)</span>: </label>
         <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} />
 
         <label>Dirección:</label>
@@ -121,6 +207,9 @@ const CrearProspecto = () => {
 
         <label>Sector:</label>
         <input type="text" name="sector" value={formData.sector} onChange={handleChange} />
+
+        <label>Cédula/RUC:</label>
+        <input type="text" name="cedula_ruc" value={formData.cedula_ruc} onChange={handleChange} />
 
         <label>Origen:</label>
         <select name="origen" value={formData.origen} onChange={handleChange}>
@@ -140,33 +229,38 @@ const CrearProspecto = () => {
         <label>Nota:</label>
         <textarea name="nota" value={formData.nota} onChange={handleChange} />
 
-        <label>Estado <span className="required">*</span>:</label>
-        <select name="estado" value={formData.estado} onChange={handleChange} required>
-          <option value="nuevo">Nuevo</option>
-          <option value="contactar">Contactar</option>
-          <option value="cita">Cita</option>
-          <option value="visita">Visita</option>
-          <option value="en_prueba">En prueba</option>
-          <option value="proformado">Proformado</option>
-          <option value="no_interesado">No Interesado</option>
-          <option value="interesado">Interesado</option>
-          <option value="ganado">Ganado</option>
-          <option value="perdido">Perdido</option>
-          <option value="archivado">Archivado</option>
-        </select>
+        <label>Estado asignado automáticamente:</label>
+        <p className="estado-label">
+  {estados.find((e) => e.id_estado === formData.id_estado)?.nombre || "nuevo"}
+</p>
+
+
 
         <label>Fecha de Creación:</label>
-        <input 
-          type="date" 
-          name="created_at" 
-          value={formData.created_at} 
-          onChange={handleChange} 
-        />
+        <input type="date" name="created_at" value={formData.created_at} onChange={handleChange} />
 
-        <button type="submit">Crear Prospecto</button>
-        <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>
-          Cerrar
-        </button>
+        {/* Solo si es admin, muestra selector de vendedora */}
+        {esAdmin && (
+          <>
+            <label>Asignar Vendedora <span className="required">*</span>:</label>
+            <select
+              name="cedula_vendedora"
+              value={formData.cedula_vendedora}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Seleccione una vendedora...</option>
+              {vendedoras.map((v) => (
+                <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre}</option>
+              ))}
+            </select>
+          </>
+        )}
+
+<button type="submit" disabled={enviando}>
+  {enviando ? "Creando..." : "Crear Prospecto"}
+</button>
+        <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>Cerrar</button>
       </form>
     </div>
   );

@@ -53,6 +53,17 @@ const SeguimientosProspecto = () => {
     setModalEditar(true);
   };
 
+  const formatearFechaVisual = (fechaStr) => {
+    const fecha = new Date(fechaStr.replace("Z", ""));
+    return fecha.toLocaleString("es-EC", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
   const guardarObjetivo = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -104,7 +115,7 @@ const SeguimientosProspecto = () => {
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <div className="filtros-container">
-        <label>Filtrar por estado:</label>
+        <label>Filtrar por estado de prospección:</label>
         <select
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
@@ -133,48 +144,62 @@ const SeguimientosProspecto = () => {
         <tbody>
           {prospecciones.map((p) => {
             const ultimoSeguimiento = p.seguimientos?.[0] || {};
+            const siguienteSeguimiento = p.seguimientos
+              ?.filter((s) => s.estado === "pendiente")
+              .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+
             return (
-              <tr key={p.id_venta}>
-                <td>{p.objetivo || "Sin Objetivo"}</td>
-                <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
-                <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion || "No registrado"}</td>
-                <td>{ultimoSeguimiento.resultado || "Pendiente"}</td>
-                <td>{ultimoSeguimiento.nota || "Sin nota"}</td>
-                <td>
-                  <button
-                    className="btn-ver-seguimientos"
-                    onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
-                  >
-                    📜 Ver Seguimientos
-                  </button>
-                  <button
-                    className="btn-agendar"
-                    onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
-                  >
-                    ➕ Agendar Seguimiento
-                  </button>
-                  <button
-                    className="btn-mini"
-                    onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    className="btn-mini red"
-                    onClick={() => abrirModalEliminar(p.id_venta)}
-                  >
-                    🗑️
-                  </button>
-                </td>
-              </tr>
+              <>
+                <tr key={p.id_venta}>
+                  <td>{p.objetivo || "Sin Objetivo"}</td>
+                  <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
+                  <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion || "No registrado"}</td>
+                  <td>{ultimoSeguimiento.resultado || "Pendiente"}</td>
+                  <td>{ultimoSeguimiento.nota || "Sin nota"}</td>
+                  <td>
+                    <button
+                      className="btn-ver-seguimientos"
+                      onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
+                    >
+                      📜 Ver Seguimientos
+                    </button>
+                    <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+                    <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                  </td>
+                </tr>
+
+                {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
+                <tr className="fila-info-extra">
+                  <td colSpan="7" style={{ fontStyle: "italic", color: "#555" }}>
+                    <strong>Siguiente fecha programada:</strong>{" "}
+                    {siguienteSeguimiento
+                      ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
+
+                      : "No se ha agendado un seguimiento."}
+                    {siguienteSeguimiento && (
+                      <>
+                        {"  —  "}
+                        <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
+                      </>
+                    )}
+                  </td>
+                </tr>
+              </>
             );
           })}
+
         </tbody>
       </table>
+
+
       <div className="tarjetas-seguimientos-prospecto">
         {prospecciones.map((p) => {
           const s = p.seguimientos?.[0] || {};
+          const siguienteSeguimiento = p.seguimientos
+            ?.filter((s) => s.estado === "pendiente")
+            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+
           return (
             <div className="card-seguimiento" key={p.id_venta}>
               <h3>🎯 Objetivo: {p.objetivo || "No definido"}</h3>
@@ -188,48 +213,57 @@ const SeguimientosProspecto = () => {
                 <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
                   📜 Ver
                 </button>
-                <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>
-                  ➕ Agendar
-                </button>
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
                 <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
 
+                <p style={{ fontStyle: "italic", marginTop: "10px" }}>
+                  <strong>Siguiente fecha programada:</strong>{" "}
+                  {siguienteSeguimiento
+                    ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
+                    : "No se ha agendado un seguimiento."}
+                  {siguienteSeguimiento && (
+                    <>
+                      {"  —  "}
+                      <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
+                    </>
+                  )}
+                </p>
 
               </div>
             </div>
           );
         })}
       </div>
-{/* 🟩 Modal Editar Objetivo */}
-{modalEditar && (
-  <div className="modal-backdrop">
-    <div className="modal-content">
-      <h3>Editar Objetivo</h3>
-      <textarea
-        value={nuevoObjetivo}
-        onChange={(e) => setNuevoObjetivo(e.target.value)}
-      />
-      <div className="modal-buttons">
-        <button onClick={guardarObjetivo}>Guardar</button>
-        <button onClick={() => setModalEditar(false)}>Cancelar</button>
-      </div>
-    </div>
-  </div>
-)}
+      {/* 🟩 Modal Editar Objetivo */}
+      {modalEditar && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>Editar Objetivo</h3>
+            <textarea
+              value={nuevoObjetivo}
+              onChange={(e) => setNuevoObjetivo(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={guardarObjetivo}>Guardar</button>
+              <button onClick={() => setModalEditar(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-{/* 🟥 Modal Eliminar Venta */}
-{modalEliminar && (
-  <div className="modal-backdrop">
-    <div className="modal-content">
-      <h3>¿Eliminar esta venta?</h3>
-      <p> 🟥 Se eliminarán también los seguimientos relacionados.</p>
-      <div className="modal-buttons">
-        <button className="btn-mini red" onClick={confirmarEliminar}>Eliminar</button>
-        <button onClick={() => setModalEliminar(false)}>Cancelar</button>
-      </div>
-    </div>
-  </div>
-)}
+      {/* 🟥 Modal Eliminar Venta */}
+      {modalEliminar && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>¿Eliminar esta venta?</h3>
+            <p> 🟥 Se eliminarán también los seguimientos relacionados.</p>
+            <div className="modal-buttons">
+              <button className="btn-mini red" onClick={confirmarEliminar}>Eliminar</button>
+              <button onClick={() => setModalEliminar(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -11,7 +11,6 @@ const SeguimientosVendedora = () => {
   const [filtroEstado, setFiltroEstado] = useState("todas");
 
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
@@ -99,28 +98,6 @@ const SeguimientosVendedora = () => {
     }
   };
 
-  const abrirModalEliminar = (id_venta) => {
-    setIdVentaSeleccionada(id_venta);
-    setModalEliminar(true);
-  };
-
-  const confirmarEliminar = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Error al eliminar venta");
-      alert("Venta eliminada correctamente");
-      setModalEliminar(false);
-      buscarSeguimientos(); // Recargar
-    } catch (err) {
-      alert("Error: " + err.message);
-    }
-  };
-
   return (
     <div className="seguimientos-container">
 
@@ -132,7 +109,7 @@ const SeguimientosVendedora = () => {
       </button>
 
       <div className="filtros-container">
-        <label>Filtrar por estado:</label>
+        <label>Filtrar por estado de prospección:</label>
         <select
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
@@ -195,7 +172,6 @@ const SeguimientosVendedora = () => {
                     )}
 
                     <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                    <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
 
                   </td>
                 </tr>
@@ -227,8 +203,6 @@ const SeguimientosVendedora = () => {
                 )}
 
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-
               </div>
             </div>
           );
@@ -246,20 +220,6 @@ const SeguimientosVendedora = () => {
             <div className="modal-buttons">
               <button onClick={guardarObjetivo}>Guardar</button>
               <button onClick={() => setModalEditar(false)}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 🟥 Modal Eliminar Venta */}
-      {modalEliminar && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <h3>¿Eliminar esta venta?</h3>
-            <p> 🟥 Se eliminarán también los seguimientos relacionados.</p>
-            <div className="modal-buttons">
-              <button className="btn-mini red" onClick={confirmarEliminar}>Eliminar</button>
-              <button onClick={() => setModalEliminar(false)}>Cancelar</button>
             </div>
           </div>
         </div>

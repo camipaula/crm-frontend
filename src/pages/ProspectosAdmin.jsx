@@ -19,26 +19,42 @@
     const [fechaFin, setFechaFin] = useState("");
     const [sectorFiltro, setSectorFiltro] = useState(null);
     const [categoriaFiltro, setCategoriaFiltro] = useState(null);
-    const opcionesEstado = [
-      { value: "nuevo", label: "Nuevo" },
-      { value: "contactar", label: "Contactar" },
-      { value: "cita", label: "Cita" },
-      { value: "visita", label: "Visita" },
-      { value: "en_prueba", label: "En Prueba" },       
-      { value: "proformado", label: "Proformado" },
-      { value: "no_interesado", label: "No Interesado" }, 
-      { value: "interesado", label: "Interesado" },
-      { value: "ganado", label: "Ganado" },
-      { value: "perdido", label: "Perdido" },
-      { value: "archivado", label: "Archivado" },
-    ];
+    const [estados, setEstados] = useState([]);
 
+  
     useEffect(() => {
       obtenerVendedoras();
       obtenerSectores();
       obtenerCategorias();
+      obtenerEstados(); 
       establecerFechasUltimos3Meses();
     }, []);
+
+    const obtenerEstados = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+                const data = await res.json();
+    
+        if (!Array.isArray(data)) {
+          throw new Error("La respuesta no es una lista de estados");
+        }
+    
+        const opciones = data.map((e) => ({
+          value: e.id_estado,
+          label: e.nombre.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+        }));
+        setEstados(opciones);
+      } catch (err) {
+        console.error("Error cargando estados:", err);
+        setError("No se pudieron cargar los estados");
+      }
+    };
+    
 
     // Establece automáticamente las fechas del mes actual
     const establecerFechasUltimos3Meses = () => {
@@ -121,8 +137,10 @@
 
         if (!res.ok) throw new Error("Error obteniendo prospectos");
         const data = await res.json();
-        setProspectos(data);
-      } catch (err) {
+        setProspectos(
+          data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        );
+              } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
@@ -210,13 +228,14 @@
           </select>
 
           <Select
-            options={opcionesEstado}
-            isMulti
-            placeholder="Seleccionar Estado(s)"
-            className="select-estado"
-            classNamePrefix="select"
-            onChange={setEstadoFiltro}
-          />
+  options={estados}
+  isMulti
+  placeholder="Seleccionar Estado(s)"
+  className="select-estado"
+  classNamePrefix="select"
+  onChange={setEstadoFiltro}
+/>
+
           <Select
             options={categorias}
             placeholder="Seleccionar Categoría"
@@ -255,7 +274,7 @@
         </button>
 
         </div>
-        <button className="admin-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto-admin")}>
+        <button className="admin-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
           ➕ Crear Prospecto
         </button>
         <table className="admin-prospectos-table">
@@ -291,10 +310,12 @@
           <tr key={p.id_prospecto}>
             <td>{p.nombre}</td>
             <td>{p.vendedora_prospecto?.nombre ?? "Sin asignar"}</td>
-            <td>{p.estado}</td>
+            <td>{p.estado_prospecto?.nombre || "Sin estado"}</td>
             <td>{proximoContactoFormateado}</td>
             <td>{ultimaNota}</td>
             <td>
+            <div className="admin-botones-acciones">
+
               {/* 🔹 Botón dinámico según si tiene ventas o no */}
               {tieneVentas ? (
                 <button className="admin-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
@@ -313,6 +334,8 @@
               <button className="admin-btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
                 Eliminar
               </button>
+              </div>
+
             </td>
           </tr>
         );
@@ -353,7 +376,7 @@
         <div className="admin-prospecto-card" key={p.id_prospecto}>
           <h3>{p.nombre}</h3>
           <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre ?? "Sin asignar"}</p>
-          <p><strong>Estado:</strong> {p.estado}</p>
+          <p><strong>Estado:</strong> {p.estado_prospecto?.nombre || "Sin estado"}</p>
           <p><strong>Próximo contacto:</strong> {proximoContactoFormateado}</p>
           <p><strong>Última nota:</strong> {ultimaNota}</p>
           <div className="acciones">

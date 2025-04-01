@@ -1,176 +1,316 @@
-  import { useState, useEffect } from "react";
-  import { useParams, useNavigate } from "react-router-dom";
-  import "../styles/registrarResultado.css";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import "../styles/registrarResultado.css";
 
-  const opcionesEstado = [
-    { value: "nuevo", label: "Nuevo" },
-    { value: "contactar", label: "Contactar" },
-    { value: "cita", label: "Cita" },
-    { value: "visita", label: "Visita" },
-    { value: "en_prueba", label: "En Prueba" },       
-    { value: "proformado", label: "Proformado" },
-    { value: "no_interesado", label: "No Interesado" }, 
-    { value: "interesado", label: "Interesado" },
-    { value: "ganado", label: "Ganado" },
-    { value: "perdido", label: "Perdido" },
-    { value: "archivado", label: "Archivado" },
-  ];
+const RegistrarResultado = () => {
+  const { id_seguimiento } = useParams();
+  const navigate = useNavigate();
 
+  const [seguimiento, setSeguimiento] = useState(null);
+  const [resultado, setResultado] = useState("");
+  const [nota, setNota] = useState("");
+  const [estadoProspecto, setEstadoProspecto] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [estados, setEstados] = useState([]);
 
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [fechaSiguiente, setFechaSiguiente] = useState("");
+  const [tipoSiguiente, setTipoSiguiente] = useState(null);
+  const [motivoSiguiente, setMotivoSiguiente] = useState("");
+  const [notaSiguiente, setNotaSiguiente] = useState("");
+  const [tiposSeguimiento, setTiposSeguimiento] = useState([]);
 
-  const RegistrarResultado = () => {
-    const { id_seguimiento } = useParams();
-    const navigate = useNavigate();
-    const [seguimiento, setSeguimiento] = useState(null);
-    const [resultado, setResultado] = useState("");
-    const [nota, setNota] = useState("");
-    const [estadoProspecto, setEstadoProspecto] = useState("interesado"); // 🔹 Estado inicial como "interesado"
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(true);
+  const [prospecto, setProspecto] = useState({});
+  const [formDataExtra, setFormDataExtra] = useState({});
+  const [tipoSiguienteTexto, setTipoSiguienteTexto] = useState("");
 
-    useEffect(() => {
-      obtenerSeguimiento();
-    }, []);
+  useEffect(() => {
+    obtenerSeguimiento();
+    obtenerTipos();
+    obtenerEstados();
+  }, []);
 
-    const obtenerSeguimiento = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) throw new Error("Error cargando seguimiento");
-
-        const data = await res.json();
-        setSeguimiento(data);
-        setResultado(data.resultado || "");
-        setNota(data.nota || "");
-
-        // Asegurar que el estado del prospecto se establezca correctamente
-        if (data.venta && data.venta.prospecto) {
-          setEstadoProspecto(data.venta.prospecto.estado);
-        }
-
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const guardarResultado = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ 
-            resultado, 
-            nota, 
-            estado: estadoProspecto // 🔹 Enviar el estado correctamente
-          }),
-        });
-
-        if (!res.ok) throw new Error("Error guardando resultado");
-
-        // Obtener nuevamente el seguimiento para reflejar cambios
-        await obtenerSeguimiento();
-
-        alert("Resultado guardado correctamente");
-        navigate(-1);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    const cancelarSeguimiento = async () => {
-      if (seguimiento.estado === "cancelado") {
-        alert("Este seguimiento ya está cancelado.");
-        return;
-      }
-
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ estado: "cancelado" }),
-        });
-
-        if (!res.ok) throw new Error("Error cancelando seguimiento");
-
-        alert("Seguimiento cancelado correctamente");
-        navigate(-1);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    if (loading) return <p>Cargando seguimiento...</p>;
-    if (error) return <p className="error">{error}</p>;
-
-    return (
-      <div className="resultado-container">
-        <h1>{seguimiento.estado === "pendiente" ? "Registrar Resultado" : "Editar Resultado"}</h1>
-        <div className="seguimiento-info">
-          <p><strong>Prospecto:</strong> {seguimiento.venta.prospecto.nombre}</p>
-          <p><strong>Venta:</strong> {seguimiento.venta.objetivo}</p>
-          <p><strong>Tipo de Seguimiento:</strong> {seguimiento.tipo_seguimiento.descripcion}</p>
-          <p><strong>Fecha Programada:</strong> {new Date(seguimiento.fecha_programada).toLocaleDateString()}</p>
-          <p><strong>Estado Actual:</strong> {seguimiento.estado}</p>
-          <p><strong>Motivo:</strong> {seguimiento.motivo}</p>
-
-        </div>
-
-        <textarea
-          placeholder="Resultado de la interacción"
-          value={resultado}
-          onChange={(e) => setResultado(e.target.value)}
-        />
-
-        <textarea
-          placeholder="Notas adicionales (opcional)"
-          value={nota}
-          readOnly
-          onChange={(e) => setNota(e.target.value)}
-        />
-
-        {/* Selector para cambiar el estado del prospecto */}
-        <label>Estado del Prospecto:</label>
-        <select 
-          value={estadoProspecto} 
-          onChange={(e) => setEstadoProspecto(e.target.value)}
-        >
-          {opcionesEstado.map((estado) => (
-            <option key={estado.value} value={estado.value}>
-              {estado.label}
-            </option>
-          ))}
-        </select>
-
-        <button onClick={guardarResultado}>
-          {seguimiento.estado === "pendiente" ? "Guardar Resultado" : "Actualizar Resultado"}
-        </button>
-
-        <button
-          className="btn-cancelar"
-          onClick={cancelarSeguimiento}
-          disabled={seguimiento.estado === "cancelado"}
-        >
-          {seguimiento.estado === "cancelado" ? "Seguimiento Cancelado" : "Cancelar Seguimiento"}
-        </button>
-        <button className="btn-volver" onClick={() => navigate(-1)}>← Volver</button>
-
-      </div>
-    );
+  const obtenerEstados = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setEstados(data);
+    } catch (error) {
+      console.error("Error al cargar estados:", error);
+    }
   };
 
-  export default RegistrarResultado;
+  const obtenerSeguimiento = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Error cargando seguimiento");
+      const data = await res.json();
+      setSeguimiento(data);
+      if (data.venta?.prospecto) {
+        setProspecto(data.venta.prospecto);
+        setEstadoProspecto(data.venta.prospecto.id_estado || "");
+      }
+      setResultado(data.resultado || "");
+      setNota(data.nota || "");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const obtenerTipos = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/tipos-seguimiento`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setTiposSeguimiento(data.map(t => ({ value: t.id_tipo, label: t.descripcion })));
+    } catch (e) {
+      console.error("Error cargando tipos de seguimiento", e);
+    }
+  };
+
+  const guardarResultado = async () => {
+    const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
+const nombreEstado = estadoSeleccionado?.nombre;
+
+if (!nombreEstado) {
+  alert("Selecciona un estado válido.");
+  return;
+}
+
+    const estadosFinales = ["interesado", "no_interesado", "ganado", "perdido"];
+
+    if (!estadosFinales.includes(nombreEstado)) {
+      setMostrarModal(true);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ resultado, nota, estado: nombreEstado })
+      });
+
+      if (!res.ok) throw new Error("Error guardando resultado");
+      alert("Resultado guardado correctamente");
+      navigate(-1);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const agendarDesdeModal = async () => {
+    if (!fechaSiguiente || !tipoSiguiente || !motivoSiguiente.trim()) {
+      alert("Por favor, completa todos los campos obligatorios del seguimiento.");
+      return;
+    }
+
+    if (tipoSiguienteTexto === "email" && !prospecto.correo && !formDataExtra.correo) {
+      alert("El prospecto necesita un correo para agendar un Email.");
+      return;
+    }
+    if (["llamada", "whatsapp"].includes(tipoSiguienteTexto) && !prospecto.telefono && !formDataExtra.telefono) {
+      alert("El prospecto necesita un teléfono para este tipo de seguimiento.");
+      return;
+    }
+    if (tipoSiguienteTexto === "visita" && !prospecto.direccion && !formDataExtra.direccion) {
+      alert("El prospecto necesita una dirección para agendar una visita.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (Object.keys(formDataExtra).length > 0) {
+        const resActualizar = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.id_prospecto}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formDataExtra),
+        });
+        if (!resActualizar.ok) throw new Error("Error actualizando datos del prospecto");
+      }
+
+      const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
+const nombreEstado = estadoSeleccionado?.nombre;
+
+if (!nombreEstado) {
+  alert("Estado del prospecto no válido.");
+  return;
+}
+
+const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
+  },
+  body: JSON.stringify({ resultado, nota, estado: nombreEstado }),
+});
+
+      if (!resResultado.ok) throw new Error("Error guardando resultado");
+
+      const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          id_venta: seguimiento.venta.id_venta,
+          cedula_vendedora: seguimiento.venta.prospecto.cedula_vendedora,
+          fecha_programada: fechaSiguiente,
+          id_tipo: tipoSiguiente,
+          motivo: motivoSiguiente,
+          nota: notaSiguiente,
+        }),
+      });
+      if (!resSeguimiento.ok) throw new Error("Error agendando siguiente seguimiento");
+
+      alert("Resultado y seguimiento agendado correctamente");
+      setMostrarModal(false);
+      navigate(-1);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  if (loading) return <p>Cargando seguimiento...</p>;
+  if (error) return <p className="error">{error}</p>;
+
+  return (
+    <div className="resultado-container">
+      <h1>{seguimiento.estado === "pendiente" ? "Registrar Resultado" : "Editar Resultado"}</h1>
+      <div className="seguimiento-info">
+        <p><strong>Prospecto:</strong> {seguimiento.venta.prospecto.nombre}</p>
+        <p><strong>Venta:</strong> {seguimiento.venta.objetivo}</p>
+        <p><strong>Tipo de Seguimiento:</strong> {seguimiento.tipo_seguimiento.descripcion}</p>
+        <p><strong>Fecha Programada:</strong> {new Date(seguimiento.fecha_programada).toLocaleDateString()}</p>
+        <p><strong>Estado Actual:</strong> {seguimiento.estado}</p>
+        <p><strong>Motivo:</strong> {seguimiento.motivo}</p>
+      </div>
+
+      <textarea
+        placeholder="Resultado de la interacción"
+        value={resultado}
+        onChange={(e) => setResultado(e.target.value)}
+      />
+
+      <textarea
+        placeholder="Notas adicionales (opcional)"
+        value={nota}
+        onChange={(e) => setNota(e.target.value)}
+      />
+
+      <label>Estado del Prospecto:</label>
+      <select value={estadoProspecto} onChange={(e) => setEstadoProspecto(e.target.value)}>
+        <option value="">-- Seleccionar estado --</option>
+        {estados.map((estado) => (
+          <option key={estado.id_estado} value={estado.id_estado}>
+            {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+          </option>
+        ))}
+      </select>
+
+      <button onClick={guardarResultado}>
+        {seguimiento.estado === "pendiente" ? "Guardar Resultado" : "Actualizar Resultado"}
+      </button>
+
+      <button className="btn-volver" onClick={() => navigate(-1)}>← Volver</button>
+
+      {mostrarModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>Agendar siguiente seguimiento</h3>
+            <input
+              type="datetime-local"
+              value={fechaSiguiente}
+              onChange={(e) => setFechaSiguiente(e.target.value)}
+              required
+            />
+            <select
+              value={tipoSiguiente || ""}
+              onChange={(e) => {
+                const selectedId = parseInt(e.target.value);
+                setTipoSiguiente(selectedId);
+                const selectedTipo = tiposSeguimiento.find(t => t.value === selectedId);
+                setTipoSiguienteTexto(selectedTipo?.label.toLowerCase());
+              }}
+              required
+            >
+              <option value="">-- Seleccionar tipo --</option>
+              {tiposSeguimiento.map((tipo) => (
+                <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Motivo"
+              value={motivoSiguiente}
+              onChange={(e) => setMotivoSiguiente(e.target.value)}
+              required
+            />
+            <textarea
+              placeholder="Nota (opcional)"
+              value={notaSiguiente}
+              onChange={(e) => setNotaSiguiente(e.target.value)}
+            />
+            {tipoSiguienteTexto === "email" && !prospecto.correo && (
+              <>
+                <label>Correo del Prospecto *</label>
+                <input
+                  type="email"
+                  value={formDataExtra.correo || ""}
+                  onChange={(e) => setFormDataExtra({ ...formDataExtra, correo: e.target.value })}
+                />
+              </>
+            )}
+            {["llamada", "whatsapp"].includes(tipoSiguienteTexto) && !prospecto.telefono && (
+              <>
+                <label>Teléfono del Prospecto *</label>
+                <input
+                  type="text"
+                  value={formDataExtra.telefono || ""}
+                  onChange={(e) => setFormDataExtra({ ...formDataExtra, telefono: e.target.value })}
+                />
+              </>
+            )}
+            {tipoSiguienteTexto === "visita" && !prospecto.direccion && (
+              <>
+                <label>Dirección del Prospecto *</label>
+                <input
+                  type="text"
+                  value={formDataExtra.direccion || ""}
+                  onChange={(e) => setFormDataExtra({ ...formDataExtra, direccion: e.target.value })}
+                />
+              </>
+            )}
+            <div className="modal-buttons">
+              <button className="btn-mini" onClick={agendarDesdeModal}>Agendar</button>
+              <button className="btn-mini red" onClick={() => setMostrarModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RegistrarResultado;
