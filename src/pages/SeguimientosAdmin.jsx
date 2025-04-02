@@ -259,7 +259,7 @@ const SeguimientosAdmin = () => {
               </tr>
               {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
               <tr className="fila-info-extra">
-                  <td colSpan="7" style={{ fontStyle: "italic", color: "#555" }}>
+                  <td colSpan="9" style={{ fontStyle: "italic", color: "#555", backgroundColor:"#c9edec"}}>
                     <strong>Siguiente fecha programada:</strong>{" "}
                     {siguienteSeguimiento
                       ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)

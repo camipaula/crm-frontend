@@ -249,12 +249,28 @@
   .modal-buttons .btn-mini.red:hover {
     background: #b02a37;
   }
+
+  .fila-info-extra {
+    background-color: #f8f8f8;
+    font-style: italic;
+    color: #555;
+    border-top: 1px solid #ddd;
+    padding: 8px 16px;
+  }
+  
+  .fila-info-extra td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
   
   /* Oculta tarjetas en escritorio */
 .seguimientos-cards {
   display: none;
 }
   
+
 
   /* 📱 Responsive */
 /* Oculta tabla en móviles */

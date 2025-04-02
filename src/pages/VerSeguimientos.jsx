@@ -55,8 +55,18 @@ const VerSeguimientos = () => {
           <p><strong>Correo:</strong> {venta.prospecto?.correo || "No registrado"}</p>
           <p><strong>Objetivo:</strong> {venta.objetivo}</p>
           <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
+          <p><strong>📅 Prospecto creado:</strong>{" "}
+      {venta.prospecto?.created_at
+        ? new Date(venta.prospecto.created_at).toLocaleDateString("es-EC", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        : "Sin fecha"}
+    </p>
         </div>
       )}
+      
 
 {seguimientos.length === 0 ? (
   <div className="sin-seguimientos">
@@ -70,6 +80,7 @@ const VerSeguimientos = () => {
   </div>
 ) : (
   <table className="ver-seguimientos-table">
+    
     <thead>
       <tr>
         <th>Fecha</th>
@@ -116,6 +127,7 @@ const VerSeguimientos = () => {
     </tbody>
   </table>
 )}
+
 
 
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>

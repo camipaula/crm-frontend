@@ -398,13 +398,17 @@ const CalendarioAdmin = () => {
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
-        headerToolbar={{ left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,timeGridDay" }}
+        headerToolbar={{
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay",
+        }}
         locale="es"
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
         slotMinTime="06:00:00"
         slotMaxTime="23:00:00"
-        events={eventos}
         height="auto"
+        events={eventos}
         eventClick={({ event }) => {
           setModoEdicion(false);
           setModalDetalle({
@@ -417,19 +421,35 @@ const CalendarioAdmin = () => {
             fecha: event.extendedProps.fecha,
           });
         }}
-
-
         dateClick={({ date, view }) => {
           const isSoloFecha = view.type === "dayGridMonth";
-          const fecha = isSoloFecha ? `${date.toISOString().slice(0, 10)}T09:00` : formatearParaDatetimeLocal(date);
+          const fecha = isSoloFecha
+            ? `${date.toISOString().slice(0, 10)}T09:00`
+            : formatearParaDatetimeLocal(date);
           setFechaSeleccionada(fecha);
-          setVendedoraNueva(vendedoraSeleccionada); // ✅ esto asocia la vendedora seleccionada
+          setVendedoraNueva(vendedoraSeleccionada);
           if (vendedoraSeleccionada) {
-            cargarProspectos(vendedoraSeleccionada.value); // ✅ carga prospectos de esa vendedora
+            cargarProspectos(vendedoraSeleccionada.value);
           }
           setMostrarModalNuevo(true);
         }}
+        eventContent={({ event }) => {
+          const prospecto = event.extendedProps.prospecto || "";
+          const motivo = event.title;
+          const hora = new Date(event.start).toLocaleTimeString("es-EC", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
+
+          return (
+            <div>
+              <b>[{prospecto.substring(0, 3).toUpperCase()}]</b> {hora} - {motivo}
+            </div>
+          );
+        }}
       />
+
 
       {modalDetalle && (
         <div className="modal">
