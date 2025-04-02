@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/seguimientosVendedora.css";
+import React from "react";
 
 const SeguimientosProspecto = () => {
   const { id_prospecto } = useParams();
@@ -149,7 +150,8 @@ const SeguimientosProspecto = () => {
               .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
 
             return (
-              <>
+              <React.Fragment key={p.id_venta}>
+
                 <tr key={p.id_venta}>
                   <td>{p.objetivo || "Sin Objetivo"}</td>
                   <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
@@ -185,7 +187,8 @@ const SeguimientosProspecto = () => {
                     )}
                   </td>
                 </tr>
-              </>
+              </React.Fragment>
+
             );
           })}
 

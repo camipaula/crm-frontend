@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
 import "../styles/seguimientosProspecto.css";
+import React from "react";
 
 const SeguimientosVendedora = () => {
   const navigate = useNavigate();
@@ -17,6 +18,18 @@ const SeguimientosVendedora = () => {
   useEffect(() => {
     buscarSeguimientos();
   }, [filtroEstado]);
+
+  const formatearFechaVisual = (fechaStr) => {
+    const fecha = new Date(fechaStr.replace("Z", ""));
+    return fecha.toLocaleString("es-EC", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   const buscarSeguimientos = async () => {
     try {
@@ -143,8 +156,14 @@ const SeguimientosVendedora = () => {
             {prospecciones.map((p) => {
               const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
               const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
+ const siguienteSeguimiento = p.seguimientos
+            ?.filter((s) => s.estado === "pendiente")
+            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
 
               return (
+                <React.Fragment key={p.id_venta}>
+
+
                 <tr key={p.id_venta}>
                   <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
                   <td>{p.objetivo || "Sin Objetivo"}</td>
@@ -175,8 +194,27 @@ const SeguimientosVendedora = () => {
 
                   </td>
                 </tr>
-              );
-            })}
+
+                {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
+              <tr className="fila-info-extra">
+                  <td colSpan="7" style={{ fontStyle: "italic", color: "#555" }}>
+                    <strong>Siguiente fecha programada:</strong>{" "}
+                    {siguienteSeguimiento
+                      ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
+
+                      : "No se ha agendado un seguimiento."}
+                    {siguienteSeguimiento && (
+                      <>
+                        {"  —  "}
+                        <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
+                      </>
+                    )}
+                  </td>
+                </tr>
+                </React.Fragment>
+
+            );
+          })}
           </tbody>
         </table>
       </div>
@@ -184,7 +222,10 @@ const SeguimientosVendedora = () => {
         {prospecciones.map((p) => {
           const tieneSeguimientos = p.seguimientos?.length > 0;
           const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
-
+          const siguienteSeguimiento = p.seguimientos
+          ?.filter((s) => s.estado === "pendiente")
+          .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+          
           return (
             <div key={p.id_venta} className="card-seguimiento">
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
@@ -203,6 +244,19 @@ const SeguimientosVendedora = () => {
                 )}
 
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+                <p style={{ fontStyle: "italic", marginTop: "10px" }}>
+                  <strong>Siguiente fecha programada:</strong>{" "}
+                  {siguienteSeguimiento
+                    ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
+                    : "No se ha agendado un seguimiento."}
+                  {siguienteSeguimiento && (
+                    <>
+                      {"  —  "}
+                      <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
+                    </>
+                  )}
+                </p>
+                
               </div>
             </div>
           );

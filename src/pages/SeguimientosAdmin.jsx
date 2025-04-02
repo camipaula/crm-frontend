@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import "../styles/seguimientosAdmin.css";
+import React from "react";
 
 const SeguimientosAdmin = () => {
   const navigate = useNavigate();
@@ -220,7 +221,8 @@ const SeguimientosAdmin = () => {
             .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
 
             return (
-              <>
+              <React.Fragment key={p.id_venta}>
+
               <tr key={p.id_venta}>
                 <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
                 <td>{p.objetivo || "Sin Objetivo"}</td>
@@ -271,7 +273,8 @@ const SeguimientosAdmin = () => {
                     )}
                   </td>
                 </tr>
-              </>
+                </React.Fragment>
+
 
             );
           })}

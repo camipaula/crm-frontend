@@ -52,6 +52,7 @@ const VerSeguimientos = () => {
         <div className="info-venta">
           <h2>📌 Prospección: {venta.prospecto?.nombre || "Sin Prospecto"}</h2>
           <p><strong>Contacto:</strong> {venta.prospecto?.nombre_contacto || "No registrado"}</p>
+          <p><strong>Correo:</strong> {venta.prospecto?.correo || "No registrado"}</p>
           <p><strong>Objetivo:</strong> {venta.objetivo}</p>
           <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
         </div>
@@ -74,9 +75,9 @@ const VerSeguimientos = () => {
         <th>Fecha</th>
         <th>Tipo</th>
         <th>Estado</th>
-        <th>Resultado</th>
         <th>Motivo</th>
         <th>Nota</th>
+        <th>Resultado</th>
         <th>Acción</th>
       </tr>
     </thead>
@@ -88,9 +89,10 @@ const VerSeguimientos = () => {
             <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
             <td>{s.tipo_seguimiento?.descripcion || "Sin tipo"}</td>
             <td>{s.estado}</td>
-            <td>{s.resultado || "Pendiente"}</td>
             <td>{s.motivo || "Sin motivo"}</td>
             <td>{s.nota || "Sin nota"}</td>
+            <td>{s.resultado || "Pendiente"}</td>
+
             <td>
               {!s.resultado ? (
                 <button

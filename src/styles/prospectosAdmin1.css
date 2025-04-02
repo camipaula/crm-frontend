@@ -42,6 +42,7 @@
 
 /* 📌 Botones dentro de filtros */
 .admin-prospectos-filtros button {
+  margin: 1% !important;
   padding: 10px 20px !important;
   background: #0d2a49 !important;
   color: white !important;
