@@ -333,33 +333,63 @@ const CalendarioVendedora = () => {
       <button className="btn-agendar" onClick={() => setMostrarModal(true)}>➕ Agendar Cita</button>
 
       <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        headerToolbar={{ left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,timeGridDay" }}
-        locale="es"
-        slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
-        slotMinTime="06:00:00"
-        slotMaxTime="24:00:00"
-        events={eventos}
-        height="auto"
-        eventClick={({ event }) => {
-          setModoEdicion(false); //siempre en modo lectura al abrir
-          setModalDetalle({
-            id: event.id,
-            motivo: event.title,
-            tipo: event.extendedProps.tipo,
-            objetivo: event.extendedProps.objetivo,
-            prospecto: event.extendedProps.prospecto,
-            fecha: event.extendedProps.fecha,
-          });
-        }}
-        dateClick={(info) => {
-          const isSoloFecha = info.view.type === "dayGridMonth";
-          const fecha = isSoloFecha ? `${info.dateStr}T09:00` : formatearParaDatetimeLocal(new Date(info.date));
-          setFechaSeguimiento(fecha);
-          setMostrarModal(true);
-        }}
-      />
+  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+  initialView="timeGridWeek"
+  headerToolbar={{
+    left: "prev,next today",
+    center: "title",
+    right: "dayGridMonth,timeGridWeek,timeGridDay",
+  }}
+  locale="es"
+  slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
+  slotMinTime="06:00:00"
+  slotMaxTime="23:00:00"
+  events={eventos}
+  height="auto"
+  eventClick={({ event }) => {
+    setModoEdicion(false);
+    setModalDetalle({
+      id: event.id,
+      motivo: event.title,
+      tipo: event.extendedProps.tipo,
+      objetivo: event.extendedProps.objetivo,
+      prospecto: event.extendedProps.prospecto,
+      fecha: event.extendedProps.fecha,
+    });
+  }}
+  dateClick={({ date, view }) => {
+    const isSoloFecha = view.type === "dayGridMonth";
+    const fecha = isSoloFecha
+      ? `${date.toISOString().slice(0, 10)}T09:00`
+      : formatearParaDatetimeLocal(date);
+    setFechaSeguimiento(fecha);
+    setMostrarModal(true);
+  }}
+  eventContent={({ event, view }) => {
+    const prospecto = event.extendedProps.prospecto || "";
+    const tipo = event.extendedProps.tipo || "";
+    const motivo = event.title;
+    const hora = new Date(event.start).toLocaleTimeString("es-EC", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+
+    if (view.type === "dayGridMonth") {
+      return (
+        <div>
+          <b>[{prospecto.substring(0, 3).toUpperCase()}]</b> {hora} - {tipo}
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <b>[{prospecto.substring(0, 3).toUpperCase()}]</b> {hora} - {motivo}
+        </div>
+      );
+    }
+  }}
+/>
 
       {mostrarModal && (
         <div className="modal">

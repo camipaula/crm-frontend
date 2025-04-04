@@ -433,21 +433,32 @@ const CalendarioAdmin = () => {
           }
           setMostrarModalNuevo(true);
         }}
-        eventContent={({ event }) => {
+        eventContent={({ event, view }) => {
           const prospecto = event.extendedProps.prospecto || "";
+          const tipo = event.extendedProps.tipo || "";
           const motivo = event.title;
           const hora = new Date(event.start).toLocaleTimeString("es-EC", {
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
           });
-
-          return (
-            <div>
-              <b>[{prospecto.substring(0, 3).toUpperCase()}]</b> {hora} - {motivo}
-            </div>
-          );
-        }}
+        
+          if (view.type === "dayGridMonth") {
+            // Solo en la vista mensual mostramos tipo con sigla
+            return (
+              <div>
+                <b>[{prospecto.substring(0, 3).toUpperCase()}]</b>{hora}-{tipo}
+              </div>
+            );
+          } else {
+            // En semana/día mostramos hora y motivo
+            return (
+              <div>
+                <b>[{prospecto.substring(0, 3).toUpperCase()}]</b> {hora} - {motivo}
+              </div>
+            );
+          }
+        }}        
       />
 
 

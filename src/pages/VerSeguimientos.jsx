@@ -93,8 +93,7 @@ const VerSeguimientos = () => {
       </tr>
     </thead>
     <tbody>
-      {seguimientos.map((s, index) => {
-        const esUltimoSeguimiento = index === 0;
+      {seguimientos.map((s) => {
         return (
           <tr key={s.id_seguimiento}>
             <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
@@ -105,22 +104,16 @@ const VerSeguimientos = () => {
             <td>{s.resultado || "Pendiente"}</td>
 
             <td>
-              {!s.resultado ? (
-                <button
-                  className="btn-resultado"
-                  onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
-                >
-                  ✍️ Registrar Resultado
-                </button>
-              ) : esUltimoSeguimiento ? (
-                <button
-                  className="btn-agendar"
-                  onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
-                >
-                  ➕ Agendar Siguiente Interacción
-                </button>
-              ) : null}
-            </td>
+  {!s.resultado && (
+    <button
+      className="btn-resultado"
+      onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
+    >
+      ✍️ Registrar Resultado
+    </button>
+  )}
+</td>
+
           </tr>
         );
       })}

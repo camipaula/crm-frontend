@@ -21,6 +21,7 @@ const SeguimientosProspecto = () => {
     buscarSeguimientos();
   }, [filtroEstado]);
 
+  
   const buscarSeguimientos = async () => {
     try {
       setLoading(true);

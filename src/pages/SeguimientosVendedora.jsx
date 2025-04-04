@@ -19,6 +19,11 @@ const SeguimientosVendedora = () => {
     buscarSeguimientos();
   }, [filtroEstado]);
 
+  const capitalizar = (texto) => {
+    if (!texto) return "";
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  };
+  
   const formatearFechaVisual = (fechaStr) => {
     const fecha = new Date(fechaStr.replace("Z", ""));
     return fecha.toLocaleString("es-EC", {
@@ -166,8 +171,8 @@ const SeguimientosVendedora = () => {
 
                 <tr key={p.id_venta}>
                   <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
-                  <td>{p.objetivo || "Sin Objetivo"}</td>
-                  <td>{p.prospecto?.estado || "No definido"}</td>
+                  <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
+                  <td>{capitalizar(p.prospecto?.estado) || "No definido"}</td>
                   <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
                   <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                   <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>

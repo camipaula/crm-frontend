@@ -24,6 +24,12 @@ const SeguimientosAdmin = () => {
     buscarSeguimientos();
   }, []);
 
+  const capitalizar = (texto) => {
+    if (!texto) return "";
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  };
+
+
   const obtenerVendedoras = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -203,7 +209,7 @@ const SeguimientosAdmin = () => {
           <tr>
             <th>Prospecto</th>
             <th>Objetivo</th>
-            <th>Estado del Prospecto</th> {/* 🔹 Nuevo campo */}
+            <th>Estado del Prospecto</th> 
             <th>Estado de la Venta</th>
             <th>Última Fecha</th>
             <th>Último Tipo</th>
@@ -225,8 +231,8 @@ const SeguimientosAdmin = () => {
 
               <tr key={p.id_venta}>
                 <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
-                <td>{p.objetivo || "Sin Objetivo"}</td>
-                <td>{p.prospecto?.estado_prospecto?.nombre || "No definido"}</td>
+                <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
+                <td>{capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</td>
                 <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
                 <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                 <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
@@ -295,7 +301,7 @@ const SeguimientosAdmin = () => {
             <div className="seguimiento-card" key={p.id_venta}>
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
-              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado_prospecto?.nombre || "No definido"}</p>
+              <p><strong>Estado del Prospecto:</strong> {capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</p>
               <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
               <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
