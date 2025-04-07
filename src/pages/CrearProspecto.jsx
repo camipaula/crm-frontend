@@ -135,7 +135,7 @@
         return setError("El nombre y el estado son obligatorios.");
       }
 
-      if (!formData.origen) {
+      if (!formData.id_origen) {
         setEnviando(false);
         return setError("Debe seleccionar un origen.");
       }
