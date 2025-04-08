@@ -103,6 +103,7 @@ const SeguimientosProspecto = () => {
       if (!res.ok) throw new Error("Error al eliminar venta");
       alert("Venta eliminada correctamente");
       setModalEliminar(false);
+      navigate(-1);
       buscarSeguimientos(); // Refrescar lista
     } catch (err) {
       alert("Error: " + err.message);

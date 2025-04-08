@@ -1,7 +1,7 @@
 /********* 📌 CONTENEDOR PRINCIPAL *********/
 .editar-prospecto-container {
   width: 100%;
-  max-width: 700px; /* 🔹 Limita el ancho en pantallas grandes */
+  max-width: 700px; 
   margin: 0 auto; /* Centrado */
   background: #fff;
   padding: 20px;
@@ -105,12 +105,12 @@ button {
 }
 
 .btn-guardar {
-  background: #28a745;
+  background: #007bffbb;
   color: white;
 }
 
 .btn-guardar:hover {
-  background: #218838;
+  background: #1e3f63bb;
 }
 
 .btn-cerrar {

@@ -20,7 +20,7 @@
 
 /* 📅 Botones */
 .btn-agendar {
-  background: #007bff;
+  background: #007bffbb !important;
   color: white;
   padding: 8px 12px;
   border: none;

@@ -107,6 +107,11 @@
   margin-bottom: 10px;
 }
 
+.btn-agendar {
+  margin-bottom: 20px;
+}
+
+
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .ver-seguimientos-container {

@@ -56,74 +56,78 @@ const VerSeguimientos = () => {
           <p><strong>Objetivo:</strong> {venta.objetivo}</p>
           <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
           <p><strong>📅 Prospecto creado:</strong>{" "}
-      {venta.prospecto?.created_at
-        ? new Date(venta.prospecto.created_at).toLocaleDateString("es-EC", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })
-        : "Sin fecha"}
-    </p>
+            {venta.prospecto?.created_at
+              ? new Date(venta.prospecto.created_at).toLocaleDateString("es-EC", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+              : "Sin fecha"}
+          </p>
         </div>
       )}
-      
-
-{seguimientos.length === 0 ? (
-  <div className="sin-seguimientos">
-    <p>No hay seguimientos registrados para esta prospección.</p>
-    <button
-      className="btn-agendar"
-      onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
-    >
-      ➕ Agendar Primer Seguimiento
-    </button>
-  </div>
-) : (
-  <table className="ver-seguimientos-table">
-    
-    <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Tipo</th>
-        <th>Estado</th>
-        <th>Motivo</th>
-        <th>Nota</th>
-        <th>Resultado</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      {seguimientos.map((s) => {
-        return (
-          <tr key={s.id_seguimiento}>
-            <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
-            <td>{s.tipo_seguimiento?.descripcion || "Sin tipo"}</td>
-            <td>{s.estado}</td>
-            <td>{s.motivo || "Sin motivo"}</td>
-            <td>{s.nota || "Sin nota"}</td>
-            <td>{s.resultado || "Pendiente"}</td>
-
-            <td>
-  {!s.resultado && (
-    <button
-      className="btn-resultado"
-      onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
-    >
-      ✍️ Registrar Resultado
-    </button>
-  )}
-</td>
-
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-)}
 
 
+      {seguimientos.length === 0 ? (
+        <div className="sin-seguimientos">
+          <p>No hay seguimientos registrados para esta prospección.</p>
+          <button
+            className="btn-agendar"
+            onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
+          >
+            ➕ Agendar Primer Seguimiento
+          </button>
+        </div>
+      ) : (
+        <>
+          <button
+            className="btn-agendar"
+            onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
+          >
+            ➕ Agendar Siguiente Interacción
+          </button>
 
-      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+          <table className="ver-seguimientos-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Motivo</th>
+                <th>Nota</th>
+                <th>Resultado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {seguimientos.map((s) => (
+                <tr key={s.id_seguimiento}>
+                  <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
+                  <td>{s.tipo_seguimiento?.descripcion || "Sin tipo"}</td>
+                  <td>{s.estado}</td>
+                  <td>{s.motivo || "Sin motivo"}</td>
+                  <td>{s.nota || "Sin nota"}</td>
+                  <td>{s.resultado || "Pendiente"}</td>
+                  <td>
+                    {!s.resultado && (
+                      <button
+                        className="btn-resultado"
+                        onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
+                      >
+                        ✍️ Registrar Resultado
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+
+
+
+      <button className="btn-volver" onClick={() => navigate(-2)}>⬅️ Volver</button>
     </div>
   );
 };

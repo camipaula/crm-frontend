@@ -2,81 +2,85 @@
 .admin-prospectos-page {
   width: 100% !important;
   height: calc(100vh - 60px) !important;
-  padding: 20px !important;
+  padding: 24px !important;
   overflow-y: auto !important;
-  background: white !important;
+  background: #ffffff !important;
   border-radius: 12px !important;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 /* 📌 Título */
 .admin-prospectos-title {
-  font-size: 26px !important;
-  color: #0d2a49 !important;
-  font-weight: bold !important;
+  font-size: 28px !important;
+  color: #1f3b5c !important;
+  font-weight: 700 !important;
   text-align: center !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 24px !important;
 }
 
-/* 📌 Contenedor de filtros */
+/* 📌 Filtros */
 .admin-prospectos-filtros {
   display: flex !important;
   justify-content: space-between !important;
-  align-items: center !important;
   flex-wrap: wrap !important;
-  margin-bottom: 20px !important;
+  align-items: center !important;
   padding: 20px !important;
-  background: #f5f5f5 !important;
+  margin-bottom: 24px !important;
+  background: #f8f9fa !important;
   border-radius: 10px !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  gap: 16px !important;
 }
 
 .admin-prospectos-filtros select,
 .admin-prospectos-filtros input {
   padding: 10px !important;
   font-size: 15px !important;
-  border: 1px solid #ddd !important;
+  border: 1px solid #ccc !important;
   border-radius: 6px !important;
   outline: none !important;
+  flex: 1 !important;
+  min-width: 200px !important;
 }
 
-/* 📌 Botones dentro de filtros */
 .admin-prospectos-filtros button {
-  margin: 1% !important;
-  padding: 10px 20px !important;
+  padding: 10px 18px !important;
   background: #0d2a49 !important;
   color: white !important;
   border: none !important;
   border-radius: 6px !important;
   cursor: pointer !important;
+  font-size: 14px !important;
+  transition: background 0.3s ease !important;
 }
 
 .admin-prospectos-filtros button:hover {
   background: #1a3966 !important;
 }
 
-/* 📌 Tabla */
+/* 📋 Tabla */
 .admin-prospectos-table {
-  all: unset; /* 🛡️ Resetea estilos heredados */
+  all: unset !important;
   display: table !important;
   width: 100% !important;
   border-collapse: collapse !important;
+  font-size: 15px !important;
   margin-top: 20px !important;
-  font-size: 16px !important;
-  background: white !important;
   border-radius: 10px !important;
-  overflow: hidden !important;
+  background: white !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03) !important;
 }
 
 .admin-prospectos-table th,
 .admin-prospectos-table td {
-  border: 1px solid #ddd !important;
-  padding: 15px !important;
+  border: 1px solid #e0e0e0 !important;
+  padding: 14px !important;
   text-align: left !important;
 }
 
 .admin-prospectos-table th {
-  background: #0d2a49 !important;
+  background: #1f3b5c !important;
   color: white !important;
   text-transform: uppercase !important;
 }
@@ -85,7 +89,7 @@
   background: #f9f9f9 !important;
 }
 
-/* 📌 Botones generales */
+/* 🛠️ Botones acción */
 .admin-btn-editar,
 .admin-btn-eliminar,
 .admin-btn-seguimientos,
@@ -93,10 +97,9 @@
   padding: 8px 12px !important;
   border: none !important;
   border-radius: 6px !important;
+  font-size: 13px !important;
   margin: 4px !important;
   cursor: pointer !important;
-  font-size: 14px !important;
-  transition: background 0.3s !important;
 }
 
 .admin-btn-editar {
@@ -110,26 +113,31 @@
 }
 
 .admin-btn-seguimientos {
-  background: #17a2b8 !important;
+  background: #1f3b5c !important;
   color: white !important;
 }
 
 .admin-btn-abrir-prospeccion {
-  background: #28a745 !important;
+  background: #2b3b70 !important;
   color: white !important;
 }
 
-/* 📌 Botón crear nuevo */
+/* ➕ Crear nuevo */
 .admin-btn-nuevo-prospecto {
   width: 100% !important;
   margin-top: 20px !important;
-  padding: 12px !important;
-  font-size: 18px !important;
-  background: #28a745 !important;
+  padding: 14px !important;
+  font-size: 17px !important;
+  background: #007bffbb !important;
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
   cursor: pointer !important;
+  transition: background 0.3s ease !important;
+}
+
+.admin-btn-nuevo-prospecto:hover {
+  background: #0056b3 !important;
 }
 
 /* 📌 Error */
@@ -139,7 +147,7 @@
   margin-top: 10px !important;
 }
 
-/* 📌 Estilos react-select */
+/* 📌 React-Select */
 .select-estado {
   width: 200px !important;
 }
@@ -150,7 +158,7 @@
 }
 
 .select__option--is-selected {
-  background-color: #1e5896 !important;
+  background-color: #10355c !important;
   color: white !important;
 }
 
@@ -162,7 +170,7 @@
 
   .admin-prospectos-filtros {
     flex-direction: column !important;
-    gap: 10px !important;
+    gap: 14px !important;
     padding: 15px !important;
   }
 
@@ -173,7 +181,7 @@
   }
 
   .admin-prospectos-filtros button {
-    font-size: 14px !important;
+    font-size: 13px !important;
     padding: 8px 12px !important;
   }
 
@@ -187,10 +195,11 @@
   }
 }
 
-/* ✅ Cards para celular */
+/* 🟨 Cards móviles */
 .admin-prospectos-cards-mobile {
   display: none !important;
 }
+
 
 @media (max-width: 768px) {
   .admin-prospectos-cards-mobile {
@@ -199,29 +208,32 @@
   }
 
   .admin-prospecto-card {
-    background: #fff !important;
+    background: #ffffff !important;
     border: 1px solid #ccc !important;
     border-radius: 12px !important;
     padding: 15px !important;
     margin-bottom: 15px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
   }
 
   .admin-prospecto-card h3 {
     margin: 0 0 8px 0 !important;
     font-size: 18px !important;
-    color: #0d2a49 !important;
+    color: #1f3b5c !important;
   }
 
   .admin-prospecto-card p {
     margin: 4px 0 !important;
     font-size: 14px !important;
+    color: #444 !important;
   }
 
+  
   .admin-prospecto-card .acciones {
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: 8px !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
     margin-top: 10px !important;
   }
 

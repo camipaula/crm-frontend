@@ -159,6 +159,7 @@ const SeguimientosAdmin = () => {
       if (!res.ok) throw new Error("Error al eliminar venta");
       alert("Venta eliminada correctamente");
       setModalEliminar(false);
+      navigate("/prospectos-admin");
       buscarSeguimientos(vendedoraSeleccionada?.value || "");
     } catch (err) {
       alert("Error: " + err.message);

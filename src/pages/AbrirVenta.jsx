@@ -13,7 +13,7 @@ const AbrirVenta = () => {
       setError("Por favor ingresa un objetivo para la prospección.");
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
@@ -24,15 +24,17 @@ const AbrirVenta = () => {
         },
         body: JSON.stringify({ id_prospecto, objetivo }),
       });
-
+  
       if (!res.ok) throw new Error("Error creando la prospección");
-
-      alert("Prospección creada exitosamente");
-      navigate(-1);
+  
+      const data = await res.json();
+  
+      navigate(`/seguimientos-prospeccion/${data.id_venta}`);
     } catch (err) {
       setError(err.message);
     }
   };
+  
 
 
   return (

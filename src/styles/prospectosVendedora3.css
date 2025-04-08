@@ -18,7 +18,7 @@
 
 /* 📌 Botón volver */
 .vendedora-btn-volver {
-  background-color: #6c757d !important;
+  background-color: #0d2a49 !important;
   color: white !important;
   border: none !important;
   padding: 8px 16px !important;
@@ -27,7 +27,7 @@
   margin-bottom: 15px !important;
 }
 .vendedora-btn-volver:hover {
-  background-color: #5a6268 !important;
+  background-color: #0d2a49 !important;
 }
 
 /* 📌 Botón nuevo prospecto */
@@ -36,7 +36,7 @@
   margin-bottom: 20px !important;
   padding: 12px !important;
   font-size: 18px !important;
-  background: #28a745 !important;
+  background: #007bffbb !important;
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
@@ -121,7 +121,7 @@
 }
 
 .vendedora-btn-editar {
-  background: #ffc107 !important;
+  background: #0793ff7a !important;
   color: black !important;
 }
 
@@ -131,12 +131,12 @@
 }
 
 .vendedora-btn-seguimientos {
-  background: #17a2b8 !important;
+  background: #1f3b5c !important;
   color: white !important;
 }
 
 .vendedora-btn-abrir-prospeccion {
-  background: #28a745 !important;
+  background: #1f3b5c !important;
   color: white !important;
 }
 

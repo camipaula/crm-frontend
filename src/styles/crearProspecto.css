@@ -1,120 +1,123 @@
 /* 📌 Contenedor Principal */
 .crear-prospecto-container {
-  width: 100%; /* ✅ Ocupa toda la pantalla */
-  height: calc(90vh - 60px); /* Ocupa toda la altura menos el navbar */
-  padding: 20px !important;
-  background: white;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  animation: fadeIn 0.5s ease-in-out; /* 🔥 Animación de entrada */
-  overflow-y: auto; 
-  border-radius: 12px;
+  width: 100% !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 24px !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
+  animation: fadeIn 0.5s ease-in-out !important;
+  overflow-y: auto !important;
 }
 
 /* 📌 Título */
 h1 {
-  font-size: 26px;
-  color: #333;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
+  font-size: 24px !important;
+  color: #1f3b5c !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  margin-bottom: 24px !important;
 }
 
 /* 📌 Formularios */
 form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
 }
 
-/* 📌 Estilos de las etiquetas */
+/* 📌 Etiquetas */
 label {
-  font-size: 16px;
-  font-weight: bold;
-  color: #444;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin-bottom: 4px !important;
 }
 
-/* 📌 Estilos de los inputs y selects */
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-}
-
-/* 📌 Área de texto */
+/* 📌 Inputs / Selects / Textareas */
+input,
+select,
 textarea {
-  resize: vertical;
-  min-height: 80px;
+  padding: 10px 12px !important;
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 8px !important;
+  font-size: 15px !important;
+  background: #fdfdfd !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-/* 📌 Contenedor de botones */
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #007bff !important;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15) !important;
 }
 
-/* 📌 Botón de Guardar */
-.btn-guardar {
-  padding: 12px 20px;
-  background: #28a745; /* Verde */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
+textarea {
+  resize: vertical !important;
+  min-height: 100px !important;
 }
 
-.btn-guardar:hover {
-  background: #218838;
+/* 📌 Estado visual */
+.estado-label {
+  font-weight: bold !important;
+  color: #007bff !important;
+  background: #f1f8ff !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #cce5ff !important;
 }
 
-/* 📌 Botón de Cancelar */
+/* 📌 Botones */
+button[type="submit"],
 .btn-cerrar {
-  padding: 12px 20px;
-  background: #dc3545; /* Rojo */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
+  padding: 12px !important;
+  font-size: 15px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: background 0.3s ease !important;
+}
+
+button[type="submit"] {
+  background: #007bff !important;
+  color: white !important;
+}
+
+button[type="submit"]:hover {
+  background: #0056b3 !important;
+}
+
+.btn-cerrar {
+  background: #dc3545 !important;
+  color: white !important;
+  margin-top: 10px !important;
 }
 
 .btn-cerrar:hover {
-  background: #c82333;
+  background: #c82333 !important;
 }
 
-/* 📌 Mensajes de éxito y error */
+/* 📌 Mensajes */
 .success {
-  color: green;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 10px;
+  color: #28a745 !important;
+  text-align: center !important;
+  font-weight: bold !important;
 }
 
 .error {
-  color: red;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 10px;
+  color: #dc3545 !important;
+  text-align: center !important;
+  font-weight: bold !important;
 }
 
-/* 📌 Animaciones */
+/* 📌 Animación */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -125,16 +128,24 @@ textarea {
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .crear-prospecto-container {
-    width: 95%;
-    padding: 15px;
+    padding: 18px !important;
+    width: 95% !important;
   }
 
-  .button-container {
-    flex-direction: column;
-    gap: 10px;
+  form {
+    gap: 16px !important;
   }
 
-  .btn-guardar, .btn-cerrar {
-    width: 100%;
+  input,
+  select,
+  textarea {
+    font-size: 14px !important;
+    padding: 10px !important;
+  }
+
+  button[type="submit"],
+  .btn-cerrar {
+    font-size: 14px !important;
+    padding: 10px !important;
   }
 }
