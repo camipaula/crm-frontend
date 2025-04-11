@@ -376,9 +376,9 @@ const SeguimientosAdmin = () => {
             <th>Último Tipo</th>
             <th>Último Resultado</th>
             <th>Última Nota</th>
+            <th>Acción</th>
             <th>Estado Último Seguimiento</th>
 
-            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -416,8 +416,6 @@ const SeguimientosAdmin = () => {
                   <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
                   <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
-                  <td>{etiquetaSeguimiento(p)}</td>
-
                   <td>
                     {!tieneSeguimientos ? (
                       <button
@@ -442,6 +440,8 @@ const SeguimientosAdmin = () => {
                     {/* Botón pequeño Eliminar */}
                     <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
                   </td>
+                  <td>{etiquetaSeguimiento(p)}</td>
+
                 </tr>
                 {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
                 <tr className="fila-info-extra">
