@@ -147,10 +147,19 @@
   margin-top: 10px !important;
 }
 
+.input-busqueda-nombre {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 200px;
+  margin: 0 10px;
+}
+ 
 /* ❌ Ocultar tarjetas en escritorio */
 .vendedora-cards-mobile {
   display: none !important;
 }
+
 
 
 /* 📱 Responsive */

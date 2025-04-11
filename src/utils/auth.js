@@ -55,5 +55,15 @@ export const obtenerCedulaDesdeToken = () => {
 // Cierra sesión eliminando los datos del usuario y redirigiendo al login
 export const logout = () => {
   localStorage.removeItem("token");
+
+  // 🧹 Limpiar todos los filtros que empiecen con "filtros_"
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("filtros_")) {
+      localStorage.removeItem(key);
+    }
+  });
+
   window.location.href = "/"; // Redirigir al login
 };
+
+

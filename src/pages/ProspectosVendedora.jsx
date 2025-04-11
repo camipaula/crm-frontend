@@ -18,13 +18,46 @@ const ProspectosVendedora = () => {
   const [sectorFiltro, setSectorFiltro] = useState(null);
   const [estados, setEstados] = useState([]);
 
+  const [busquedaNombre, setBusquedaNombre] = useState("");
+const [filtrosInicializados, setFiltrosInicializados] = useState(false);
+
+
   useEffect(() => {
     const cedula = obtenerCedulaDesdeToken();
     setCedulaVendedora(cedula);
     obtenerSectores();
     obtenerEstados();
     establecerFechasUltimos3Meses();
+    const filtrosGuardados = localStorage.getItem("filtros_prospectos_vendedora");
+if (filtrosGuardados) {
+  try {
+    const filtros = JSON.parse(filtrosGuardados);
+    if (filtros.estadoFiltro) setEstadoFiltro(filtros.estadoFiltro);
+    if (filtros.fechaInicio) setFechaInicio(filtros.fechaInicio);
+    if (filtros.fechaFin) setFechaFin(filtros.fechaFin);
+    if (filtros.sectorFiltro) setSectorFiltro(filtros.sectorFiltro);
+    if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
+  } catch (e) {
+    console.error("Error al cargar filtros guardados", e);
+  }
+}
+setFiltrosInicializados(true);
+
   }, []);
+
+  useEffect(() => {
+    if (!filtrosInicializados) return;
+  
+    const filtros = {
+      estadoFiltro,
+      fechaInicio,
+      fechaFin,
+      sectorFiltro,
+      busquedaNombre,
+    };
+    localStorage.setItem("filtros_prospectos_vendedora", JSON.stringify(filtros));
+  }, [estadoFiltro, fechaInicio, fechaFin, sectorFiltro, busquedaNombre, filtrosInicializados]);
+  
 
   const obtenerEstados = async () => {
     try {
@@ -119,6 +152,11 @@ setProspectos(
     }
   };
 
+  const prospectosFiltrados = prospectos.filter((p) =>
+    p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
+  );
+  
+
   return (
     <div className="vendedora-prospectos-page">
       <h1 className="vendedora-prospectos-title">Mis Prospectos</h1>
@@ -156,6 +194,15 @@ setProspectos(
           onChange={setSectorFiltro}
           isClearable
         />
+
+<input
+  type="text"
+  placeholder="Buscar por nombre..."
+  value={busquedaNombre}
+  onChange={(e) => setBusquedaNombre(e.target.value)}
+  className="input-busqueda-nombre"
+/>
+
         <button onClick={buscarProspectos} disabled={loading}>
           {loading ? "Cargando..." : "Buscar"}
         </button>
@@ -175,7 +222,7 @@ setProspectos(
           </tr>
         </thead>
         <tbody>
-          {prospectos.map((p) => {
+          {prospectosFiltrados.map((p) => {
             const ultimaNota = p.ventas
               ?.flatMap((v) => v.seguimientos)
               .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
@@ -219,7 +266,7 @@ setProspectos(
       </table>
 
       <div className="vendedora-cards-mobile">
-        {prospectos.map((p) => {
+        {prospectosFiltrados.map((p) => {
           const ultimaNota = p.ventas
             ?.flatMap((v) => v.seguimientos)
             .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";

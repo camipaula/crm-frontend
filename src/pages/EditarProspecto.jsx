@@ -110,7 +110,6 @@
     };
 
     if (loading) return <p>Cargando...</p>;
-    if (error) return <p className="error">{error}</p>;
 
     return (
       <div className="editar-prospecto-container">

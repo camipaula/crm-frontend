@@ -15,9 +15,36 @@ const SeguimientosVendedora = () => {
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
-  useEffect(() => {
-    buscarSeguimientos();
-  }, [filtroEstado]);
+  const [busquedaNombre, setBusquedaNombre] = useState("");
+const [filtrosInicializados, setFiltrosInicializados] = useState(false);
+
+
+useEffect(() => {
+  const filtrosGuardados = localStorage.getItem("filtros_seguimientos_vendedora");
+  if (filtrosGuardados) {
+    try {
+      const filtros = JSON.parse(filtrosGuardados);
+      if (filtros.filtroEstado) setFiltroEstado(filtros.filtroEstado);
+      if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
+    } catch (e) {
+      console.error("Error al leer filtros guardados:", e);
+    }
+  }
+  setFiltrosInicializados(true);
+  buscarSeguimientos();
+}, []);
+
+useEffect(() => {
+  if (!filtrosInicializados) return;
+
+  const filtros = {
+    filtroEstado,
+    busquedaNombre,
+  };
+  localStorage.setItem("filtros_seguimientos_vendedora", JSON.stringify(filtros));
+  buscarSeguimientos(); 
+  
+}, [filtroEstado, busquedaNombre, filtrosInicializados]);
 
   const capitalizar = (texto) => {
     if (!texto) return "";
@@ -116,6 +143,10 @@ const SeguimientosVendedora = () => {
     }
   };
 
+  const prospeccionesFiltradas = prospecciones.filter((p) =>
+    p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
+  );
+  
   return (
     <div className="seguimientos-container">
 
@@ -136,6 +167,13 @@ const SeguimientosVendedora = () => {
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
         </select>
+        <input
+  type="text"
+  placeholder="Buscar por nombre de prospecto..."
+  value={busquedaNombre}
+  onChange={(e) => setBusquedaNombre(e.target.value)}
+  className="input-busqueda-nombre"
+/>
 
       </div>
 
@@ -158,7 +196,7 @@ const SeguimientosVendedora = () => {
             </tr>
           </thead>
           <tbody>
-            {prospecciones.map((p) => {
+            {prospeccionesFiltradas.map((p) => {
               const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
               const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
  const siguienteSeguimiento = p.seguimientos
@@ -224,7 +262,7 @@ const SeguimientosVendedora = () => {
         </table>
       </div>
       <div className="tarjetas-seguimientos-vendedora">
-        {prospecciones.map((p) => {
+        {prospeccionesFiltradas.map((p) => {
           const tieneSeguimientos = p.seguimientos?.length > 0;
           const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
           const siguienteSeguimiento = p.seguimientos

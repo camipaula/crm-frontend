@@ -18,11 +18,54 @@ const SeguimientosAdmin = () => {
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
+  const [busquedaNombre, setBusquedaNombre] = useState("");
+  const [filtrosInicializados, setFiltrosInicializados] = useState(false);
+
 
   useEffect(() => {
-    obtenerVendedoras();
-    buscarSeguimientos();
+    const filtrosGuardados = localStorage.getItem("filtros_seguimientos_admin");
+    let filtros = { filtroEstado: "todas", vendedoraSeleccionada: null };
+
+    if (filtrosGuardados) {
+      try {
+        filtros = JSON.parse(filtrosGuardados);
+        setFiltroEstado(filtros.filtroEstado || "todas");
+        if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
+        setFiltrosInicializados(true);
+
+
+      } catch (e) {
+        console.error("Error al leer filtros guardados", e);
+      }
+    }
+    obtenerVendedoras().then((opciones) => {
+      setVendedoras(opciones);
+      if (filtros.vendedoraSeleccionada) {
+        const seleccion = opciones.find(
+          (v) => v.value === filtros.vendedoraSeleccionada.value
+        );
+        if (seleccion) {
+          setVendedoraSeleccionada(seleccion);
+          buscarSeguimientos(seleccion.value, filtros.filtroEstado || "todas");
+          return;
+        }
+      }
+      buscarSeguimientos("", filtros.filtroEstado || "todas");
+    });
   }, []);
+
+  useEffect(() => {
+    if (!filtrosInicializados) return;
+
+    const filtrosActualizados = {
+      vendedoraSeleccionada,
+      filtroEstado,
+      busquedaNombre,
+    };
+    localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
+  }, [vendedoraSeleccionada, filtroEstado, busquedaNombre, filtrosInicializados]);
+
+
 
   const capitalizar = (texto) => {
     if (!texto) return "";
@@ -38,11 +81,18 @@ const SeguimientosAdmin = () => {
       });
       if (!res.ok) throw new Error("Error obteniendo vendedoras");
       const data = await res.json();
-      setVendedoras([{ value: "", label: "Todas las vendedoras" }, ...data.map(v => ({ value: v.cedula_ruc, label: v.nombre }))]);
+      const opciones = [
+        { value: "", label: "Todas las vendedoras" },
+        ...data.map(v => ({ value: v.cedula_ruc, label: v.nombre }))
+      ];
+      setVendedoras(opciones);
+      return opciones; // AQUÍ DEVUELVES LAS OPCIONES
     } catch (err) {
       setError(err.message);
+      return []; // importante retornar algo aunque haya error
     }
   };
+
   const formatearFechaVisual = (fechaStr) => {
     const fecha = new Date(fechaStr.replace("Z", ""));
     return fecha.toLocaleString("es-EC", {
@@ -82,8 +132,14 @@ const SeguimientosAdmin = () => {
 
   const handleVendedoraChange = (selectedOption) => {
     setVendedoraSeleccionada(selectedOption);
-    buscarSeguimientos(selectedOption?.value || "");
+    const filtrosActualizados = {
+      vendedoraSeleccionada: selectedOption,
+      filtroEstado,
+    };
+    localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
+    buscarSeguimientos(selectedOption?.value || "", filtroEstado);
   };
+
 
   const exportarExcel = async () => {
     try {
@@ -166,6 +222,18 @@ const SeguimientosAdmin = () => {
     }
   };
 
+  const prospeccionesFiltradas = prospecciones.filter((p) =>
+    p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
+  );
+
+
+  const limpiarFiltros = () => {
+    setVendedoraSeleccionada(null);
+    setFiltroEstado("todas");
+    setBusquedaNombre("");
+    localStorage.removeItem("filtros_seguimientos_admin");
+    buscarSeguimientos("", "todas");
+  };
 
   return (
     <div className="seguimientos-container">
@@ -178,6 +246,8 @@ const SeguimientosAdmin = () => {
       </button>
 
       <div className="filtros-container">
+
+
         <Select
           options={vendedoras}
           placeholder="Seleccionar Vendedora"
@@ -185,21 +255,44 @@ const SeguimientosAdmin = () => {
           isClearable
           value={vendedoraSeleccionada}
         />
+        <input
+          type="text"
+          placeholder="Buscar por nombre de prospecto..."
+          value={busquedaNombre}
+          onChange={(e) => setBusquedaNombre(e.target.value)}
+          className="input-busqueda-nombre"
+        />
+
 
         <label>Filtrar por estado de prospección:</label>
         <select
-  value={filtroEstado}
-  onChange={(e) => {
-    const nuevoEstado = e.target.value;
-    setFiltroEstado(nuevoEstado);
-    buscarSeguimientos(vendedoraSeleccionada?.value || "", nuevoEstado);
-  }}
->
+          value={filtroEstado}
+          onChange={(e) => {
+            const nuevoEstado = e.target.value;
+            setFiltroEstado(nuevoEstado);
+            const filtrosActualizados = {
+              vendedoraSeleccionada,
+              filtroEstado: nuevoEstado,
+            };
+            localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
+            buscarSeguimientos(vendedoraSeleccionada?.value || "", nuevoEstado);
+          }}
+
+        >
+
+
+
 
           <option value="todas">Todas</option>
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
         </select>
+
+        <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+          Limpiar Filtros
+        </button>
+
+
       </div>
 
       {loading && <p>Cargando...</p>}
@@ -209,8 +302,10 @@ const SeguimientosAdmin = () => {
         <thead>
           <tr>
             <th>Prospecto</th>
+            <th>Vendedora</th>
+
             <th>Objetivo</th>
-            <th>Estado del Prospecto</th> 
+            <th>Estado del Prospecto</th>
             <th>Estado de la Venta</th>
             <th>Última Fecha</th>
             <th>Último Tipo</th>
@@ -220,53 +315,68 @@ const SeguimientosAdmin = () => {
           </tr>
         </thead>
         <tbody>
-          {prospecciones.map((p) => {
+          {!loading && prospeccionesFiltradas.length === 0 && (
+            <tr>
+              <td colSpan="10" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
+                No hay seguimientos para mostrar.
+              </td>
+            </tr>
+          )}
+
+          {prospeccionesFiltradas.map((p) => {
+
             const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
             const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null; // 🔹 Obtener el más reciente
             const siguienteSeguimiento = p.seguimientos
-            ?.filter((s) => s.estado === "pendiente")
-            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+              ?.filter((s) => s.estado === "pendiente")
+              .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
 
             return (
               <React.Fragment key={p.id_venta}>
 
-              <tr key={p.id_venta}>
-                <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
-                <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
-                <td>{capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</td>
-                <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
-                <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
-                <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
-                <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
-                <td>
-                  {!tieneSeguimientos ? (
-                    <button
-                      className="btn-agendar"
-                      onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
-                    >
-                      📅 Agendar Primer Seguimiento
-                    </button>
-                  ) : (
-                    <button
-                      className="btn-ver-seguimientos"
-                      onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
-                    >
-                      📜 Ver Seguimientos
-                    </button>
-                  )}
+                <tr key={p.id_venta}>
+                  <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
+                  <td>
+                    {p.prospecto?.vendedora_prospecto
+                      ? `${p.prospecto.vendedora_prospecto.nombre}${p.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+                      : "Sin asignar"}
+                  </td>
 
-                  {/* Botón pequeño Editar */}
-                  <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+                  <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
+                  <td>{capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</td>
+                  <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
+                  <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
+                  <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
+                  <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                  <td>
+                    {!tieneSeguimientos ? (
+                      <button
+                        className="btn-agendar"
+                        onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
+                      >
+                        📅 Agendar Primer Seguimiento
+                      </button>
+                    ) : (
+                      <button
+                        className="btn-ver-seguimientos"
+                        onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
+                      >
+                        📜 Ver Seguimientos
+                      </button>
+                    )}
+
+                    {/* Botón pequeño Editar */}
+                    <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
 
 
-                  {/* Botón pequeño Eliminar */}
-                  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-                </td>
-              </tr>
-              {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
-              <tr className="fila-info-extra">
-                  <td colSpan="9" style={{ fontStyle: "italic", color: "#555", backgroundColor:"#c9edec"}}>
+                    {/* Botón pequeño Eliminar */}
+                    <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                  </td>
+                </tr>
+                {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
+                <tr className="fila-info-extra">
+                  <td colSpan="9" style={{ fontStyle: "italic", color: "#555", backgroundColor: "#c9edec" }}>
                     <strong>Siguiente fecha programada:</strong>{" "}
                     {siguienteSeguimiento
                       ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
@@ -280,7 +390,7 @@ const SeguimientosAdmin = () => {
                     )}
                   </td>
                 </tr>
-                </React.Fragment>
+              </React.Fragment>
 
 
             );
@@ -291,16 +401,23 @@ const SeguimientosAdmin = () => {
 
       {/* Vista en móviles - tarjetas compactas */}
       <div className="seguimientos-cards">
-        {prospecciones.map((p) => {
+        {prospeccionesFiltradas.map((p) => {
+
           const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
           const ultimo = tieneSeguimientos ? p.seguimientos[0] : null;
           const siguienteSeguimiento = p.seguimientos
-          ?.filter((s) => s.estado === "pendiente")
-          .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
-          
+            ?.filter((s) => s.estado === "pendiente")
+            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+
           return (
             <div className="seguimiento-card" key={p.id_venta}>
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
+              <p><strong>Vendedora:</strong>{" "}
+                {p.prospecto?.vendedora_prospecto
+                  ? `${p.prospecto.vendedora_prospecto.nombre}${p.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+                  : "Sin asignar"}
+              </p>
+
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
               <p><strong>Estado del Prospecto:</strong> {capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</p>
               <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
@@ -355,6 +472,12 @@ const SeguimientosAdmin = () => {
 
           );
         })}
+        {!loading && prospeccionesFiltradas.length === 0 && (
+          <p style={{ textAlign: "center", fontWeight: "bold" }}>
+            No hay seguimientos para mostrar.
+          </p>
+        )}
+
       </div>
       {/* 🟩 Modal para editar objetivo */}
       {modalEditar && (

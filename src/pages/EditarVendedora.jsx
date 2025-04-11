@@ -64,17 +64,20 @@ const EditarVendedora = () => {
 
   const toggleEstado = async () => {
     try {
-      const nuevoEstado = estado === 1 ? 0 : 1; 
+      const nuevoEstado = estado === 1 ? 0 : 1;
       const token = localStorage.getItem("token");
-  
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ estado: nuevoEstado }), // Asegurar que estado es INT
-      });
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}/inactivar`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ estado: nuevoEstado }), 
+        }
+      );
   
       if (!res.ok) {
         const errorData = await res.json();
@@ -88,6 +91,7 @@ const EditarVendedora = () => {
       setError(err.message);
     }
   };
+  
   
 
   if (!vendedora) return <p>Cargando vendedora...</p>;

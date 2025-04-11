@@ -50,7 +50,14 @@ const VerSeguimientos = () => {
 
       {venta && (
         <div className="info-venta">
+          
           <h2>📌 Prospección: {venta.prospecto?.nombre || "Sin Prospecto"}</h2>
+          <p><strong>Vendedora:</strong>{" "}
+  {venta.prospecto?.vendedora_prospecto
+    ? `${venta.prospecto.vendedora_prospecto.nombre}${venta.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+    : "Sin asignar"}
+</p>
+
           <p><strong>Contacto:</strong> {venta.prospecto?.nombre_contacto || "No registrado"}</p>
           <p><strong>Correo:</strong> {venta.prospecto?.correo || "No registrado"}</p>
           <p><strong>Objetivo:</strong> {venta.objetivo}</p>
@@ -127,7 +134,7 @@ const VerSeguimientos = () => {
 
 
 
-      <button className="btn-volver" onClick={() => navigate(-2)}>⬅️ Volver</button>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
     </div>
   );
 };

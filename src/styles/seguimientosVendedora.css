@@ -114,6 +114,14 @@
 .btn-ver-seguimientos:hover {
   background: #0056b3;
 }
+.input-busqueda-nombre {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 200px;
+  margin-left: 10px;
+}
+
 
 /* ❗ Error */
 .error {

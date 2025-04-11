@@ -81,12 +81,12 @@ const RegistrarResultado = () => {
 
   const guardarResultado = async () => {
     const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
-const nombreEstado = estadoSeleccionado?.nombre;
+    const nombreEstado = estadoSeleccionado?.nombre;
 
-if (!nombreEstado) {
-  alert("Selecciona un estado válido.");
-  return;
-}
+    if (!nombreEstado) {
+      alert("Selecciona un estado válido.");
+      return;
+    }
 
     const estadosFinales = ["interesado", "no_interesado", "ganado", "perdido"];
 
@@ -119,7 +119,7 @@ if (!nombreEstado) {
       alert("Por favor, completa todos los campos obligatorios del seguimiento.");
       return;
     }
-
+  
     if (tipoSiguienteTexto === "email" && !prospecto.correo && !formDataExtra.correo) {
       alert("El prospecto necesita un correo para agendar un Email.");
       return;
@@ -132,10 +132,16 @@ if (!nombreEstado) {
       alert("El prospecto necesita una dirección para agendar una visita.");
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
-
+  
+      // Validar que la vendedora no esté inactiva
+      if (prospecto.vendedora && prospecto.vendedora.estado === 0) {
+        alert("Esta vendedora está inactiva. No puedes guardar el seguimiento.");
+        return;
+      }
+  
       if (Object.keys(formDataExtra).length > 0) {
         const resActualizar = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.id_prospecto}`, {
           method: "PUT",
@@ -147,26 +153,8 @@ if (!nombreEstado) {
         });
         if (!resActualizar.ok) throw new Error("Error actualizando datos del prospecto");
       }
-
-      const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
-const nombreEstado = estadoSeleccionado?.nombre;
-
-if (!nombreEstado) {
-  alert("Estado del prospecto no válido.");
-  return;
-}
-
-const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
-  method: "PUT",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
-  },
-  body: JSON.stringify({ resultado, nota, estado: nombreEstado }),
-});
-
-      if (!resResultado.ok) throw new Error("Error guardando resultado");
-
+  
+      // Agendar el nuevo seguimiento primero
       const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
         headers: {
@@ -182,8 +170,26 @@ const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimient
           nota: notaSiguiente,
         }),
       });
-      if (!resSeguimiento.ok) throw new Error("Error agendando siguiente seguimiento");
-
+      if (!resSeguimiento.ok) {
+        const errorData = await resSeguimiento.json();
+        throw new Error(errorData.message || "Error agendando siguiente seguimiento");
+      }
+  
+      // Si todo fue bien, ahora sí guardar el resultado del seguimiento actual
+      const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
+      const nombreEstado = estadoSeleccionado?.nombre;
+  
+      const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ resultado, nota, estado: nombreEstado }),
+      });
+  
+      if (!resResultado.ok) throw new Error("Error guardando resultado");
+  
       alert("Resultado y seguimiento agendado correctamente");
       setMostrarModal(false);
       navigate(-1);
@@ -191,9 +197,8 @@ const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimient
       setError(err.message);
     }
   };
-
+  
   if (loading) return <p>Cargando seguimiento...</p>;
-  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="resultado-container">
@@ -239,6 +244,11 @@ const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimient
         <div className="modal-backdrop">
           <div className="modal-content">
             <h3>Agendar siguiente seguimiento</h3>
+            {error && (
+  <p className="error-modal">{error}</p>
+)}
+
+
             <input
               type="datetime-local"
               value={fechaSiguiente}
@@ -304,7 +314,15 @@ const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimient
             )}
             <div className="modal-buttons">
               <button className="btn-mini" onClick={agendarDesdeModal}>Agendar</button>
-              <button className="btn-mini red" onClick={() => setMostrarModal(false)}>Cancelar</button>
+              <button
+  className="btn-mini red"
+  onClick={() => {
+    setMostrarModal(false);
+    setError(""); // limpiar error cuando cierra
+  }}
+>
+  Cancelar
+</button>
             </div>
           </div>
         </div>
