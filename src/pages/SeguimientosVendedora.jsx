@@ -18,6 +18,8 @@ const SeguimientosVendedora = () => {
   const [busquedaNombre, setBusquedaNombre] = useState("");
 const [filtrosInicializados, setFiltrosInicializados] = useState(false);
 
+const [filtroSeguimiento, setFiltroSeguimiento] = useState("todos");
+
 
 useEffect(() => {
   const filtrosGuardados = localStorage.getItem("filtros_seguimientos_vendedora");
@@ -26,6 +28,8 @@ useEffect(() => {
       const filtros = JSON.parse(filtrosGuardados);
       if (filtros.filtroEstado) setFiltroEstado(filtros.filtroEstado);
       if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
+      if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
+
     } catch (e) {
       console.error("Error al leer filtros guardados:", e);
     }
@@ -35,16 +39,19 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
+
   if (!filtrosInicializados) return;
 
   const filtros = {
     filtroEstado,
     busquedaNombre,
+    filtroSeguimiento,
   };
+  
   localStorage.setItem("filtros_seguimientos_vendedora", JSON.stringify(filtros));
   buscarSeguimientos(); 
   
-}, [filtroEstado, busquedaNombre, filtrosInicializados]);
+}, [filtroEstado, busquedaNombre,filtroSeguimiento, filtrosInicializados]);
 
   const capitalizar = (texto) => {
     if (!texto) return "";
@@ -142,10 +149,41 @@ useEffect(() => {
       alert("Error: " + err.message);
     }
   };
-
-  const prospeccionesFiltradas = prospecciones.filter((p) =>
-    p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
-  );
+  const clasificarSeguimiento = (venta) => {
+    const seguimientos = venta.seguimientos || [];
+    if (seguimientos.length === 0) return "sin_seguimiento";
+  
+    const ultimo = seguimientos[0];
+  
+    if (ultimo.estado === "realizado") return "realizado";
+  
+    const hoy = new Date();
+    const fecha = new Date(ultimo.fecha_programada);
+    const diffDias = (fecha - hoy) / (1000 * 60 * 60 * 24);
+  
+    if (fecha < hoy) return "vencido";
+    if (diffDias >= 0 && diffDias <= 7) return "proximo";
+    return "futuro";
+  };
+  
+  const etiquetaSeguimiento = (venta) => {
+    const estado = clasificarSeguimiento(venta);
+    const clases = `estado-tag ${estado}`;
+  
+    if (estado === "vencido") return <span className={clases}>🔴 Vencido</span>;
+    if (estado === "proximo") return <span className={clases}>🟡 Próximo</span>;
+    if (estado === "futuro") return <span className={clases}>🔵 Futuro</span>;
+    if (estado === "realizado") return <span className={clases}>✅ Realizado</span>;
+    return <span className={clases}>⚪ Sin seguimiento</span>;
+  };
+  
+  const prospeccionesFiltradas = prospecciones.filter((p) => {
+    const coincideNombre = p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase());
+    const clasificacion = clasificarSeguimiento(p);
+    const coincideSeguimiento = filtroSeguimiento === "todos" || filtroSeguimiento === clasificacion;
+  
+    return coincideNombre && coincideSeguimiento;
+  });
   
   return (
     <div className="seguimientos-container">
@@ -167,6 +205,18 @@ useEffect(() => {
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
         </select>
+        <label>Filtrar por seguimiento:</label>
+<select
+  value={filtroSeguimiento}
+  onChange={(e) => setFiltroSeguimiento(e.target.value)}
+>
+  <option value="todos">Todos</option>
+  <option value="vencido">Vencidos</option>
+  <option value="proximo">Próximos</option>
+  <option value="futuro">Futuros</option>
+  <option value="realizado">Realizados</option>
+</select>
+
         <input
   type="text"
   placeholder="Buscar por nombre de prospecto..."
@@ -192,6 +242,8 @@ useEffect(() => {
               <th>Último Tipo</th>
               <th>Último Resultado</th>
               <th>Última Nota</th>
+              <th>Seguimiento</th>
+
               <th>Acción</th>
             </tr>
           </thead>
@@ -216,6 +268,8 @@ useEffect(() => {
                   <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
                   <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                  <td>{etiquetaSeguimiento(p)}</td>
+
                   <td>
                     {!tieneSeguimientos ? (
                       <button
@@ -279,6 +333,8 @@ useEffect(() => {
               <p><strong>Último Tipo:</strong> {ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Último Resultado:</strong> {ultimoSeguimiento?.resultado || "Pendiente"}</p>
               <p><strong>Última Nota:</strong> {ultimoSeguimiento?.nota || "Sin nota"}</p>
+              <p><strong>Seguimiento:</strong> {etiquetaSeguimiento(p)}</p>
+
               <div className="acciones">
                 {!tieneSeguimientos ? (
                   <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>📅 Agendar Primer Seguimiento</button>

@@ -21,6 +21,7 @@ const SeguimientosAdmin = () => {
   const [busquedaNombre, setBusquedaNombre] = useState("");
   const [filtrosInicializados, setFiltrosInicializados] = useState(false);
 
+  const [filtroSeguimiento, setFiltroSeguimiento] = useState("todos");
 
   useEffect(() => {
     const filtrosGuardados = localStorage.getItem("filtros_seguimientos_admin");
@@ -52,6 +53,7 @@ const SeguimientosAdmin = () => {
       }
       buscarSeguimientos("", filtros.filtroEstado || "todas");
     });
+    if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
   }, []);
 
   useEffect(() => {
@@ -61,6 +63,7 @@ const SeguimientosAdmin = () => {
       vendedoraSeleccionada,
       filtroEstado,
       busquedaNombre,
+      filtroSeguimiento,
     };
     localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
   }, [vendedoraSeleccionada, filtroEstado, busquedaNombre, filtrosInicializados]);
@@ -222,14 +225,57 @@ const SeguimientosAdmin = () => {
     }
   };
 
-  const prospeccionesFiltradas = prospecciones.filter((p) =>
-    p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
-  );
+  
 
-
+  const clasificarSeguimiento = (venta) => {
+    const seguimientos = venta.seguimientos || [];
+    if (seguimientos.length === 0) return "sin_seguimiento";
+  
+    const ultimo = seguimientos[0];
+  
+    if (ultimo.estado === "realizado") return "realizado";
+  
+    const hoy = new Date();
+    const fecha = new Date(ultimo.fecha_programada);
+  
+    const diffDias = (fecha - hoy) / (1000 * 60 * 60 * 24);
+  
+    if (fecha < hoy) return "vencido";
+    if (diffDias >= 0 && diffDias <= 7) return "proximo";
+    return "futuro";
+  };
+  
+  const etiquetaSeguimiento = (venta) => {
+    const clasificacion = clasificarSeguimiento(venta);
+  
+    switch (clasificacion) {
+      case "vencido":
+        return "🔴 Vencido";
+      case "proximo":
+        return "🟡 Próximo";
+      case "futuro":
+        return "🟢 Futuro";
+      case "realizado":
+        return "✅ Realizado";
+      case "sin_seguimiento":
+      default:
+        return "⚪ Sin seguimiento";
+    }
+  };
+  
+  const prospeccionesFiltradas = prospecciones.filter((p) => {
+    const coincideNombre = p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase());
+  
+    const clasificacion = clasificarSeguimiento(p);
+    const coincideSeguimiento = filtroSeguimiento === "todos" || filtroSeguimiento === clasificacion;
+  
+    return coincideNombre && coincideSeguimiento;
+  });
+  
   const limpiarFiltros = () => {
     setVendedoraSeleccionada(null);
     setFiltroEstado("todas");
+    setFiltroSeguimiento("todos");
     setBusquedaNombre("");
     localStorage.removeItem("filtros_seguimientos_admin");
     buscarSeguimientos("", "todas");
@@ -279,14 +325,33 @@ const SeguimientosAdmin = () => {
           }}
 
         >
-
-
-
-
           <option value="todas">Todas</option>
           <option value="abiertas">Abiertas</option>
           <option value="cerradas">Cerradas</option>
         </select>
+
+        <label>Filtrar por seguimiento:</label>
+<select
+  value={filtroSeguimiento}
+  onChange={(e) => {
+    setFiltroSeguimiento(e.target.value);
+    const filtrosActualizados = {
+      vendedoraSeleccionada,
+      filtroEstado,
+      busquedaNombre,
+      filtroSeguimiento: e.target.value,
+    };
+    localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
+  }}
+>
+  <option value="todos">Todos</option>
+  <option value="sin_seguimiento">Sin seguimiento</option>
+  <option value="vencido">Vencidos</option>
+  <option value="proximo">Próximos</option>
+  <option value="futuro">Futuros</option>
+  <option value="realizado">Realizados</option>
+</select>
+
 
         <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
           Limpiar Filtros
@@ -311,6 +376,8 @@ const SeguimientosAdmin = () => {
             <th>Último Tipo</th>
             <th>Último Resultado</th>
             <th>Última Nota</th>
+            <th>Estado Último Seguimiento</th>
+
             <th>Acción</th>
           </tr>
         </thead>
@@ -349,6 +416,8 @@ const SeguimientosAdmin = () => {
                   <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
                   <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                  <td>{etiquetaSeguimiento(p)}</td>
+
                   <td>
                     {!tieneSeguimientos ? (
                       <button
@@ -425,6 +494,7 @@ const SeguimientosAdmin = () => {
               <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Resultado:</strong> {ultimo?.resultado || "Pendiente"}</p>
               <p><strong>Nota:</strong> {ultimo?.nota || "Sin nota"}</p>
+              <p><strong>Estado Último Seguimiento:</strong> {etiquetaSeguimiento(p)}</p>
 
               <div className="acciones">
                 {!tieneSeguimientos ? (
