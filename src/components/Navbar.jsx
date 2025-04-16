@@ -1,5 +1,5 @@
-import { logout } from "../utils/auth";
 import { useNavigate, useLocation } from "react-router-dom";
+import { logout, getNombreUsuario } from "../utils/auth";
 import PropTypes from "prop-types";
 import "../styles/navbar.css";
 
@@ -9,6 +9,7 @@ const Navbar = ({ toggleSidebar }) => {
 
   const rutasSinFlecha = ["/admin", "/vendedora"];
   const mostrarFlecha = !rutasSinFlecha.includes(location.pathname);
+  const nombreUsuario = getNombreUsuario();
 
   return (
     <nav className="navbar">
@@ -29,6 +30,7 @@ const Navbar = ({ toggleSidebar }) => {
       <h2 className="navbar-title">Santos Distribuidores</h2>
 
       <div className="navbar-right">
+      <span className="nombre-usuario">👤Bienvenida, {nombreUsuario}</span>
         <button className="logout-btn" onClick={logout}>
           Cerrar Sesión
         </button>

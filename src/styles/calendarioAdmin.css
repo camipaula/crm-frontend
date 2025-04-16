@@ -18,6 +18,11 @@
   margin-bottom: 15px;
 }
 
+.btn-registrar {
+  background: #ffc107 !important;
+  color: black !important;
+}
+
 /* 📅 Botones */
 .btn-agendar {
   background: #007bffbb !important;

@@ -56,6 +56,13 @@
   padding-right: 16px; /* 👈 esto separa todo su contenido del borde */
 }
 
+.nombre-usuario {
+  margin-right: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
 
 /* 🔐 Botón logout */
 .navbar-right .logout-btn {

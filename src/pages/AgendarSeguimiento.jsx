@@ -61,9 +61,19 @@ const AgendarSeguimiento = () => {
 
   const agendar = async (e) => {
     e.preventDefault();
+    
     try {
       const token = localStorage.getItem("token");
-
+  
+      const fechaSeleccionada = new Date(fecha_programada);
+      const hoy = new Date();
+      const unAnioDespues = new Date();
+      unAnioDespues.setFullYear(hoy.getFullYear() + 1);
+  
+      if (fechaSeleccionada > unAnioDespues) {
+        setError("La fecha programada es muy lejana.");
+        return;
+      }
 
       const cedulaVendedoraAsignada = prospecto?.cedula_vendedora;
       if (!cedulaVendedoraAsignada) throw new Error("No se encontró vendedora asignada al prospecto");
@@ -134,12 +144,14 @@ const AgendarSeguimiento = () => {
       )}
 
       <form onSubmit={agendar}>
-        <input
-          type="datetime-local"
-          value={fecha_programada}
-          onChange={(e) => setFechaProgramada(e.target.value)}
-          required
-        />
+      <input
+  type="datetime-local"
+  value={fecha_programada}
+  onChange={(e) => setFechaProgramada(e.target.value)}
+  required
+  max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
+/>
+
 
         <Select
           options={tiposSeguimiento}

@@ -17,47 +17,118 @@ const ProspectosVendedora = () => {
   const [fechaFin, setFechaFin] = useState("");
   const [sectorFiltro, setSectorFiltro] = useState(null);
   const [estados, setEstados] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [ciudades, setCiudades] = useState([]);
+  const [provincias, setProvincias] = useState([]);
+  const [categoriaFiltro, setCategoriaFiltro] = useState(null);
+  const [ciudadFiltro, setCiudadFiltro] = useState(null);
+  const [provinciaFiltro, setProvinciaFiltro] = useState(null);
 
   const [busquedaNombre, setBusquedaNombre] = useState("");
-const [filtrosInicializados, setFiltrosInicializados] = useState(false);
+  const [filtrosInicializados, setFiltrosInicializados] = useState(false);
 
 
   useEffect(() => {
     const cedula = obtenerCedulaDesdeToken();
     setCedulaVendedora(cedula);
-    obtenerSectores();
-    obtenerEstados();
     establecerFechasUltimos3Meses();
-    const filtrosGuardados = localStorage.getItem("filtros_prospectos_vendedora");
-if (filtrosGuardados) {
-  try {
-    const filtros = JSON.parse(filtrosGuardados);
-    if (filtros.estadoFiltro) setEstadoFiltro(filtros.estadoFiltro);
-    if (filtros.fechaInicio) setFechaInicio(filtros.fechaInicio);
-    if (filtros.fechaFin) setFechaFin(filtros.fechaFin);
-    if (filtros.sectorFiltro) setSectorFiltro(filtros.sectorFiltro);
-    if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
-  } catch (e) {
-    console.error("Error al cargar filtros guardados", e);
-  }
-}
-setFiltrosInicializados(true);
 
+    const filtrosGuardados = localStorage.getItem("filtros_prospectos_vendedora");
+    const filtrosParsed = filtrosGuardados ? JSON.parse(filtrosGuardados) : null;
+
+    // Cargar opciones (ciudades, provincias, etc.)
+    const cargarFiltros = async () => {
+      await Promise.all([
+        obtenerSectores(),
+        obtenerEstados(),
+        obtenerCategorias(),
+        obtenerCiudades(),
+        obtenerProvincias()
+      ]);
+
+      // Solo después de que se cargan las opciones
+      if (filtrosParsed) {
+        if (filtrosParsed.estadoFiltro) setEstadoFiltro(filtrosParsed.estadoFiltro);
+        if (filtrosParsed.fechaInicio) setFechaInicio(filtrosParsed.fechaInicio);
+        if (filtrosParsed.fechaFin) setFechaFin(filtrosParsed.fechaFin);
+        if (filtrosParsed.sectorFiltro) setSectorFiltro(filtrosParsed.sectorFiltro);
+        if (filtrosParsed.busquedaNombre) setBusquedaNombre(filtrosParsed.busquedaNombre);
+        if (filtrosParsed.ciudadFiltro) setCiudadFiltro(filtrosParsed.ciudadFiltro);
+        if (filtrosParsed.provinciaFiltro) setProvinciaFiltro(filtrosParsed.provinciaFiltro);
+        if (filtrosParsed.categoriaFiltro) setCategoriaFiltro(filtrosParsed.categoriaFiltro);
+      }
+
+      setFiltrosInicializados(true);
+    };
+
+    cargarFiltros();
   }, []);
+
 
   useEffect(() => {
     if (!filtrosInicializados) return;
-  
+
     const filtros = {
       estadoFiltro,
       fechaInicio,
       fechaFin,
       sectorFiltro,
       busquedaNombre,
+      ciudadFiltro,
+      provinciaFiltro,
+      categoriaFiltro
     };
+
     localStorage.setItem("filtros_prospectos_vendedora", JSON.stringify(filtros));
-  }, [estadoFiltro, fechaInicio, fechaFin, sectorFiltro, busquedaNombre, filtrosInicializados]);
-  
+  }, [
+    estadoFiltro,
+    fechaInicio,
+    fechaFin,
+    sectorFiltro,
+    busquedaNombre,
+    ciudadFiltro,        
+    provinciaFiltro,     
+    categoriaFiltro,     
+    filtrosInicializados
+  ]);
+
+  const obtenerCategorias = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`);
+      if (!res.ok) throw new Error("Error cargando categorías");
+      const data = await res.json();
+      setCategorias(data.map((c) => ({ value: c.id_categoria, label: c.nombre })));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const obtenerCiudades = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/ciudades`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setCiudades(data.map((c) => ({ value: c, label: c })));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const obtenerProvincias = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/provincias`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setProvincias(data.map((p) => ({ value: p, label: p })));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
 
   const obtenerEstados = async () => {
     try {
@@ -67,12 +138,12 @@ setFiltrosInicializados(true);
           Authorization: `Bearer ${token}`,
         },
       });
-            const data = await res.json();
-  
+      const data = await res.json();
+
       if (!Array.isArray(data)) {
         throw new Error("La respuesta no es una lista de estados");
       }
-  
+
       const opciones = data.map((e) => ({
         value: e.id_estado,
         label: e.nombre.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
@@ -83,8 +154,8 @@ setFiltrosInicializados(true);
       setError("No se pudieron cargar los estados");
     }
   };
-  
-  
+
+
 
   const establecerFechasUltimos3Meses = () => {
     const fechaActual = new Date();
@@ -98,12 +169,31 @@ setFiltrosInicializados(true);
     setFechaFin(fechaFin);
   };
 
-  useEffect(() => {
-    if (cedulaVendedora && fechaInicio && fechaFin) {
-      buscarProspectos();
-    }
-  }, [cedulaVendedora, estadoFiltro, fechaInicio, fechaFin, sectorFiltro]);
 
+
+  useEffect(() => {
+    if (
+      !filtrosInicializados ||
+      !cedulaVendedora ||
+      !fechaInicio ||
+      !fechaFin
+    ) return;
+  
+    buscarProspectos();
+  }, [
+    filtrosInicializados,
+    cedulaVendedora,
+    estadoFiltro,
+    fechaInicio,
+    fechaFin,
+    sectorFiltro,
+    categoriaFiltro,
+    ciudadFiltro,
+    provinciaFiltro,
+    busquedaNombre
+  ]);
+  
+  
   const obtenerSectores = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -134,6 +224,9 @@ setFiltrosInicializados(true);
       if (fechaInicio) url += `&fechaInicio=${fechaInicio}`;
       if (fechaFin) url += `&fechaFin=${fechaFin}`;
       if (sectorFiltro) url += `&sector=${sectorFiltro.value}`;
+      if (categoriaFiltro) url += `&id_categoria=${categoriaFiltro.value}`;
+      if (ciudadFiltro) url += `&ciudad=${encodeURIComponent(ciudadFiltro)}`;
+      if (provinciaFiltro) url += `&provincia=${encodeURIComponent(provinciaFiltro)}`;
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -141,9 +234,9 @@ setFiltrosInicializados(true);
 
       if (!res.ok) throw new Error("Error obteniendo prospectos");
       const data = await res.json();
-setProspectos(
-  data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-);
+      setProspectos(
+        data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      );
 
     } catch (err) {
       setError(err.message);
@@ -155,7 +248,21 @@ setProspectos(
   const prospectosFiltrados = prospectos.filter((p) =>
     p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
-  
+
+  const limpiarFiltros = () => {
+    setEstadoFiltro([]);
+    setFechaInicio("");
+    setFechaFin("");
+    setSectorFiltro(null);
+    setCategoriaFiltro(null);
+    setCiudadFiltro(null);
+    setProvinciaFiltro(null);
+    setBusquedaNombre("");
+    localStorage.removeItem("filtros_prospectos_vendedora");
+    buscarProspectos();
+  };
+
+
 
   return (
     <div className="vendedora-prospectos-page">
@@ -166,54 +273,112 @@ setProspectos(
         ➕ Crear Prospecto
       </button>
 
-      <div className="vendedora-filtros">
-        <Select
-          options={estados}
-          isMulti
-          placeholder="Seleccionar Estado(s)"
-          className="select-estado"
-          onChange={setEstadoFiltro}
-        />
+      <div className="admin-prospectos-filtros">
+        <div className="filtro-grupo">
+          <label>Estado(s)</label>
+          <Select
+            options={estados}
+            isMulti
+            placeholder="Seleccionar Estado(s)"
+            className="select-estado"
+            value={estadoFiltro}
+            onChange={setEstadoFiltro}
+          />
+        </div>
 
-        <input
-          type="date"
-          name="fechaInicio"
-          onChange={(e) => setFechaInicio(e.target.value)}
-          value={fechaInicio}
-        />
-        <input
-          type="date"
-          name="fechaFin"
-          onChange={(e) => setFechaFin(e.target.value)}
-          value={fechaFin}
-        />
-        <Select
-          options={sectores}
-          placeholder="Seleccionar Sector"
-          className="select-sector"
-          onChange={setSectorFiltro}
-          isClearable
-        />
+        <div className="filtro-grupo">
+          <label>Categoría</label>
+          <Select
+            options={categorias}
+            placeholder="Seleccionar Categoría"
 
-<input
-  type="text"
-  placeholder="Buscar por nombre..."
-  value={busquedaNombre}
-  onChange={(e) => setBusquedaNombre(e.target.value)}
-  className="input-busqueda-nombre"
-/>
+            className="select-categoria"
+            value={categoriaFiltro}
+            onChange={setCategoriaFiltro}
+            isClearable
+          />
+        </div>
 
-        <button onClick={buscarProspectos} disabled={loading}>
-          {loading ? "Cargando..." : "Buscar"}
-        </button>
+        <div className="filtro-grupo">
+          <label>Sector</label>
+          <Select
+            options={sectores}
+            placeholder="Seleccionar Sector"
+            className="select-sector"
+            value={sectorFiltro}
+            onChange={setSectorFiltro}
+            isClearable
+          />
+        </div>
+
+        <div className="filtro-grupo">
+          <label>Ciudad</label>
+          <Select
+            options={ciudades}
+            placeholder="Seleccionar Ciudad"
+            className="select-ciudad"
+            value={ciudades.find((c) => c.value === ciudadFiltro) || null}
+            onChange={(op) => setCiudadFiltro(op ? op.value : null)}
+            isClearable
+          />
+        </div>
+
+
+        <div className="filtro-grupo">
+          <label>Provincia</label>
+          <Select
+            options={provincias}
+            placeholder="Seleccionar Provincia"
+            className="select-provincia"
+            value={provincias.find((p) => p.value === provinciaFiltro)}
+            onChange={(op) => setProvinciaFiltro(op ? op.value : null)}
+            isClearable
+          />
+        </div>
+
+        <div className="filtro-grupo">
+          <label>Nombre</label>
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busquedaNombre}
+            onChange={(e) => setBusquedaNombre(e.target.value)}
+            className="input-busqueda-nombre"
+          />
+        </div>
+
+        <div className="filtro-grupo">
+          <label>Fecha Inicio</label>
+          <input
+            type="date"
+            value={fechaInicio}
+            onChange={(e) => setFechaInicio(e.target.value)}
+          />
+        </div>
+
+        <div className="filtro-grupo">
+          <label>Fecha Fin</label>
+          <input
+            type="date"
+            value={fechaFin}
+            onChange={(e) => setFechaFin(e.target.value)}
+          />
+        </div>
+
       </div>
 
+      <button onClick={limpiarFiltros}>🧹 Limpiar Filtros</button>
+
+      <button onClick={buscarProspectos} disabled={loading}>
+        {loading ? "Cargando..." : "Buscar"}
+      </button>
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}
 
       <table className="vendedora-prospectos-table">
         <thead>
           <tr>
+            <th>#</th>
             <th>Prospecto</th>
             <th>Estado</th>
             <th>Próximo Contacto</th>
@@ -222,7 +387,7 @@ setProspectos(
           </tr>
         </thead>
         <tbody>
-          {prospectosFiltrados.map((p) => {
+          {prospectosFiltrados.map((p, index) => {
             const ultimaNota = p.ventas
               ?.flatMap((v) => v.seguimientos)
               .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
@@ -240,6 +405,8 @@ setProspectos(
 
             return (
               <tr key={p.id_prospecto}>
+                <td>{index + 1}</td>
+
                 <td>{p.nombre}</td>
                 <td>{p.estado_prospecto?.nombre || "Sin estado"}</td>
                 <td>{proximoContactoFormateado}</td>
@@ -266,7 +433,7 @@ setProspectos(
       </table>
 
       <div className="vendedora-cards-mobile">
-        {prospectosFiltrados.map((p) => {
+        {prospectosFiltrados.map((p, index) => {
           const ultimaNota = p.ventas
             ?.flatMap((v) => v.seguimientos)
             .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
@@ -284,6 +451,8 @@ setProspectos(
 
           return (
             <div className="vendedora-prospecto-card" key={p.id_prospecto}>
+              <p><strong>#</strong> {index + 1}</p>
+
               <h3>{p.nombre}</h3>
               <p><strong>Estado:</strong> {p.estado_prospecto?.nombre || "Sin estado"}</p>
               <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>

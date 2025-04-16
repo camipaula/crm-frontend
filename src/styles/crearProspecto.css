@@ -113,6 +113,7 @@ button[type="submit"]:hover {
   font-weight: bold !important;
 }
 
+
 /* 📌 Animación */
 @keyframes fadeIn {
   from {
@@ -124,6 +125,9 @@ button[type="submit"]:hover {
     transform: translateY(0);
   }
 }
+
+
+
 
 /* 📱 Responsive */
 @media (max-width: 768px) {

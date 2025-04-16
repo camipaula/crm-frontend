@@ -512,6 +512,12 @@ const CalendarioAdmin = () => {
             )}
 
             <div className="modal-actions">
+            <button
+  onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
+  className="btn-registrar"
+>
+  ✍️ Registrar Resultado
+</button>
               {modoEdicion ? (
                 <>
                   <button onClick={() => editarSeguimientoDesdeModal(modalDetalle)}>💾 Guardar</button>

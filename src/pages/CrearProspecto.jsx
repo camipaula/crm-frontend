@@ -170,14 +170,13 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Error al crear prospecto");
 
-        setMensaje("Prospecto creado exitosamente.");
-        setTimeout(() => {
-          navigate(esAdmin ? "/prospectos-admin" : "/prospectos-vendedora");
-        }, 2000);
+        window.alert("✅ Prospecto creado exitosamente.");
+navigate(esAdmin ? "/prospectos-admin" : "/prospectos-vendedora");
+
       } catch (err) {
         setError(err.message);
       } finally {
-        setEnviando(false); // 🔹 termina el envío
+        setEnviando(false); // 
       }
     };
 

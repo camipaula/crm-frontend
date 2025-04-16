@@ -268,64 +268,6 @@ const CalendarioVendedora = () => {
     }
   };
 
-  const editarSeguimientoDesdeModal = async (detalle) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const tipo = detalle.tipoSeleccionado || tiposSeguimiento.find(t => t.label === detalle.tipo);
-      const id_tipo = tipo?.value;
-
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${detalle.id}/editar`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fecha_programada: detalle.fecha,
-          id_tipo,
-          motivo: detalle.motivo,
-        }),
-      });
-
-      if (!res.ok) throw new Error("No se pudo editar el seguimiento");
-
-      alert("Seguimiento actualizado correctamente");
-      setModalDetalle(null);
-      setModoEdicion(false);
-      cargarAgenda();
-    } catch (err) {
-      console.error("Error al editar seguimiento:", err);
-      alert("Ocurrió un error al editar el seguimiento");
-    }
-  };
-
-  const eliminarSeguimientoDesdeModal = async (id) => {
-    const confirmar = confirm("¿Estás seguro de que deseas eliminar esta cita?");
-    if (!confirmar) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("No se pudo eliminar el seguimiento");
-
-      alert("Seguimiento eliminado correctamente");
-      setModalDetalle(null);
-      setModoEdicion(false);
-      cargarAgenda();
-    } catch (err) {
-      console.error("Error al eliminar seguimiento:", err);
-      alert("Ocurrió un error al eliminar el seguimiento");
-    }
-  };
-
-
-
-
   return (
     <div className="calendario-container">
       <h2>📅 Mi Agenda</h2>
@@ -517,16 +459,20 @@ const CalendarioVendedora = () => {
             )}
 
             <div className="modal-actions">
-              {modoEdicion ? (
-                <>
-                  <button onClick={() => editarSeguimientoDesdeModal(modalDetalle)}>💾 Guardar</button>
-                  <button onClick={() => setModoEdicion(false)}>Cancelar</button>
-                </>
-              ) : (
-                <button onClick={() => setModoEdicion(true)}>✏️ Editar</button>
-              )}
-              <button onClick={() => eliminarSeguimientoDesdeModal(modalDetalle.id)}>🗑️ Eliminar</button>
-              <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
+            <button
+  onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
+  className="btn-registrar"
+>
+  ✍️ Registrar Resultado
+</button>
+
+<button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
+
+<p className="info-admin">⚠️ Solo la administradora puede editar o eliminar una cita. Solicítalo directamente.</p>
+  
+  <button disabled className="btn-disabled">✏️ Editar </button>
+  <button disabled className="btn-disabled">🗑️ Eliminar</button>
+
             </div>
           </div>
         </div>

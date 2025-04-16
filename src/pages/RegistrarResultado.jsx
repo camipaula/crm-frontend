@@ -115,6 +115,18 @@ const RegistrarResultado = () => {
   };
 
   const agendarDesdeModal = async () => {
+
+    const fechaSeleccionada = new Date(fechaSiguiente);
+const hoy = new Date();
+const unAnioDespues = new Date();
+unAnioDespues.setFullYear(hoy.getFullYear() + 1);
+
+if (fechaSeleccionada > unAnioDespues) {
+  alert("La fecha programada no puede ser mayor a un año desde hoy.");
+  return;
+}
+
+
     if (!fechaSiguiente || !tipoSiguiente || !motivoSiguiente.trim()) {
       alert("Por favor, completa todos los campos obligatorios del seguimiento.");
       return;
@@ -249,12 +261,15 @@ const RegistrarResultado = () => {
 )}
 
 
-            <input
-              type="datetime-local"
-              value={fechaSiguiente}
-              onChange={(e) => setFechaSiguiente(e.target.value)}
-              required
-            />
+<input
+  type="datetime-local"
+  value={fechaSiguiente}
+  onChange={(e) => setFechaSiguiente(e.target.value)}
+  max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
+  required
+/>
+
+
             <select
               value={tipoSiguiente || ""}
               onChange={(e) => {

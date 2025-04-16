@@ -52,6 +52,19 @@ export const obtenerCedulaDesdeToken = () => {
   }
 };
 
+export const getNombreUsuario = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode(token);
+    return decoded.nombre;
+  } catch (error) {
+    console.error("Error al decodificar token:", error);
+    return null;
+  }
+};
+
 // Cierra sesión eliminando los datos del usuario y redirigiendo al login
 export const logout = () => {
   localStorage.removeItem("token");
@@ -62,6 +75,7 @@ export const logout = () => {
       localStorage.removeItem(key);
     }
   });
+
 
   window.location.href = "/"; // Redirigir al login
 };

@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { getRol } from "../utils/auth";
 import "../styles/seguimientosVendedora.css";
 import React from "react";
 
 const SeguimientosProspecto = () => {
+  const rolUsuario = getRol();
+
   const { id_prospecto } = useParams();
   const navigate = useNavigate();
   const [prospecciones, setProspecciones] = useState([]);
@@ -88,18 +91,29 @@ const SeguimientosProspecto = () => {
   };
 
   const abrirModalEliminar = (id_venta) => {
+    if (rolUsuario !== "admin") {
+      alert("❌ No tienes permiso para eliminar esta venta.");
+      return;
+    }
     setIdVentaSeleccionada(id_venta);
     setModalEliminar(true);
   };
-
+  
   const confirmarEliminar = async () => {
+    const rolUsuario = getRol();
+  
+    if (rolUsuario !== "admin") {
+      alert("No tienes permiso para eliminar esta venta. Contacta a la administradora.");
+      return;
+    }
+  
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (!res.ok) throw new Error("Error al eliminar venta");
       alert("Venta eliminada correctamente");
       setModalEliminar(false);
@@ -109,6 +123,7 @@ const SeguimientosProspecto = () => {
       alert("Error: " + err.message);
     }
   };
+  
 
 
   return (
@@ -169,7 +184,9 @@ const SeguimientosProspecto = () => {
                       📜 Ver Seguimientos
                     </button>
                     <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                    <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                    {rolUsuario === "admin" && (
+  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+)}
                   </td>
                 </tr>
 
@@ -219,7 +236,9 @@ const SeguimientosProspecto = () => {
                   📜 Ver
                 </button>
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                {rolUsuario === "admin" && (
+  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+)}
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
