@@ -262,8 +262,14 @@ useEffect(() => {
                 <tr key={p.id_venta}>
                   <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
                   <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
-                  <td>{capitalizar(p.prospecto?.estado) || "No definido"}</td>
-                  <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>{capitalizar(p.prospecto.estado_prospecto.nombre) || "No definido"}</td>
+                  <td>
+  {p.abierta
+    ? "Abierta"
+    : p.monto_cierre
+    ? `Cerrada ($${p.monto_cierre.toFixed(2)})`
+    : "Cerrada (Sin monto)"}
+</td>
                   <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                   <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
@@ -326,9 +332,16 @@ useEffect(() => {
           return (
             <div key={p.id_venta} className="card-seguimiento">
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
-              <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
-              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado || "No definido"}</p>
-              <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+              <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p> 
+              <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado_prospecto?.nombre || "No definido"}</p>
+              <p>
+  <strong>Estado de la Venta:</strong>{" "}
+  {p.abierta
+    ? "Abierta"
+    : p.monto_cierre
+    ? `Cerrada ($${p.monto_cierre.toFixed(2)})`
+    : "Cerrada (Sin monto)"}
+</p>
               <p><strong>Última Fecha:</strong> {ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Último Tipo:</strong> {ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Último Resultado:</strong> {ultimoSeguimiento?.resultado || "Pendiente"}</p>

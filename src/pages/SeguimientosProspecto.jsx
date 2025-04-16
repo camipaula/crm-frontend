@@ -24,7 +24,7 @@ const SeguimientosProspecto = () => {
     buscarSeguimientos();
   }, [filtroEstado]);
 
-  
+
   const buscarSeguimientos = async () => {
     try {
       setLoading(true);
@@ -98,22 +98,22 @@ const SeguimientosProspecto = () => {
     setIdVentaSeleccionada(id_venta);
     setModalEliminar(true);
   };
-  
+
   const confirmarEliminar = async () => {
     const rolUsuario = getRol();
-  
+
     if (rolUsuario !== "admin") {
       alert("No tienes permiso para eliminar esta venta. Contacta a la administradora.");
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (!res.ok) throw new Error("Error al eliminar venta");
       alert("Venta eliminada correctamente");
       setModalEliminar(false);
@@ -123,7 +123,7 @@ const SeguimientosProspecto = () => {
       alert("Error: " + err.message);
     }
   };
-  
+
 
 
   return (
@@ -152,6 +152,7 @@ const SeguimientosProspecto = () => {
           <tr>
             <th>Objetivo</th>
             <th>Estado de la Venta</th>
+            <th>Monto de Cierre</th>
             <th>Última Fecha</th>
             <th>Último Tipo</th>
             <th>Último Resultado</th>
@@ -172,6 +173,14 @@ const SeguimientosProspecto = () => {
                 <tr key={p.id_venta}>
                   <td>{p.objetivo || "Sin Objetivo"}</td>
                   <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>
+                    {typeof p.monto_cierre === "number"
+                      ? `$${p.monto_cierre.toFixed(2)}`
+                      : p.abierta
+                        ? "—"
+                        : "Sin monto"}
+
+                  </td>
                   <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                   <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento.resultado || "Pendiente"}</td>
@@ -185,14 +194,14 @@ const SeguimientosProspecto = () => {
                     </button>
                     <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
                     {rolUsuario === "admin" && (
-  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-)}
+                      <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                    )}
                   </td>
                 </tr>
 
                 {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
                 <tr className="fila-info-extra">
-                  <td colSpan="7" style={{ fontStyle: "italic", color: "#555", backgroundColor:"#c9edec" }}>
+                  <td colSpan="7" style={{ fontStyle: "italic", color: "#555", backgroundColor: "#c9edec" }}>
                     <strong>Siguiente fecha programada:</strong>{" "}
                     {siguienteSeguimiento
                       ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
@@ -226,6 +235,15 @@ const SeguimientosProspecto = () => {
             <div className="card-seguimiento" key={p.id_venta}>
               <h3>🎯 Objetivo: {p.objetivo || "No definido"}</h3>
               <p><strong>Estado Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+              {!p.abierta && (
+                <p>
+                  <strong>Monto Cierre:</strong>{" "}
+                  {typeof p.monto_cierre === "number"
+                    ? `$${p.monto_cierre.toFixed(2)}`
+                    : "Sin monto"}
+                </p>
+              )}
+
               <p><strong>Fecha:</strong> {s.fecha_programada ? new Date(s.fecha_programada).toLocaleDateString() : "Sin fecha"}</p>
               <p><strong>Tipo:</strong> {s.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Resultado:</strong> {s.resultado || "Pendiente"}</p>
@@ -237,8 +255,8 @@ const SeguimientosProspecto = () => {
                 </button>
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
                 {rolUsuario === "admin" && (
-  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-)}
+                  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                )}
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}

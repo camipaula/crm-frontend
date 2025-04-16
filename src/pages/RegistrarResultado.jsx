@@ -82,30 +82,51 @@ const RegistrarResultado = () => {
   const guardarResultado = async () => {
     const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
     const nombreEstado = estadoSeleccionado?.nombre;
-
+  
     if (!nombreEstado) {
       alert("Selecciona un estado válido.");
       return;
     }
-
+  
     const estadosFinales = ["interesado", "no_interesado", "ganado", "perdido"];
-
     if (!estadosFinales.includes(nombreEstado)) {
       setMostrarModal(true);
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
+  
+      let monto_cierre = null;
+      if (nombreEstado === "ganado") {
+        const monto = prompt("Por favor, ingresa el monto de cierre de la venta:");
+        const montoNumerico = parseFloat(monto);
+        if (!monto || isNaN(montoNumerico) || montoNumerico <= 0) {
+          alert("Debes ingresar un monto válido para cerrar la venta.");
+          return;
+        }
+        monto_cierre = montoNumerico;
+      }
+  
+      const body = {
+        resultado,
+        nota,
+        estado: nombreEstado,
+      };
+  
+      if (monto_cierre !== null) {
+        body.monto_cierre = monto_cierre;
+      }
+  
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ resultado, nota, estado: nombreEstado })
+        body: JSON.stringify(body)
       });
-
+  
       if (!res.ok) throw new Error("Error guardando resultado");
       alert("Resultado guardado correctamente");
       navigate(-1);
@@ -113,25 +134,26 @@ const RegistrarResultado = () => {
       setError(err.message);
     }
   };
+  
 
   const agendarDesdeModal = async () => {
 
     const fechaSeleccionada = new Date(fechaSiguiente);
-const hoy = new Date();
-const unAnioDespues = new Date();
-unAnioDespues.setFullYear(hoy.getFullYear() + 1);
+    const hoy = new Date();
+    const unAnioDespues = new Date();
+    unAnioDespues.setFullYear(hoy.getFullYear() + 1);
 
-if (fechaSeleccionada > unAnioDespues) {
-  alert("La fecha programada no puede ser mayor a un año desde hoy.");
-  return;
-}
+    if (fechaSeleccionada > unAnioDespues) {
+      alert("La fecha programada no puede ser mayor a un año desde hoy.");
+      return;
+    }
 
 
     if (!fechaSiguiente || !tipoSiguiente || !motivoSiguiente.trim()) {
       alert("Por favor, completa todos los campos obligatorios del seguimiento.");
       return;
     }
-  
+
     if (tipoSiguienteTexto === "email" && !prospecto.correo && !formDataExtra.correo) {
       alert("El prospecto necesita un correo para agendar un Email.");
       return;
@@ -144,16 +166,16 @@ if (fechaSeleccionada > unAnioDespues) {
       alert("El prospecto necesita una dirección para agendar una visita.");
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
-  
+
       // Validar que la vendedora no esté inactiva
       if (prospecto.vendedora && prospecto.vendedora.estado === 0) {
         alert("Esta vendedora está inactiva. No puedes guardar el seguimiento.");
         return;
       }
-  
+
       if (Object.keys(formDataExtra).length > 0) {
         const resActualizar = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.id_prospecto}`, {
           method: "PUT",
@@ -165,7 +187,7 @@ if (fechaSeleccionada > unAnioDespues) {
         });
         if (!resActualizar.ok) throw new Error("Error actualizando datos del prospecto");
       }
-  
+
       // Agendar el nuevo seguimiento primero
       const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
@@ -186,11 +208,11 @@ if (fechaSeleccionada > unAnioDespues) {
         const errorData = await resSeguimiento.json();
         throw new Error(errorData.message || "Error agendando siguiente seguimiento");
       }
-  
+
       // Si todo fue bien, ahora sí guardar el resultado del seguimiento actual
       const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
       const nombreEstado = estadoSeleccionado?.nombre;
-  
+
       const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
@@ -199,9 +221,9 @@ if (fechaSeleccionada > unAnioDespues) {
         },
         body: JSON.stringify({ resultado, nota, estado: nombreEstado }),
       });
-  
+
       if (!resResultado.ok) throw new Error("Error guardando resultado");
-  
+
       alert("Resultado y seguimiento agendado correctamente");
       setMostrarModal(false);
       navigate(-1);
@@ -209,7 +231,7 @@ if (fechaSeleccionada > unAnioDespues) {
       setError(err.message);
     }
   };
-  
+
   if (loading) return <p>Cargando seguimiento...</p>;
 
   return (
@@ -257,17 +279,17 @@ if (fechaSeleccionada > unAnioDespues) {
           <div className="modal-content">
             <h3>Agendar siguiente seguimiento</h3>
             {error && (
-  <p className="error-modal">{error}</p>
-)}
+              <p className="error-modal">{error}</p>
+            )}
 
 
-<input
-  type="datetime-local"
-  value={fechaSiguiente}
-  onChange={(e) => setFechaSiguiente(e.target.value)}
-  max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
-  required
-/>
+            <input
+              type="datetime-local"
+              value={fechaSiguiente}
+              onChange={(e) => setFechaSiguiente(e.target.value)}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
+              required
+            />
 
 
             <select
@@ -330,14 +352,14 @@ if (fechaSeleccionada > unAnioDespues) {
             <div className="modal-buttons">
               <button className="btn-mini" onClick={agendarDesdeModal}>Agendar</button>
               <button
-  className="btn-mini red"
-  onClick={() => {
-    setMostrarModal(false);
-    setError(""); // limpiar error cuando cierra
-  }}
->
-  Cancelar
-</button>
+                className="btn-mini red"
+                onClick={() => {
+                  setMostrarModal(false);
+                  setError(""); // limpiar error cuando cierra
+                }}
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </div>

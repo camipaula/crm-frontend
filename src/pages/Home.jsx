@@ -144,7 +144,7 @@
     if (error) return <p className="error">{error}</p>;
 
     return (
-      <Layout>
+      <Layout extraClass="dashboard-home">
         <div className="home-container">
           <h1>Bienvenida, {rol === "vendedora" ? "Vendedora" : "Administradora"}</h1>
 
@@ -184,17 +184,28 @@
 
             <button type="submit">Filtrar</button>
           </form>
+          <hr style={{ margin: "20px 0" }} />  {/* 👈 separador visual */}
 
           <div className="dashboard-grid">
-            <div className="dashboard-card">
-              <h3>✅ Porcentaje de Ventas Cerradas</h3>
-              <p><strong>{dashboardData.porcentajeCerradas.toFixed(1)}%</strong></p>
-            </div>
+          <div className="dashboard-card">
+  <h3>📊 Resumen de Ventas</h3>
+  <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
+  <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
+  <p>🔒 Cerradas: <strong>{dashboardData.totalVentasCerradas}</strong></p>
+</div>
+
 
             <div className="dashboard-card">
+            <h3>✅ Porcentaje Cerradas: <strong>{dashboardData.porcentajeCerradas.toFixed(1)}%</strong></h3>
+
               <h3>📅 Promedio de días hasta el cierre</h3>
               <p>{dashboardData.promedioDiasCierre} días</p>
             </div>
+            <div className="dashboard-card">
+  <h3>💵 Promedio del Monto de Cierre</h3>
+  <p>${dashboardData.promedioMontoCierre}</p>
+</div>
+
 
             <div className="dashboard-card">
               <h3>💡 Interés Generado</h3>
@@ -242,6 +253,8 @@
                     <th>Apertura</th>
                     <th>Cierre</th>
                     <th>Días</th>
+                    <th>Monto</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -251,6 +264,8 @@
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{new Date(fila.fecha_cierre).toLocaleDateString()}</td>
                       <td>{fila.dias}</td>
+                      <td>${fila.monto}</td>
+
                     </tr>
                   ))}
                 </tbody>

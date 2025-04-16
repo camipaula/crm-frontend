@@ -245,6 +245,50 @@ const ProspectosVendedora = () => {
     }
   };
 
+  const exportarExcel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+  
+      let url = `${import.meta.env.VITE_API_URL}/api/prospectos/exportar?cedula_vendedora=${cedulaVendedora}`;
+  
+      if (estadoFiltro.length > 0) {
+        estadoFiltro.forEach((estado) => {
+          url += `&estado=${estado.value}`;
+        });
+      }
+      if (categoriaFiltro) url += `&id_categoria=${categoriaFiltro.value}`;
+      if (fechaInicio) url += `&fechaInicio=${fechaInicio}`;
+      if (fechaFin) url += `&fechaFin=${fechaFin}`;
+      if (sectorFiltro) url += `&sector=${sectorFiltro.value}`;
+      if (ciudadFiltro) url += `&ciudad=${encodeURIComponent(ciudadFiltro)}`;
+      if (provinciaFiltro) url += `&provincia=${encodeURIComponent(provinciaFiltro)}`;
+  
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const contentType = res.headers.get("content-type");
+  
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        alert(data.message);
+        return;
+      }
+  
+      if (!res.ok) throw new Error("Error al exportar prospectos");
+  
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "mis_prospectos.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error al exportar:", error);
+    }
+  };
+  
   const prospectosFiltrados = prospectos.filter((p) =>
     p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
@@ -372,6 +416,10 @@ const ProspectosVendedora = () => {
       <button onClick={buscarProspectos} disabled={loading}>
         {loading ? "Cargando..." : "Buscar"}
       </button>
+      <button onClick={exportarExcel} className="vendedora-btn-exportar">
+  📥 Exportar Excel
+</button>
+
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}
 
@@ -408,7 +456,11 @@ const ProspectosVendedora = () => {
                 <td>{index + 1}</td>
 
                 <td>{p.nombre}</td>
-                <td>{p.estado_prospecto?.nombre || "Sin estado"}</td>
+                <td>
+  {p.estado_prospecto?.nombre === "ganado" && p.ventas?.[0]?.monto_cierre
+    ? `Ganado ($${p.ventas[0].monto_cierre})`
+    : p.estado_prospecto?.nombre || "Sin estado"}
+</td>
                 <td>{proximoContactoFormateado}</td>
                 <td>{ultimaNota}</td>
                 <td>
@@ -454,7 +506,12 @@ const ProspectosVendedora = () => {
               <p><strong>#</strong> {index + 1}</p>
 
               <h3>{p.nombre}</h3>
-              <p><strong>Estado:</strong> {p.estado_prospecto?.nombre || "Sin estado"}</p>
+              <p>
+  <strong>Estado:</strong>{" "}
+  {p.estado_prospecto?.nombre === "ganado" && p.ventas?.[0]?.monto_cierre
+    ? `Ganado ($${p.ventas[0].monto_cierre})`
+    : p.estado_prospecto?.nombre || "Sin estado"}
+</p>
               <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>
               <p><strong>Última Nota:</strong> {ultimaNota}</p>
               <div className="acciones">

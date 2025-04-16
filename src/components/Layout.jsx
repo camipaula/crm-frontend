@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 import { getRol } from "../utils/auth";
 import "../styles/layout.css";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, extraClass }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [rol, setRol] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ const Layout = ({ children }) => {
         rol={rol}
       />
 
-      <div className={`main-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
+<div className={`main-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"} ${extraClass || ""}`}>
         <div className="content">{children}</div>
       </div>
     </div>
@@ -48,6 +48,8 @@ const Layout = ({ children }) => {
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
+  extraClass: PropTypes.string,
 };
+
 
 export default Layout;

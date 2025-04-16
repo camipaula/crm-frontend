@@ -225,29 +225,29 @@ const SeguimientosAdmin = () => {
     }
   };
 
-  
+
 
   const clasificarSeguimiento = (venta) => {
     const seguimientos = venta.seguimientos || [];
     if (seguimientos.length === 0) return "sin_seguimiento";
-  
+
     const ultimo = seguimientos[0];
-  
+
     if (ultimo.estado === "realizado") return "realizado";
-  
+
     const hoy = new Date();
     const fecha = new Date(ultimo.fecha_programada);
-  
+
     const diffDias = (fecha - hoy) / (1000 * 60 * 60 * 24);
-  
+
     if (fecha < hoy) return "vencido";
     if (diffDias >= 0 && diffDias <= 7) return "proximo";
     return "futuro";
   };
-  
+
   const etiquetaSeguimiento = (venta) => {
     const clasificacion = clasificarSeguimiento(venta);
-  
+
     switch (clasificacion) {
       case "vencido":
         return "🔴 Vencido";
@@ -262,16 +262,16 @@ const SeguimientosAdmin = () => {
         return "⚪ Sin seguimiento";
     }
   };
-  
+
   const prospeccionesFiltradas = prospecciones.filter((p) => {
     const coincideNombre = p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase());
-  
+
     const clasificacion = clasificarSeguimiento(p);
     const coincideSeguimiento = filtroSeguimiento === "todos" || filtroSeguimiento === clasificacion;
-  
+
     return coincideNombre && coincideSeguimiento;
   });
-  
+
   const limpiarFiltros = () => {
     setVendedoraSeleccionada(null);
     setFiltroEstado("todas");
@@ -331,26 +331,26 @@ const SeguimientosAdmin = () => {
         </select>
 
         <label>Filtrar por seguimiento:</label>
-<select
-  value={filtroSeguimiento}
-  onChange={(e) => {
-    setFiltroSeguimiento(e.target.value);
-    const filtrosActualizados = {
-      vendedoraSeleccionada,
-      filtroEstado,
-      busquedaNombre,
-      filtroSeguimiento: e.target.value,
-    };
-    localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
-  }}
->
-  <option value="todos">Todos</option>
-  <option value="sin_seguimiento">Sin seguimiento</option>
-  <option value="vencido">Vencidos</option>
-  <option value="proximo">Próximos</option>
-  <option value="futuro">Futuros</option>
-  <option value="realizado">Realizados</option>
-</select>
+        <select
+          value={filtroSeguimiento}
+          onChange={(e) => {
+            setFiltroSeguimiento(e.target.value);
+            const filtrosActualizados = {
+              vendedoraSeleccionada,
+              filtroEstado,
+              busquedaNombre,
+              filtroSeguimiento: e.target.value,
+            };
+            localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
+          }}
+        >
+          <option value="todos">Todos</option>
+          <option value="sin_seguimiento">Sin seguimiento</option>
+          <option value="vencido">Vencidos</option>
+          <option value="proximo">Próximos</option>
+          <option value="futuro">Futuros</option>
+          <option value="realizado">Realizados</option>
+        </select>
 
 
         <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
@@ -411,7 +411,11 @@ const SeguimientosAdmin = () => {
 
                   <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
                   <td>{capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</td>
-                  <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>
+                    {p.abierta
+                      ? "Abierta"
+                      : `Cerrada${typeof p.monto_cierre === "number" ? ` ($${p.monto_cierre.toFixed(2)})` : ""}`}
+                  </td>
                   <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                   <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
@@ -489,7 +493,12 @@ const SeguimientosAdmin = () => {
 
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
               <p><strong>Estado del Prospecto:</strong> {capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</p>
-              <p><strong>Estado de la Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+              <p>
+                <strong>Estado de la Venta:</strong>{" "}
+                {p.abierta
+                  ? "Abierta"
+                  : `Cerrada${typeof p.monto_cierre === "number" ? ` ($${p.monto_cierre.toFixed(2)})` : ""}`}
+              </p>
               <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Resultado:</strong> {ultimo?.resultado || "Pendiente"}</p>

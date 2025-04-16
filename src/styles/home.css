@@ -1,7 +1,10 @@
 
+
+
 /* 🎯 Contenedor principal del dashboard */
 .home-container {
-  width: 100%;
+  width: 1240px;
+  max-width: 100%;  
   min-height: calc(100vh - 60px);
   padding: 30px;
   background: #f0f4ff;
