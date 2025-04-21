@@ -4,6 +4,7 @@ import { logout } from "../utils/auth";
 import "../styles/sidebar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
+  
   return (
     <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
       {/* ☰ Solo visible en escritorio */}
@@ -14,10 +15,11 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
       <ul className="sidebar-menu">
         {rol === "vendedora" ? (
           <>
-            <li><NavLink to="/vendedora" className="nav-link" onClick={() => {
-              if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-            }}
+            <li><NavLink to="/vendedora" className="nav-link" onClick={ toggleSidebar }
             >👩 <span className={isOpen ? "show" : "hide"}>home</span></NavLink></li>
+
+
+
 
             <li><NavLink to="/prospectos-vendedora" className="nav-link" onClick={() => {
               if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
@@ -39,9 +41,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
           <>
             <li>
               <NavLink to="/admin" className="nav-link"
-                onClick={() => {
-                  if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-                }}
+                onClick={toggleSidebar}
               >👩 <span className={isOpen ? "show" : "hide"}> home</span></NavLink>
             </li>
 

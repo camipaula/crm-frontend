@@ -132,7 +132,7 @@
   .seguimientos-table th,
   .seguimientos-table td {
     border: 1px solid #ddd;
-    padding: 10px;
+  padding: 6px 8px; /* más chiquito que antes */
     text-align: left;
   }
   
@@ -285,6 +285,19 @@
   background-color: #d32f2f;
 }
 
+
+/* 🔄 Scroll horizontal solo para la tabla */
+.tabla-scroll-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Opcional: que no se desborde feo */
+.seguimientos-table {
+  min-width: 1000px; /* Ajusta si necesitas más ancho */
+  table-layout: auto;
+}
 
   /* 📱 Responsive */
 /* Oculta tabla en móviles */

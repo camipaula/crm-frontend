@@ -345,7 +345,7 @@ const ProspectosAdmin = () => {
   className="btn-toggle-filtros"
   onClick={() => setMostrarFiltros((prev) => !prev)}
 >
-  {mostrarFiltros ? "🔽 Ocultar Filtros" : "🔍 Mostrar Filtros"}
+  {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
 </button>
 {mostrarFiltros && (
       <div className="admin-prospectos-filtros">
@@ -480,6 +480,7 @@ const ProspectosAdmin = () => {
             className="input-busqueda-nombre"
           />
         </div>
+        <div className="admin-prospectos-table-wrapper">
 
       <table className="admin-prospectos-table">
         <thead>
@@ -570,6 +571,7 @@ const ProspectosAdmin = () => {
 
 
       </table>
+      </div>
 
       {/* Tarjetas para móvil */}
       <div className="admin-prospectos-cards-mobile">

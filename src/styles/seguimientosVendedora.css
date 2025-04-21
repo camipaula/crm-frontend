@@ -122,6 +122,16 @@
   margin-left: 10px;
 }
 
+.seguimientos-table-vendedora-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Para asegurarte que la tabla no se aplaste */
+.seguimientos-table {
+  min-width: 1000px;
+}
+
 
 /* ❗ Error */
 .error {

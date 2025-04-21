@@ -33,6 +33,16 @@
   justify-content: center;
 }
 
+/* 🏠 Ajustes SOLO para Home */
+.dashboard-home.main-container {
+  margin-top: 1px !important;
+}
+
+.dashboard-home.sidebar-open {
+  margin-left: 1px !important;
+}
+
+
 @media (max-width: 768px) {
   .main-container.sidebar-open,
   .main-container.sidebar-closed {

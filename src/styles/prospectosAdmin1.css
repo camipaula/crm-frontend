@@ -44,7 +44,6 @@
   color: #1f3b5c !important;
 }
 
-
 .admin-prospectos-filtros select,
 .admin-prospectos-filtros input {
   font-size: 13px !important;
@@ -73,12 +72,18 @@
 }
 
 /* 📋 Tabla */
+.admin-prospectos-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 .admin-prospectos-table {
   all: unset !important;
   display: table !important;
   width: 100% !important;
+  min-width: 1000px;
   border-collapse: collapse !important;
-  font-size: 15px !important;
+  font-size: 16px;
   margin-top: 20px !important;
   border-radius: 10px !important;
   background: white !important;
@@ -87,9 +92,10 @@
 
 .admin-prospectos-table th,
 .admin-prospectos-table td {
+  padding: 6px 8px;
   border: 1px solid #e0e0e0 !important;
-  padding: 14px !important;
   text-align: left !important;
+  font-size: 16px;
 }
 
 .admin-prospectos-table th {
@@ -177,7 +183,7 @@
 
 .input-busqueda-nombre {
   width: 100% !important;
-  max-width: 220px !important; /* 🔽 Limita el ancho */
+  max-width: 220px !important;
   padding: 6px 8px !important;
   font-size: 13px !important;
   border: 1px solid #ccc !important;
@@ -200,8 +206,11 @@
   background-color: #574fd6;
 }
 
+/* 🟨 Cards móviles */
+.admin-prospectos-cards-mobile {
+  display: none !important;
+}
 
-/* 📱 Responsive */
 @media (max-width: 768px) {
   .admin-prospectos-page {
     padding: 15px !important;
@@ -232,15 +241,7 @@
   .admin-prospectos-table {
     display: none !important;
   }
-}
 
-/* 🟨 Cards móviles */
-.admin-prospectos-cards-mobile {
-  display: none !important;
-}
-
-
-@media (max-width: 768px) {
   .admin-prospectos-cards-mobile {
     display: block !important;
     margin-top: 20px !important;
@@ -267,7 +268,6 @@
     color: #444 !important;
   }
 
-  
   .admin-prospecto-card .acciones {
     display: flex !important;
     flex-wrap: wrap !important;

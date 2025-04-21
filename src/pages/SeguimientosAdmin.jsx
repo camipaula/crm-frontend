@@ -373,6 +373,7 @@ const SeguimientosAdmin = () => {
 
       {loading && <p>Cargando...</p>}
       {error && <p className="error">{error}</p>}
+      <div className="tabla-scroll-wrapper">
 
       <table className="seguimientos-table">
         <thead>
@@ -481,6 +482,7 @@ const SeguimientosAdmin = () => {
           })}
         </tbody>
       </table>
+      </div>
 
 
       {/* Vista en móviles - tarjetas compactas */}

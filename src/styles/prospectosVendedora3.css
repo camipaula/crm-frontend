@@ -103,6 +103,12 @@
   background: #f9f9f9 !important;
 }
 
+.botones-acciones button {
+  min-width: 180px; /* 🟩 Opcional para simetría */
+  text-align: center;
+}
+
+
 /* 📌 Botones */
 .vendedora-btn-editar,
 .vendedora-btn-eliminar,

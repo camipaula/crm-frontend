@@ -318,13 +318,11 @@ const ProspectosVendedora = () => {
   className="btn-toggle-filtros"
   onClick={() => setMostrarFiltros((prev) => !prev)}
 >
-  {mostrarFiltros ? "🔽 Ocultar Filtros" : "🔍 Mostrar Filtros"}
+  {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
 </button>
 
 
-      <button className="vendedora-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
-        ➕ Crear Prospecto
-      </button>
+      
 
       {mostrarFiltros && (
 
@@ -419,11 +417,18 @@ const ProspectosVendedora = () => {
       </div>
 )}
 
+<div className="botones-acciones">
+
+<button className="vendedora-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
+        ➕ Crear Prospecto
+      </button>
 
      
       <button onClick={exportarExcel} className="vendedora-btn-exportar">
   📥 Exportar Excel
 </button>
+
+</div>
 
 <div className="filtro-grupo-nombre">
           <label>Nombre</label>
@@ -438,6 +443,7 @@ const ProspectosVendedora = () => {
         
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}
+      <div className="vendedora-prospectos-table-wrapper">
 
       <table className="vendedora-prospectos-table">
         <thead>
@@ -499,7 +505,7 @@ const ProspectosVendedora = () => {
           })}
         </tbody>
       </table>
-
+      </div>
       <div className="vendedora-cards-mobile">
         {prospectosFiltrados.map((p, index) => {
           const ultimaNota = p.ventas
