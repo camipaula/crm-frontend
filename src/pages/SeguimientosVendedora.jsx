@@ -154,23 +154,32 @@ useEffect(() => {
     if (seguimientos.length === 0) return "sin_seguimiento";
   
     const ultimo = seguimientos[0];
-  
     if (ultimo.estado === "realizado") return "realizado";
   
-    const hoy = new Date();
-    const fecha = new Date(ultimo.fecha_programada);
-    const diffDias = (fecha - hoy) / (1000 * 60 * 60 * 24);
+    const fechaProgramada = new Date(ultimo.fecha_programada);
   
-    if (fecha < hoy) return "vencido";
-    if (diffDias >= 0 && diffDias <= 7) return "proximo";
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+  
+    const fechaSoloDia = new Date(fechaProgramada);
+    fechaSoloDia.setHours(0, 0, 0, 0);
+  
+    const diffDias = (fechaSoloDia - hoy) / (1000 * 60 * 60 * 24);
+  
+    if (diffDias < 0) return "vencido";
+    if (diffDias === 0) return "hoy";
+    if (diffDias <= 7) return "proximo";
     return "futuro";
   };
+  
+  
   
   const etiquetaSeguimiento = (venta) => {
     const estado = clasificarSeguimiento(venta);
     const clases = `estado-tag ${estado}`;
   
     if (estado === "vencido") return <span className={clases}>🔴 Vencido</span>;
+    if (estado === "hoy") return <span className={clases}>🟠 Hoy</span>; // 👈 agregado
     if (estado === "proximo") return <span className={clases}>🟡 Próximo</span>;
     if (estado === "futuro") return <span className={clases}>🔵 Futuro</span>;
     if (estado === "realizado") return <span className={clases}>✅ Realizado</span>;
@@ -212,6 +221,7 @@ useEffect(() => {
 >
   <option value="todos">Todos</option>
   <option value="vencido">Vencidos</option>
+  <option value="hoy">Hoy</option>
   <option value="proximo">Próximos</option>
   <option value="futuro">Futuros</option>
   <option value="realizado">Realizados</option>
