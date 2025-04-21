@@ -338,6 +338,8 @@ const ProspectosAdmin = () => {
   return (
     <div className="admin-prospectos-page">
       <h1 className="admin-prospectos-title">Gestión de Prospectos</h1>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
       {error && <p className="error">{error}</p>}
 <button
   className="btn-toggle-filtros"
@@ -640,7 +642,6 @@ const ProspectosAdmin = () => {
       </div>
 
 
-      <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>Cerrar</button>
     </div>
   );
 };

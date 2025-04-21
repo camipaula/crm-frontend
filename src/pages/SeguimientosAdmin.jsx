@@ -232,18 +232,24 @@ const SeguimientosAdmin = () => {
     if (seguimientos.length === 0) return "sin_seguimiento";
 
     const ultimo = seguimientos[0];
-
     if (ultimo.estado === "realizado") return "realizado";
 
+    const fechaProgramada = new Date(ultimo.fecha_programada);
+
     const hoy = new Date();
-    const fecha = new Date(ultimo.fecha_programada);
+    hoy.setHours(0, 0, 0, 0);
 
-    const diffDias = (fecha - hoy) / (1000 * 60 * 60 * 24);
+    const fechaSoloDia = new Date(fechaProgramada);
+    fechaSoloDia.setHours(0, 0, 0, 0);
 
-    if (fecha < hoy) return "vencido";
-    if (diffDias >= 0 && diffDias <= 7) return "proximo";
-    return "futuro";
+    const diffDias = (fechaSoloDia - hoy) / (1000 * 60 * 60 * 24);
+
+    if (diffDias < 0) return "vencido";        // antes de hoy
+    if (diffDias === 0) return "hoy";          // hoy
+    if (diffDias <= 7) return "proximo";       // dentro de 7 días
+    return "futuro";                           // más allá
   };
+
 
   const etiquetaSeguimiento = (venta) => {
     const clasificacion = clasificarSeguimiento(venta);
@@ -251,6 +257,8 @@ const SeguimientosAdmin = () => {
     switch (clasificacion) {
       case "vencido":
         return "🔴 Vencido";
+      case "hoy":
+        return "🟠 Hoy";
       case "proximo":
         return "🟡 Próximo";
       case "futuro":
@@ -262,6 +270,7 @@ const SeguimientosAdmin = () => {
         return "⚪ Sin seguimiento";
     }
   };
+
 
   const prospeccionesFiltradas = prospecciones.filter((p) => {
     const coincideNombre = p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase());
@@ -346,11 +355,13 @@ const SeguimientosAdmin = () => {
         >
           <option value="todos">Todos</option>
           <option value="sin_seguimiento">Sin seguimiento</option>
+          <option value="hoy">Hoy</option> 
           <option value="vencido">Vencidos</option>
           <option value="proximo">Próximos</option>
           <option value="futuro">Futuros</option>
           <option value="realizado">Realizados</option>
         </select>
+
 
 
         <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
