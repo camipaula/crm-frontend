@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRol } from "../utils/auth";
 import "../styles/seguimientosVendedora.css";
 import React from "react";
 
 const SeguimientosProspecto = () => {
-  const rolUsuario = getRol();
 
   const { id_prospecto } = useParams();
   const navigate = useNavigate();
@@ -15,7 +13,6 @@ const SeguimientosProspecto = () => {
   const [filtroEstado, setFiltroEstado] = useState("todas"); // 🔹 Estado del filtro
 
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
@@ -90,40 +87,6 @@ const SeguimientosProspecto = () => {
     }
   };
 
-  const abrirModalEliminar = (id_venta) => {
-    if (rolUsuario !== "admin") {
-      alert("❌ No tienes permiso para eliminar esta venta.");
-      return;
-    }
-    setIdVentaSeleccionada(id_venta);
-    setModalEliminar(true);
-  };
-
-  const confirmarEliminar = async () => {
-    const rolUsuario = getRol();
-
-    if (rolUsuario !== "admin") {
-      alert("No tienes permiso para eliminar esta venta. Contacta a la administradora.");
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Error al eliminar venta");
-      alert("Venta eliminada correctamente");
-      setModalEliminar(false);
-      navigate(-1);
-      buscarSeguimientos(); // Refrescar lista
-    } catch (err) {
-      alert("Error: " + err.message);
-    }
-  };
-
 
 
   return (
@@ -193,9 +156,7 @@ const SeguimientosProspecto = () => {
                       📜 Ver Seguimientos
                     </button>
                     <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                    {rolUsuario === "admin" && (
-                      <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-                    )}
+                   
                   </td>
                 </tr>
 
@@ -254,9 +215,7 @@ const SeguimientosProspecto = () => {
                   📜 Ver
                 </button>
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                {rolUsuario === "admin" && (
-                  <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
-                )}
+               
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
@@ -293,19 +252,7 @@ const SeguimientosProspecto = () => {
         </div>
       )}
 
-      {/* 🟥 Modal Eliminar Venta */}
-      {modalEliminar && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <h3>¿Eliminar esta venta?</h3>
-            <p> 🟥 Se eliminarán también los seguimientos relacionados.</p>
-            <div className="modal-buttons">
-              <button className="btn-mini red" onClick={confirmarEliminar}>Eliminar</button>
-              <button onClick={() => setModalEliminar(false)}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      
 
     </div>
   );

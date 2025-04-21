@@ -185,6 +185,20 @@
   box-sizing: border-box !important;
 }
 
+.btn-toggle-filtros {
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-toggle-filtros:hover {
+  background-color: #574fd6;
+}
 
 
 /* 📱 Responsive */

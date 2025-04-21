@@ -34,24 +34,6 @@ const VendedorasAdmin = () => {
     }
   };
 
-  const eliminarVendedora = async (cedula_ruc) => {
-    try {
-      const confirmar = window.confirm("¿Estás seguro de eliminar a esta vendedora?");
-      if (!confirmar) return;
-
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Error al eliminar vendedora");
-
-      alert("Vendedora eliminada correctamente");
-      obtenerVendedoras();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
 
   return (
     <div className="content">
@@ -97,9 +79,7 @@ const VendedorasAdmin = () => {
                   <button className="btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>
                     ✏️ Editar
                   </button>
-                  <button className="btn-eliminar" onClick={() => eliminarVendedora(v.cedula_ruc)}>
-                    🗑️ Eliminar
-                  </button>
+                  
                 </td>
               </tr>
             ))}
@@ -118,9 +98,6 @@ const VendedorasAdmin = () => {
       <div className="acciones">
         <button className="btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>
           ✏️
-        </button>
-        <button className="btn-eliminar" onClick={() => eliminarVendedora(v.cedula_ruc)}>
-          🗑️
         </button>
       </div>
     </div>

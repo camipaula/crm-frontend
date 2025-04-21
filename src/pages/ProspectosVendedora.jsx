@@ -26,6 +26,7 @@ const ProspectosVendedora = () => {
 
   const [busquedaNombre, setBusquedaNombre] = useState("");
   const [filtrosInicializados, setFiltrosInicializados] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
 
   useEffect(() => {
@@ -311,11 +312,21 @@ const ProspectosVendedora = () => {
   return (
     <div className="vendedora-prospectos-page">
       <h1 className="vendedora-prospectos-title">Mis Prospectos</h1>
-      <button className="vendedora-btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+
+      <button
+  className="btn-toggle-filtros"
+  onClick={() => setMostrarFiltros((prev) => !prev)}
+>
+  {mostrarFiltros ? "🔽 Ocultar Filtros" : "🔍 Mostrar Filtros"}
+</button>
+
 
       <button className="vendedora-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
         ➕ Crear Prospecto
       </button>
+
+      {mostrarFiltros && (
 
       <div className="admin-prospectos-filtros">
         <div className="filtro-grupo">
@@ -380,16 +391,7 @@ const ProspectosVendedora = () => {
           />
         </div>
 
-        <div className="filtro-grupo">
-          <label>Nombre</label>
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            value={busquedaNombre}
-            onChange={(e) => setBusquedaNombre(e.target.value)}
-            className="input-busqueda-nombre"
-          />
-        </div>
+        
 
         <div className="filtro-grupo">
           <label>Fecha Inicio</label>
@@ -408,18 +410,32 @@ const ProspectosVendedora = () => {
             onChange={(e) => setFechaFin(e.target.value)}
           />
         </div>
+        <button onClick={limpiarFiltros}>🧹 Limpiar Filtros</button>
 
-      </div>
-
-      <button onClick={limpiarFiltros}>🧹 Limpiar Filtros</button>
-
-      <button onClick={buscarProspectos} disabled={loading}>
+        <button onClick={buscarProspectos} disabled={loading}>
         {loading ? "Cargando..." : "Buscar"}
       </button>
+
+      </div>
+)}
+
+
+     
       <button onClick={exportarExcel} className="vendedora-btn-exportar">
   📥 Exportar Excel
 </button>
 
+<div className="filtro-grupo-nombre">
+          <label>Nombre</label>
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busquedaNombre}
+            onChange={(e) => setBusquedaNombre(e.target.value)}
+            className="input-busqueda-nombre"
+          />
+        </div>
+        
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}
 

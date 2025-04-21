@@ -29,6 +29,8 @@ const ProspectosAdmin = () => {
 
   const [filtrosInicializados, setFiltrosInicializados] = useState(false);
 
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
 
   useEffect(() => {
     obtenerVendedoras();
@@ -52,6 +54,7 @@ const ProspectosAdmin = () => {
 
         if (filtros.ciudadFiltro) setCiudadFiltro(filtros.ciudadFiltro);
         if (filtros.provinciaFiltro) setProvinciaFiltro(filtros.provinciaFiltro);
+        if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
 
 
         setEstadoFiltro(filtros.estadoFiltro || []);
@@ -223,21 +226,35 @@ const ProspectosAdmin = () => {
 
   const eliminarProspecto = async (id) => {
     try {
-      const confirmar = window.confirm("¿Estás seguro de eliminar a este prospecto?");
-      if (!confirmar) return;
-
+      const razon = prompt("¿Por qué deseas eliminar este prospecto? (Ej: duplicado, error de tipeo, etc.)");
+      if (!razon || razon.trim().length < 3) {
+        alert("Debes ingresar una razón válida.");
+        return;
+      }
+  
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}/eliminar`, {
+        method: "PUT", // usamos PUT porque es una eliminación lógica con update
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ razon }),
       });
-      if (!res.ok) throw new Error("Error eliminando prospecto");
+  
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message || "Error eliminando prospecto"); 
+        return; 
+      }
+      
+  
       setProspectos((prev) => prev.filter((p) => p.id_prospecto !== id));
     } catch (error) {
       setError(error.message);
     }
   };
-
+  
   const exportarExcel = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -287,6 +304,8 @@ const ProspectosAdmin = () => {
   };
 
   useEffect(() => {
+    if (!filtrosInicializados) return;
+  
     const filtros = {
       cedulaVendedora,
       estadoFiltro,
@@ -296,10 +315,22 @@ const ProspectosAdmin = () => {
       categoriaFiltro,
       ciudadFiltro,
       provinciaFiltro,
+      busquedaNombre,
     };
     localStorage.setItem("filtros_prospectos_admin", JSON.stringify(filtros));
-  }, [cedulaVendedora, estadoFiltro, fechaInicio, fechaFin, sectorFiltro, categoriaFiltro, ciudadFiltro, provinciaFiltro]);
-
+  }, [
+    cedulaVendedora,
+    estadoFiltro,
+    fechaInicio,
+    fechaFin,
+    sectorFiltro,
+    categoriaFiltro,
+    ciudadFiltro,
+    provinciaFiltro,
+    busquedaNombre,
+    filtrosInicializados, 
+  ]);
+  
   const prospectosFiltrados = prospectos.filter((p) =>
     p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
@@ -308,7 +339,13 @@ const ProspectosAdmin = () => {
     <div className="admin-prospectos-page">
       <h1 className="admin-prospectos-title">Gestión de Prospectos</h1>
       {error && <p className="error">{error}</p>}
-
+<button
+  className="btn-toggle-filtros"
+  onClick={() => setMostrarFiltros((prev) => !prev)}
+>
+  {mostrarFiltros ? "🔽 Ocultar Filtros" : "🔍 Mostrar Filtros"}
+</button>
+{mostrarFiltros && (
       <div className="admin-prospectos-filtros">
 
 
@@ -390,16 +427,7 @@ const ProspectosAdmin = () => {
           />
         </div>
 
-        <div className="filtro-grupo">
-          <label>Nombre del Prospecto</label>
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            value={busquedaNombre}
-            onChange={(e) => setBusquedaNombre(e.target.value)}
-            className="input-busqueda-nombre"
-          />
-        </div>
+        
         <div className="filtro-grupo">
           <label>Fecha Inicio</label>
           <input
@@ -427,13 +455,30 @@ const ProspectosAdmin = () => {
         </button>
 
 
-      </div>
+        </div>
+      )}
+
+
+
+
       <button className="exportar-btn" onClick={exportarExcel}>
         📥 Exportar Excel
       </button>
       <button className="admin-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
         ➕ Crear Prospecto
       </button>
+
+      <div className="filtro-grupo-nombre">
+          <label>Nombre del Prospecto</label>
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busquedaNombre}
+            onChange={(e) => setBusquedaNombre(e.target.value)}
+            className="input-busqueda-nombre"
+          />
+        </div>
+
       <table className="admin-prospectos-table">
         <thead>
           <tr>

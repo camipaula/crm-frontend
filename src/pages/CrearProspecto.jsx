@@ -31,6 +31,7 @@
       sector: "",
       cedula_ruc: "",
       cedula_vendedora: "",
+      objetivo: "",
       created_at: new Date().toISOString().split("T")[0],
     });
 
@@ -276,6 +277,15 @@ navigate(esAdmin ? "/prospectos-admin" : "/prospectos-vendedora");
               </select>
             </>
           )}
+
+<label>Objetivo de la Prospección <span className="required">*</span>:</label>
+<textarea
+  name="objetivo"
+  value={formData.objetivo || ""}
+  onChange={handleChange}
+  required
+/>
+
 
           <button type="submit" disabled={enviando}>
             {enviando ? "Creando..." : "Crear Prospecto"}

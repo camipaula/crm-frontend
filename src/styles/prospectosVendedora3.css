@@ -16,19 +16,7 @@
   margin-bottom: 20px !important;
 }
 
-/* 📌 Botón volver */
-.vendedora-btn-volver {
-  background-color: #0d2a49 !important;
-  color: white !important;
-  border: none !important;
-  padding: 8px 16px !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  margin-bottom: 15px !important;
-}
-.vendedora-btn-volver:hover {
-  background-color: #0d2a49 !important;
-}
+
 
 /* 📌 Botón nuevo prospecto */
 .vendedora-btn-nuevo-prospecto {
@@ -36,13 +24,22 @@
   margin-bottom: 20px !important;
   padding: 12px !important;
   font-size: 18px !important;
-  background: #007bffbb !important;
+  background: #2dab21db !important;
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
   cursor: pointer !important;
 }
 
+.filtro-grupo-nombre{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  padding: 20px !important;
+  background: #f5f5f5 !important;
+  margin-bottom: 20px !important;
+  margin-top: 20px !important;
+
+}
 /* 📌 Filtros */
 .vendedora-filtros {
   display: flex !important;
@@ -160,6 +157,16 @@
   display: none !important;
 }
 
+.btn-toggle-filtros {
+  background-color: #a09bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
 
 /* 📱 Responsive */
