@@ -174,6 +174,38 @@
   font-weight: bold;
 }
 
+.paginador-lindo {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.paginador-contenido {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.btn-paginador {
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-paginador:hover {
+  background-color: #5148d6;
+}
+
+.paginador-info {
+  font-weight: normal;
+}
+
 
 /* 📱 Responsive */
 @media (max-width: 768px) {

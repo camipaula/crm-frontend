@@ -76,6 +76,16 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
               }}
               >📅 <span className={isOpen ? "show" : "hide"}>Calendario Vendedoras</span></NavLink>
               </li>
+              <li>
+  <NavLink to="/mi-informacion" className="nav-link"
+    onClick={() => {
+      if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
+    }}
+  >
+    🧍 <span className={isOpen ? "show" : "hide"}>Mi Información</span>
+  </NavLink>
+</li>
+
 
             {/*<li><NavLink to="/admin" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
             <li><NavLink to="/admin" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>*/}

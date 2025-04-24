@@ -103,7 +103,7 @@ const EditarProspecto = () => {
       }
 
       window.alert("✅ Prospecto actualizado con éxito.");
-setModoEdicion(false);
+      setModoEdicion(false);
 
     } catch (err) {
       setError(err.message);

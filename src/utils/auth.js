@@ -65,7 +65,7 @@ export const getNombreUsuario = () => {
   }
 };
 
-// Cierra sesión eliminando los datos del usuario y redirigiendo al login
+// Cierra sesión elimiAnando los datos del usuario y redirigiendo al login
 export const logout = () => {
   localStorage.removeItem("token");
 

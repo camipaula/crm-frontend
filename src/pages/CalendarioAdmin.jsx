@@ -442,7 +442,7 @@ const CalendarioAdmin = () => {
             minute: "2-digit",
             hour12: false,
           });
-        
+
           if (view.type === "dayGridMonth") {
             // Solo en la vista mensual mostramos tipo con sigla
             return (
@@ -458,7 +458,7 @@ const CalendarioAdmin = () => {
               </div>
             );
           }
-        }}        
+        }}
       />
 
 
@@ -512,12 +512,12 @@ const CalendarioAdmin = () => {
             )}
 
             <div className="modal-actions">
-            <button
-  onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
-  className="btn-registrar"
->
-  ✍️ Registrar Resultado
-</button>
+              <button
+                onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
+                className="btn-registrar"
+              >
+                ✍️ Registrar Resultado
+              </button>
               {modoEdicion ? (
                 <>
                   <button onClick={() => editarSeguimientoDesdeModal(modalDetalle)}>💾 Guardar</button>

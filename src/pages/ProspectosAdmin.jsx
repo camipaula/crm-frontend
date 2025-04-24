@@ -31,6 +31,9 @@ const ProspectosAdmin = () => {
 
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+
 
   useEffect(() => {
     obtenerVendedoras();
@@ -146,7 +149,8 @@ const ProspectosAdmin = () => {
     categoriaFiltro,
     ciudadFiltro,
     provinciaFiltro,
-    filtrosInicializados
+    filtrosInicializados,
+    paginaActual
   ]);
 
 
@@ -192,20 +196,23 @@ const ProspectosAdmin = () => {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      let url = `${import.meta.env.VITE_API_URL}/api/prospectos?`;
+      let params = new URLSearchParams();
+      params.append("page", paginaActual);
+      params.append("limit", 10);
 
-      if (cedulaVendedora) url += `cedula_vendedora=${cedulaVendedora}&`;
+      if (cedulaVendedora) params.append("cedula_vendedora", cedulaVendedora);
       if (estadoFiltro.length > 0) {
-        estadoFiltro.forEach((estado) => {
-          url += `estado=${estado.value}&`;
-        });
+        estadoFiltro.forEach((estado) => params.append("estado", estado.value));
       }
-      if (fechaInicio) url += `fechaInicio=${fechaInicio}&`;
-      if (fechaFin) url += `fechaFin=${fechaFin}&`;
-      if (sectorFiltro) url += `sector=${sectorFiltro.value}&`;
-      if (categoriaFiltro) url += `id_categoria=${categoriaFiltro.value}&`;
-      if (ciudadFiltro) url += `ciudad=${encodeURIComponent(ciudadFiltro)}&`;
-      if (provinciaFiltro) url += `provincia=${encodeURIComponent(provinciaFiltro)}&`;
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      if (sectorFiltro) params.append("sector", sectorFiltro.value);
+      if (categoriaFiltro) params.append("id_categoria", categoriaFiltro.value);
+      if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
+      if (provinciaFiltro) params.append("provincia", provinciaFiltro);
+
+      const url = `${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`;
+
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -213,9 +220,10 @@ const ProspectosAdmin = () => {
 
       if (!res.ok) throw new Error("Error obteniendo prospectos");
       const data = await res.json();
-      setProspectos(
-        data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      );
+
+      setProspectos(data.prospectos || []);
+      setTotalPaginas(data.totalPages || 1);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -231,7 +239,7 @@ const ProspectosAdmin = () => {
         alert("Debes ingresar una razón válida.");
         return;
       }
-  
+
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${id}/eliminar`, {
         method: "PUT", // usamos PUT porque es una eliminación lógica con update
@@ -241,20 +249,20 @@ const ProspectosAdmin = () => {
         },
         body: JSON.stringify({ razon }),
       });
-  
+
       if (!res.ok) {
         const data = await res.json();
-        alert(data.message || "Error eliminando prospecto"); 
-        return; 
+        alert(data.message || "Error eliminando prospecto");
+        return;
       }
-      
-  
+
+
       setProspectos((prev) => prev.filter((p) => p.id_prospecto !== id));
     } catch (error) {
       setError(error.message);
     }
   };
-  
+
   const exportarExcel = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -305,7 +313,7 @@ const ProspectosAdmin = () => {
 
   useEffect(() => {
     if (!filtrosInicializados) return;
-  
+
     const filtros = {
       cedulaVendedora,
       estadoFiltro,
@@ -328,9 +336,9 @@ const ProspectosAdmin = () => {
     ciudadFiltro,
     provinciaFiltro,
     busquedaNombre,
-    filtrosInicializados, 
+    filtrosInicializados,
   ]);
-  
+
   const prospectosFiltrados = prospectos.filter((p) =>
     p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
@@ -341,120 +349,120 @@ const ProspectosAdmin = () => {
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       {error && <p className="error">{error}</p>}
-<button
-  className="btn-toggle-filtros"
-  onClick={() => setMostrarFiltros((prev) => !prev)}
->
-  {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
-</button>
-{mostrarFiltros && (
-      <div className="admin-prospectos-filtros">
+      <button
+        className="btn-toggle-filtros"
+        onClick={() => setMostrarFiltros((prev) => !prev)}
+      >
+        {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
+      </button>
+      {mostrarFiltros && (
+        <div className="admin-prospectos-filtros">
 
 
-        <div className="filtro-grupo">
-          <label>Vendedora</label>
-          <select
-            name="cedula_vendedora"
-            onChange={(e) => setCedulaVendedora(e.target.value)}
-            value={cedulaVendedora}
-          >
-            <option value="">Todas</option>
-            {vendedoras.map((v) => (
-              <option key={v.cedula_ruc} value={v.cedula_ruc}>
-                {v.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="filtro-grupo">
+            <label>Vendedora</label>
+            <select
+              name="cedula_vendedora"
+              onChange={(e) => setCedulaVendedora(e.target.value)}
+              value={cedulaVendedora}
+            >
+              <option value="">Todas</option>
+              {vendedoras.map((v) => (
+                <option key={v.cedula_ruc} value={v.cedula_ruc}>
+                  {v.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
 
 
-        <div className="filtro-grupo">
-          <label>Categoría</label>
-          <Select
-            options={categorias}
-            placeholder="Seleccionar Categoría"
-            className="select-categoria"
-            value={categoriaFiltro}
-            onChange={setCategoriaFiltro}
-            isClearable
-          />
-        </div>
+          <div className="filtro-grupo">
+            <label>Categoría</label>
+            <Select
+              options={categorias}
+              placeholder="Seleccionar Categoría"
+              className="select-categoria"
+              value={categoriaFiltro}
+              onChange={setCategoriaFiltro}
+              isClearable
+            />
+          </div>
 
-        <div className="filtro-grupo">
-          <label>Sector</label>
-          <Select
-            options={sectores}
-            placeholder="Seleccionar Sector"
-            className="select-sector"
-            classNamePrefix="select"
-            value={sectorFiltro}
-            onChange={setSectorFiltro}
-            isClearable
-          />
-        </div>
-        <div className="filtro-grupo">
-          <label>Ciudad</label>
-          <Select
-            options={ciudades}
-            placeholder="Seleccionar Ciudad"
-            className="select-ciudad"
-            value={ciudades.find(c => c.value === ciudadFiltro)}
-            onChange={(op) => setCiudadFiltro(op ? op.value : "")}
-            isClearable
-          />
-        </div>
+          <div className="filtro-grupo">
+            <label>Sector</label>
+            <Select
+              options={sectores}
+              placeholder="Seleccionar Sector"
+              className="select-sector"
+              classNamePrefix="select"
+              value={sectorFiltro}
+              onChange={setSectorFiltro}
+              isClearable
+            />
+          </div>
+          <div className="filtro-grupo">
+            <label>Ciudad</label>
+            <Select
+              options={ciudades}
+              placeholder="Seleccionar Ciudad"
+              className="select-ciudad"
+              value={ciudades.find(c => c.value === ciudadFiltro)}
+              onChange={(op) => setCiudadFiltro(op ? op.value : "")}
+              isClearable
+            />
+          </div>
 
-        <div className="filtro-grupo">
-          <label>Provincia</label>
-          <Select
-            options={provincias}
-            placeholder="Seleccionar Provincia"
-            className="select-provincia"
-            value={provincias.find(p => p.value === provinciaFiltro)}
-            onChange={(op) => setProvinciaFiltro(op ? op.value : "")}
-            isClearable
-          />
-        </div>
-        <div className="filtro-grupo">
+          <div className="filtro-grupo">
+            <label>Provincia</label>
+            <Select
+              options={provincias}
+              placeholder="Seleccionar Provincia"
+              className="select-provincia"
+              value={provincias.find(p => p.value === provinciaFiltro)}
+              onChange={(op) => setProvinciaFiltro(op ? op.value : "")}
+              isClearable
+            />
+          </div>
+          <div className="filtro-grupo">
 
-          <label>Estado(s)</label>
-          <Select
-            options={estados}
-            isMulti
-            placeholder="Seleccionar Estado(s)"
-            className="select-estado"
-            classNamePrefix="select"
-            value={estadoFiltro}
-            onChange={setEstadoFiltro}
-          />
-        </div>
-
-        
-        <div className="filtro-grupo">
-          <label>Fecha Inicio</label>
-          <input
-            type="date"
-            name="fechaInicio"
-            onChange={(e) => setFechaInicio(e.target.value)}
-            value={fechaInicio}
-          />
-        </div>
-        <div className="filtro-grupo">
-          <label>Fecha Fin</label>
-          <input
-            type="date"
-            name="fechaFin"
-            onChange={(e) => setFechaFin(e.target.value)}
-            value={fechaFin}
-          />
-        </div>
+            <label>Estado(s)</label>
+            <Select
+              options={estados}
+              isMulti
+              placeholder="Seleccionar Estado(s)"
+              className="select-estado"
+              classNamePrefix="select"
+              value={estadoFiltro}
+              onChange={setEstadoFiltro}
+            />
+          </div>
 
 
+          <div className="filtro-grupo">
+            <label>Fecha Inicio</label>
+            <input
+              type="date"
+              name="fechaInicio"
+              onChange={(e) => setFechaInicio(e.target.value)}
+              value={fechaInicio}
+            />
+          </div>
+          <div className="filtro-grupo">
+            <label>Fecha Fin</label>
+            <input
+              type="date"
+              name="fechaFin"
+              onChange={(e) => setFechaFin(e.target.value)}
+              value={fechaFin}
+            />
+          </div>
 
 
-        <button onClick={buscarProspectos} disabled={loading}>
-          {loading ? "Cargando..." : "Buscar"}
-        </button>
+
+
+          <button onClick={buscarProspectos} disabled={loading}>
+            {loading ? "Cargando..." : "Buscar"}
+          </button>
 
 
         </div>
@@ -471,106 +479,134 @@ const ProspectosAdmin = () => {
       </button>
 
       <div className="filtro-grupo-nombre">
-          <label>Nombre del Prospecto</label>
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            value={busquedaNombre}
-            onChange={(e) => setBusquedaNombre(e.target.value)}
-            className="input-busqueda-nombre"
-          />
+        <label>Nombre del Prospecto</label>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={busquedaNombre}
+          onChange={(e) => setBusquedaNombre(e.target.value)}
+          className="input-busqueda-nombre"
+        />
+      </div>
+      {loading && <p>Cargando prospectos...</p>}
+
+
+      <div className="admin-prospectos-table-wrapper">
+
+        <div className="paginador-lindo">
+          <div className="paginador-contenido">
+            {paginaActual > 1 && (
+              <button className="btn-paginador" onClick={() => setPaginaActual((p) => p - 1)}>
+                ⬅ Anterior
+              </button>
+            )}
+
+            <span className="paginador-info">
+              Página {paginaActual} de {totalPaginas}
+            </span>
+
+            {paginaActual < totalPaginas && (
+              <button className="btn-paginador" onClick={() => setPaginaActual((p) => p + 1)}>
+                Siguiente ➡
+              </button>
+            )}
+          </div>
         </div>
-        <div className="admin-prospectos-table-wrapper">
-
-      <table className="admin-prospectos-table">
-        <thead>
-          <tr>
-            <th>#</th>
-
-            <th>Prospecto</th>
-            <th>Vendedora</th>
-            <th>Estado</th>
-            <th>Próximo Contacto</th>
-            <th>Última Nota</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {prospectosFiltrados.length > 0 ? (
-            prospectosFiltrados.map((p, index) => {
 
 
-              const ultimaNota = p.ventas
-                ?.flatMap((v) => v.seguimientos)
-                .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
 
-              const proximoContacto = p.ventas
-                ?.flatMap((v) => v.seguimientos)
-                .filter((s) => s.estado === "pendiente")
-                .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
-
-              const proximoContactoFormateado = proximoContacto
-                ? new Date(proximoContacto).toLocaleDateString("es-EC")
-                : "Sin programar";
-
-              const tieneVentas = p.ventas?.length > 0; // Verifica si el prospecto tiene ventas
-
-              return (
-                <tr key={p.id_prospecto}>
-                  <td>{index + 1}</td>
-
-                  <td>{p.nombre}</td>
-                  <td>
-                    {p.vendedora_prospecto
-                      ? `${p.vendedora_prospecto.nombre}${p.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
-                      : "Sin asignar"}
-                  </td>
-                  <td>
-                    {p.estado_prospecto?.nombre === "ganado" && p.ventas?.[0]?.monto_cierre
-                      ? `Ganado ($${p.ventas[0].monto_cierre})`
-                      : p.estado_prospecto?.nombre || "Sin estado"}
-                  </td>
-                  <td>{proximoContactoFormateado}</td>
-                  <td>{ultimaNota}</td>
-                  <td>
-                    <div className="admin-botones-acciones">
-
-                      {/* 🔹 Botón dinámico según si tiene ventas o no */}
-                      {tieneVentas ? (
-                        <button className="admin-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
-                          🔍 Ver Seguimientos
-                        </button>
-                      ) : (
-                        <button className="admin-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
-                          ➕ Abrir Prospección
-                        </button>
-                      )}
-
-                      <button className="admin-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                        Información del Prospecto
-                      </button>
-
-                      <button className="admin-btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
-                        Eliminar
-                      </button>
-                    </div>
-
-                  </td>
-                </tr>
-              );
-            })
-          ) : (
+        <table className="admin-prospectos-table">
+          <thead>
             <tr>
-              <td colSpan="6" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
-                No hay prospectos disponibles
-              </td>
+              <th>#</th>
+
+              <th>Prospecto</th>
+              <th>Vendedora</th>
+              <th>Estado</th>
+              <th>Próximo Contacto</th>
+              <th>Última Nota</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
+          </thead>
+          <tbody>
+            {prospectosFiltrados.length > 0 ? (
+              prospectosFiltrados.map((p, index) => {
+
+
+                const ultimaNota = p.ventas
+                  ?.flatMap((v) => v.seguimientos)
+                  .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
+
+                const proximoContacto = p.ventas
+                  ?.flatMap((v) => v.seguimientos)
+                  .filter((s) => s.estado === "pendiente")
+                  .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
+
+                const proximoContactoFormateado = proximoContacto
+                  ? new Date(proximoContacto).toLocaleDateString("es-EC")
+                  : "Sin programar";
+
+                const tieneVentas = p.ventas?.length > 0; // Verifica si el prospecto tiene ventas
+
+                return (
+                  <tr key={p.id_prospecto}>
+                    <td>{index + 1}</td>
+
+                    <td>{p.nombre}</td>
+                    <td>
+                      {p.vendedora_prospecto
+                        ? `${p.vendedora_prospecto.nombre}${p.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+                        : "Sin asignar"}
+                    </td>
+                    <td>
+                      {p.estado_prospecto?.nombre === "ganado" && p.ventas?.[0]?.monto_cierre
+                        ? `Ganado ($${p.ventas[0].monto_cierre})`
+                        : p.estado_prospecto?.nombre || "Sin estado"}
+                    </td>
+                    <td>{proximoContactoFormateado}</td>
+                    <td>{ultimaNota}</td>
+                    <td>
+                      <div className="admin-botones-acciones">
+
+                        {/* 🔹 Botón dinámico según si tiene ventas o no */}
+                        {tieneVentas ? (
+                          <button className="admin-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
+                            🔍 Ver Seguimientos
+                          </button>
+                        ) : (
+                          <button className="admin-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
+                            ➕ Abrir Prospección
+                          </button>
+                        )}
+
+                        <button className="admin-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
+                          Información del Prospecto
+                        </button>
+
+                        <button className="admin-btn-eliminar" onClick={() => eliminarProspecto(p.id_prospecto)}>
+                          Eliminar
+                        </button>
+                      </div>
+
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
+                  No hay prospectos disponibles
+                </td>
+              </tr>
+            )}
+          </tbody>
 
 
 
-      </table>
+        </table>
+
+
+
       </div>
 
       {/* Tarjetas para móvil */}

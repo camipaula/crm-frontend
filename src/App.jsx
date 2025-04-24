@@ -20,7 +20,7 @@ import EditarVendedora from "./pages/EditarVendedora";
 import SeguimientosAdmin from "./pages/SeguimientosAdmin";
 import VerSeguimientos from "./pages/VerSeguimientos";
 import CalendarioAdmin from "./pages/CalendarioAdmin";
-
+import MiInformacionAdmin from "./pages/MiInformacionAdmin";
 const App = () => {
   const [isAuth, setIsAuth] = useState(null);
 
@@ -58,6 +58,7 @@ const App = () => {
           <Route path="/editar-vendedora/:cedula_ruc" element={<Layout><EditarVendedora /></Layout>}/>
           <Route path="/seguimientos-admin" element={<Layout><SeguimientosAdmin /></Layout>} />
           <Route path="/calendario-admin" element={<Layout><CalendarioAdmin  /></Layout>} />
+          <Route path="/mi-informacion" element={<Layout><MiInformacionAdmin /></Layout>} />
 
 
         </Route>

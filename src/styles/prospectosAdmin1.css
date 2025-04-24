@@ -211,6 +211,57 @@
   display: none !important;
 }
 
+
+.skeleton-row {
+  height: 30px;
+  background: linear-gradient(-90deg, #eeeeee 0%, #dddddd 50%, #eeeeee 100%);
+  background-size: 400% 400%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  margin: 10px 0;
+}
+
+.paginador-lindo {
+  margin: 24px auto 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.paginador-contenido {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  background: #f4f4f4;
+  padding: 6px 14px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.btn-paginador {
+  background-color: transparent;
+  color: #1f3b5c;
+  border: none;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-paginador:hover {
+  background-color: #d9e3f0;
+}
+
+.paginador-info {
+  color: #444;
+  font-weight: 500;
+}
+
+
+
 @media (max-width: 768px) {
   .admin-prospectos-page {
     padding: 15px !important;

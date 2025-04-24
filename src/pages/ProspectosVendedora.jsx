@@ -28,6 +28,9 @@ const ProspectosVendedora = () => {
   const [filtrosInicializados, setFiltrosInicializados] = useState(false);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
+  const [paginaActual, setPaginaActual] = useState(1);
+const [totalPaginas, setTotalPaginas] = useState(1);
+
 
   useEffect(() => {
     const cedula = obtenerCedulaDesdeToken();
@@ -191,7 +194,8 @@ const ProspectosVendedora = () => {
     categoriaFiltro,
     ciudadFiltro,
     provinciaFiltro,
-    busquedaNombre
+    busquedaNombre,
+    paginaActual
   ]);
   
   
@@ -214,38 +218,40 @@ const ProspectosVendedora = () => {
     try {
       setLoading(true);
       setError("");
+  
       const token = localStorage.getItem("token");
-      let url = `${import.meta.env.VITE_API_URL}/api/prospectos?vendedora=${cedulaVendedora}`;
-
+      const params = new URLSearchParams();
+      params.append("page", paginaActual);
+      params.append("limit", 10);
+      params.append("vendedora", cedulaVendedora);
+  
       if (estadoFiltro.length > 0) {
-        estadoFiltro.forEach((estado) => {
-          url += `&estado=${estado.value}`;
-        });
+        estadoFiltro.forEach((estado) => params.append("estado", estado.value));
       }
-      if (fechaInicio) url += `&fechaInicio=${fechaInicio}`;
-      if (fechaFin) url += `&fechaFin=${fechaFin}`;
-      if (sectorFiltro) url += `&sector=${sectorFiltro.value}`;
-      if (categoriaFiltro) url += `&id_categoria=${categoriaFiltro.value}`;
-      if (ciudadFiltro) url += `&ciudad=${encodeURIComponent(ciudadFiltro)}`;
-      if (provinciaFiltro) url += `&provincia=${encodeURIComponent(provinciaFiltro)}`;
-
-      const res = await fetch(url, {
+      if (fechaInicio) params.append("fechaInicio", fechaInicio);
+      if (fechaFin) params.append("fechaFin", fechaFin);
+      if (sectorFiltro) params.append("sector", sectorFiltro.value);
+      if (categoriaFiltro) params.append("id_categoria", categoriaFiltro.value);
+      if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
+      if (provinciaFiltro) params.append("provincia", provinciaFiltro);
+  
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (!res.ok) throw new Error("Error obteniendo prospectos");
       const data = await res.json();
-      setProspectos(
-        data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      );
-
+  
+      setProspectos(data.prospectos || []);
+      setTotalPaginas(data.totalPages || 1);
+  
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const exportarExcel = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -443,6 +449,26 @@ const ProspectosVendedora = () => {
         
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}
+
+      <div className="paginador-lindo">
+  <div className="paginador-contenido">
+    {paginaActual > 1 && (
+      <button className="btn-paginador" onClick={() => setPaginaActual((p) => p - 1)}>
+        ⬅ Anterior
+      </button>
+    )}
+    <span className="paginador-info">
+      Página {paginaActual} de {totalPaginas}
+    </span>
+    {paginaActual < totalPaginas && (
+      <button className="btn-paginador" onClick={() => setPaginaActual((p) => p + 1)}>
+        Siguiente ➡
+      </button>
+    )}
+  </div>
+</div>
+
+
       <div className="vendedora-prospectos-table-wrapper">
 
       <table className="vendedora-prospectos-table">

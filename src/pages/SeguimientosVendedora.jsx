@@ -20,6 +20,10 @@ const [filtrosInicializados, setFiltrosInicializados] = useState(false);
 
 const [filtroSeguimiento, setFiltroSeguimiento] = useState("todos");
 
+const [paginaActual, setPaginaActual] = useState(1);
+const [totalPaginas, setTotalPaginas] = useState(1);
+const [limitePorPagina] = useState(10);
+
 
 useEffect(() => {
   const filtrosGuardados = localStorage.getItem("filtros_seguimientos_vendedora");
@@ -70,27 +74,30 @@ useEffect(() => {
     });
   };
 
-  const buscarSeguimientos = async () => {
+  const buscarSeguimientos = async (pagina = paginaActual) => {
     try {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
       const cedulaVendedora = obtenerCedulaDesdeToken();
-
-      let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?cedula_vendedora=${cedulaVendedora}`;
+  
+      let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?cedula_vendedora=${cedulaVendedora}&page=${pagina}&limit=${limitePorPagina}`;
       if (filtroEstado !== "todas") url += `&estado_prospeccion=${filtroEstado}`;
-
+  
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-
       if (!res.ok) throw new Error("Error obteniendo prospecciones");
+  
       const data = await res.json();
-      setProspecciones(data);
+      setProspecciones(data.prospecciones);
+      setPaginaActual(data.page);
+      setTotalPaginas(data.totalPages);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const exportarExcel = async () => {
     try {
@@ -240,6 +247,31 @@ useEffect(() => {
       {loading && <p>Cargando...</p>}
       {error && <p className="error">{error}</p>}
       <div className="seguimientos-table-vendedora-wrapper">
+      <div className="paginador-lindo">
+  <div className="paginador-contenido">
+    {paginaActual > 1 && (
+      <button
+        className="btn-paginador"
+        onClick={() => buscarSeguimientos(paginaActual - 1)}
+      >
+        ⬅ Anterior
+      </button>
+    )}
+
+    <span className="paginador-info">
+      Página {paginaActual} de {totalPaginas}
+    </span>
+
+    {paginaActual < totalPaginas && (
+      <button
+        className="btn-paginador"
+        onClick={() => buscarSeguimientos(paginaActual + 1)}
+      >
+        Siguiente ➡
+      </button>
+    )}
+  </div>
+</div>
 
         <table className="seguimientos-table">
           <thead>
