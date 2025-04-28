@@ -241,31 +241,43 @@ const SeguimientosAdmin = () => {
   };
 
 
-
   const clasificarSeguimiento = (venta) => {
     const seguimientos = venta.seguimientos || [];
     if (seguimientos.length === 0) return "sin_seguimiento";
-
-    const ultimo = seguimientos[0];
-    if (ultimo.estado === "realizado") return "realizado";
-
-    const fechaProgramada = new Date(ultimo.fecha_programada);
-
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-
-    const fechaSoloDia = new Date(fechaProgramada);
-    fechaSoloDia.setHours(0, 0, 0, 0);
-
-    const diffDias = (fechaSoloDia - hoy) / (1000 * 60 * 60 * 24);
-
-    if (diffDias < 0) return "vencido";        // antes de hoy
-    if (diffDias === 0) return "hoy";          // hoy
-    if (diffDias <= 7) return "proximo";       // dentro de 7 días
-    return "futuro";                           // más allá
+  
+    // 🔥 Buscar el siguiente seguimiento pendiente más próximo
+    const pendientes = seguimientos
+      .filter(s => s.estado === "pendiente")
+      .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada));
+  
+    if (pendientes.length > 0) {
+      const siguientePendiente = pendientes[0];
+      const fechaProgramada = new Date(siguientePendiente.fecha_programada);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      fechaProgramada.setHours(0, 0, 0, 0);
+  
+      const diffDias = (fechaProgramada - hoy) / (1000 * 60 * 60 * 24);
+  
+      if (diffDias < 0) return "vencido"; // vencido
+      if (diffDias === 0) return "hoy";   // hoy
+      if (diffDias <= 7) return "proximo"; // próximos 7 días
+      return "futuro"; // más adelante
+    }
+  
+    // 🔥 Si no hay pendientes, buscar el último realizado
+    const realizados = seguimientos
+      .filter(s => s.estado === "realizado")
+      .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada));
+  
+    if (realizados.length > 0) {
+      return "realizado"; // fue realizado
+    }
+  
+    // 🔥 Si no hay nada, es sin seguimiento
+    return "sin_seguimiento";
   };
-
-
+  
   const etiquetaSeguimiento = (venta) => {
     const clasificacion = clasificarSeguimiento(venta);
 
