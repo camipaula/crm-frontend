@@ -83,6 +83,7 @@ useEffect(() => {
   
       let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?cedula_vendedora=${cedulaVendedora}&page=${pagina}&limit=${limitePorPagina}`;
       if (filtroEstado !== "todas") url += `&estado_prospeccion=${filtroEstado}`;
+      if (filtroSeguimiento && filtroSeguimiento !== "todos") url += `&seguimiento=${filtroSeguimiento}`; // 🔥 Agregado 🔥
   
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Error obteniendo prospecciones");
@@ -97,6 +98,7 @@ useEffect(() => {
       setLoading(false);
     }
   };
+  
   
 
   const exportarExcel = async () => {
@@ -193,13 +195,10 @@ useEffect(() => {
     return <span className={clases}>⚪ Sin seguimiento</span>;
   };
   
-  const prospeccionesFiltradas = prospecciones.filter((p) => {
-    const coincideNombre = p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase());
-    const clasificacion = clasificarSeguimiento(p);
-    const coincideSeguimiento = filtroSeguimiento === "todos" || filtroSeguimiento === clasificacion;
+  const prospeccionesFiltradas = prospecciones.filter((p) => 
+    p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
+  );
   
-    return coincideNombre && coincideSeguimiento;
-  });
   
   return (
     <div className="seguimientos-container">
