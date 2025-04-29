@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
 import "../styles/seguimientosProspecto.css";
@@ -23,6 +24,7 @@ const SeguimientosVendedora = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [limitePorPagina] = useState(10);
+  const [busquedaInput, setBusquedaInput] = useState("");
 
 
   useEffect(() => {
@@ -31,8 +33,11 @@ const SeguimientosVendedora = () => {
       try {
         const filtros = JSON.parse(filtrosGuardados);
         if (filtros.filtroEstado) setFiltroEstado(filtros.filtroEstado);
-        if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
-        if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
+        if (filtros.busquedaNombre) {
+          setBusquedaNombre(filtros.busquedaNombre);
+          setBusquedaInput(filtros.busquedaNombre); // 👈 aquí
+        }
+                if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
 
       } catch (e) {
         console.error("Error al leer filtros guardados:", e);
@@ -53,7 +58,8 @@ const SeguimientosVendedora = () => {
     };
 
     localStorage.setItem("filtros_seguimientos_vendedora", JSON.stringify(filtros));
-    buscarSeguimientos();
+    buscarSeguimientos(1, busquedaNombre); // 👈 Reinicia página al cambiar filtros
+
 
   }, [filtroEstado, busquedaNombre, filtroSeguimiento, filtrosInicializados]);
 
@@ -74,7 +80,7 @@ const SeguimientosVendedora = () => {
     });
   };
 
-  const buscarSeguimientos = async (pagina = paginaActual) => {
+  const buscarSeguimientos = async (pagina = paginaActual, nombre = busquedaNombre) => {
     try {
       setLoading(true);
       setError("");
@@ -84,6 +90,7 @@ const SeguimientosVendedora = () => {
       let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?cedula_vendedora=${cedulaVendedora}&page=${pagina}&limit=${limitePorPagina}`;
       if (filtroEstado !== "todas") url += `&estado_prospeccion=${filtroEstado}`;
       if (filtroSeguimiento && filtroSeguimiento !== "todos") url += `&seguimiento=${filtroSeguimiento}`; // 🔥 Agregado 🔥
+      if (nombre.trim()) url += `&nombre=${encodeURIComponent(nombre.trim())}`;
 
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Error obteniendo prospecciones");
@@ -212,6 +219,20 @@ const SeguimientosVendedora = () => {
     p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
 
+  const debouncedBuscar = useRef(
+    debounce((valor) => {
+      setPaginaActual(1);
+      setBusquedaNombre(valor); // esto activa el useEffect y hace fetch
+    }, 500)
+  ).current;
+  
+
+   useEffect(() => {
+      return () => {
+        debouncedBuscar.cancel(); 
+      };
+    }, []);
+
 
   return (
     <div className="seguimientos-container">
@@ -224,6 +245,22 @@ const SeguimientosVendedora = () => {
       </button>
 
       <div className="filtros-container">
+      <label>Filtrar nombre de Prospecto:</label>
+
+      <input
+  type="text"
+  placeholder="Buscar por nombre de prospecto..."
+  value={busquedaInput}
+  onChange={(e) => {
+    const valor = e.target.value;
+    setBusquedaInput(valor);           // 🔹 actualiza lo que ves al escribir
+    debouncedBuscar(valor);            // 🔸 filtra con retraso
+  }}
+  className="input-busqueda-nombre"
+/>
+
+
+
         <label>Filtrar por estado de prospección:</label>
         <select
           value={filtroEstado}
@@ -246,13 +283,7 @@ const SeguimientosVendedora = () => {
           <option value="realizado">Realizados</option>
         </select>
 
-        <input
-          type="text"
-          placeholder="Buscar por nombre de prospecto..."
-          value={busquedaNombre}
-          onChange={(e) => setBusquedaNombre(e.target.value)}
-          className="input-busqueda-nombre"
-        />
+        
 
       </div>
 
@@ -264,7 +295,7 @@ const SeguimientosVendedora = () => {
             {paginaActual > 1 && (
               <button
                 className="btn-paginador"
-                onClick={() => buscarSeguimientos(paginaActual - 1)}
+                onClick={() => buscarSeguimientos(paginaActual - 1, busquedaNombre)}
               >
                 ⬅ Anterior
               </button>
@@ -277,7 +308,7 @@ const SeguimientosVendedora = () => {
             {paginaActual < totalPaginas && (
               <button
                 className="btn-paginador"
-                onClick={() => buscarSeguimientos(paginaActual + 1)}
+                onClick={() => buscarSeguimientos(paginaActual + 1, busquedaNombre)}
               >
                 Siguiente ➡
               </button>

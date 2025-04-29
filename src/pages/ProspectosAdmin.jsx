@@ -373,6 +373,14 @@ const ProspectosAdmin = () => {
     localStorage.removeItem("filtros_prospectos_admin");
     // No llamamos buscarProspectos directamente, el useEffect ya se encarga
   };
+
+
+  useEffect(() => {
+    return () => {
+      debouncedBuscar.cancel();
+    };
+  }, []);
+  
    
   return (
     <div className="admin-prospectos-page">

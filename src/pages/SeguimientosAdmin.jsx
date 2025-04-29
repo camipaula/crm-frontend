@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import "../styles/seguimientosAdmin.css";
@@ -118,7 +119,8 @@ const SeguimientosAdmin = () => {
     cedula_ruc = "",
     estado = filtroEstado,
     pagina = 1,
-    seguimientoFiltro = filtroSeguimiento // 🔥 Agregarlo
+    seguimientoFiltro = filtroSeguimiento,
+    nombre = busquedaNombre
   ) => {
     try {
       setLoading(true);
@@ -128,7 +130,8 @@ const SeguimientosAdmin = () => {
       let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?page=${pagina}&limit=${limitePorPagina}`;
       if (cedula_ruc) url += `&cedula_vendedora=${cedula_ruc}`;
       if (estado !== "todas") url += `&estado_prospeccion=${estado}`;
-      if (seguimientoFiltro && seguimientoFiltro !== "todos") url += `&seguimiento=${seguimientoFiltro}`; // 🔥 Nuevo
+      if (seguimientoFiltro && seguimientoFiltro !== "todos") url += `&seguimiento=${seguimientoFiltro}`;
+      if (nombre.trim()) url += `&nombre=${encodeURIComponent(nombre.trim())}`; // 👈 SOLO ESTA
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -146,6 +149,7 @@ const SeguimientosAdmin = () => {
       setLoading(false);
     }
   };
+
 
 
   const handleVendedoraChange = (selectedOption) => {
@@ -244,40 +248,40 @@ const SeguimientosAdmin = () => {
   const clasificarSeguimiento = (venta) => {
     const seguimientos = venta.seguimientos || [];
     if (seguimientos.length === 0) return "sin_seguimiento";
-  
-    // 🔥 Buscar el siguiente seguimiento pendiente más próximo
+
+    //  Buscar el siguiente seguimiento pendiente más próximo
     const pendientes = seguimientos
       .filter(s => s.estado === "pendiente")
       .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada));
-  
+
     if (pendientes.length > 0) {
       const siguientePendiente = pendientes[0];
       const fechaProgramada = new Date(siguientePendiente.fecha_programada);
       const hoy = new Date();
       hoy.setHours(0, 0, 0, 0);
       fechaProgramada.setHours(0, 0, 0, 0);
-  
+
       const diffDias = (fechaProgramada - hoy) / (1000 * 60 * 60 * 24);
-  
+
       if (diffDias < 0) return "vencido"; // vencido
       if (diffDias === 0) return "hoy";   // hoy
       if (diffDias <= 7) return "proximo"; // próximos 7 días
       return "futuro"; // más adelante
     }
-  
-    // 🔥 Si no hay pendientes, buscar el último realizado
+
+    //  Si no hay pendientes, buscar el último realizado
     const realizados = seguimientos
       .filter(s => s.estado === "realizado")
       .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada));
-  
+
     if (realizados.length > 0) {
       return "realizado"; // fue realizado
     }
-  
-    // 🔥 Si no hay nada, es sin seguimiento
+
+    // Si no hay nada, es sin seguimiento
     return "sin_seguimiento";
   };
-  
+
   const etiquetaSeguimiento = (venta) => {
     const clasificacion = clasificarSeguimiento(venta);
 
@@ -299,10 +303,28 @@ const SeguimientosAdmin = () => {
   };
 
 
-  const prospeccionesFiltradas = prospecciones.filter((p) => 
-    p.prospecto?.nombre?.toLowerCase().includes(busquedaNombre.toLowerCase())
-  );
+
+  const debouncedBuscar = useRef(
+    debounce((nuevoNombre, filtrosActuales) => {
+      setPaginaActual(1);
+      buscarSeguimientos(
+        filtrosActuales.vendedora,
+        filtrosActuales.estado,
+        1,
+        filtrosActuales.seguimiento,
+        nuevoNombre
+      );
+    }, 500)
+  ).current;
+
+
+  useEffect(() => {
+    return () => {
+      debouncedBuscar.cancel(); 
+    };
+  }, []);
   
+
 
   const limpiarFiltros = () => {
     setVendedoraSeleccionada(null);
@@ -337,9 +359,23 @@ const SeguimientosAdmin = () => {
           type="text"
           placeholder="Buscar por nombre de prospecto..."
           value={busquedaNombre}
-          onChange={(e) => setBusquedaNombre(e.target.value)}
+          onChange={(e) => {
+            const nuevoValor = e.target.value;
+            setBusquedaNombre(nuevoValor);
+
+            const filtrosActuales = {
+              vendedora: vendedoraSeleccionada?.value || "",
+              estado: filtroEstado,
+              seguimiento: filtroSeguimiento,
+            };
+
+            debouncedBuscar(nuevoValor, filtrosActuales);
+          }}
+
+
           className="input-busqueda-nombre"
         />
+
 
 
         <label>Filtrar por estado de prospección:</label>
@@ -454,7 +490,7 @@ const SeguimientosAdmin = () => {
             </tr>
           </thead>
           <tbody>
-            {!loading && prospeccionesFiltradas.length === 0 && (
+            {!loading && prospecciones.length === 0 && (
               <tr>
                 <td colSpan="10" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
                   No hay seguimientos para mostrar.
@@ -462,7 +498,7 @@ const SeguimientosAdmin = () => {
               </tr>
             )}
 
-            {prospeccionesFiltradas.map((p) => {
+            {prospecciones.map((p) => {
 
               const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
               const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null; // 🔹 Obtener el más reciente
@@ -547,7 +583,7 @@ const SeguimientosAdmin = () => {
 
       {/* Vista en móviles - tarjetas compactas */}
       <div className="seguimientos-cards">
-        {prospeccionesFiltradas.map((p) => {
+        {prospecciones.map((p) => {
 
           const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
           const ultimo = tieneSeguimientos ? p.seguimientos[0] : null;
@@ -624,7 +660,7 @@ const SeguimientosAdmin = () => {
 
           );
         })}
-        {!loading && prospeccionesFiltradas.length === 0 && (
+        {!loading && prospecciones.length === 0 && (
           <p style={{ textAlign: "center", fontWeight: "bold" }}>
             No hay seguimientos para mostrar.
           </p>

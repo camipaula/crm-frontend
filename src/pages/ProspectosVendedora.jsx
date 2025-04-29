@@ -362,7 +362,12 @@ const obtenerProspectos = async () => {
     
   };
   
-
+  useEffect(() => {
+    return () => {
+      debouncedBuscar.cancel();
+    };
+  }, []);
+  
 
   return (
     <div className="vendedora-prospectos-page">
