@@ -88,7 +88,7 @@ const RegistrarResultado = () => {
       return;
     }
   
-    const estadosFinales = ["interesado", "no_interesado", "ganado", "perdido"];
+    const estadosFinales = ["no_interesado", "ganado", "perdido"];
     if (!estadosFinales.includes(nombreEstado)) {
       setMostrarModal(true);
       return;

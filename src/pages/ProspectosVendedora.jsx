@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
+import { debounce } from "lodash";
+
 import "../styles/prospectosVendedora3.css";
 
 const ProspectosVendedora = () => {
@@ -12,6 +14,9 @@ const ProspectosVendedora = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+    // Filtros y búsqueda
+    const [busquedaNombre, setBusquedaNombre] = useState("");
+    const [busquedaInput, setBusquedaInput] = useState("");
   const [estadoFiltro, setEstadoFiltro] = useState([]);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
@@ -24,12 +29,54 @@ const ProspectosVendedora = () => {
   const [ciudadFiltro, setCiudadFiltro] = useState(null);
   const [provinciaFiltro, setProvinciaFiltro] = useState(null);
 
-  const [busquedaNombre, setBusquedaNombre] = useState("");
   const [filtrosInicializados, setFiltrosInicializados] = useState(false);
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
   const [paginaActual, setPaginaActual] = useState(1);
 const [totalPaginas, setTotalPaginas] = useState(1);
+
+
+ const debouncedBuscar = useRef(
+   debounce((valor) => {
+     setPaginaActual(1); // siempre resetear a página 1 cuando busque
+     setBusquedaNombre(valor);
+   }, 500)
+ ).current;
+
+ useEffect(() => {
+  obtenerProspectos();
+}, [paginaActual, busquedaNombre]);
+
+const obtenerProspectos = async () => {
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+
+    let params = new URLSearchParams();
+    params.append("page", paginaActual);
+    params.append("limit", 10); // O el límite que tú prefieras
+
+    if (busquedaNombre.trim() !== "") {
+      params.append("nombre", busquedaNombre);
+    }
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Error obteniendo prospectos");
+
+    const data = await res.json();
+    setProspectos(data.prospectos || []);
+    setTotalPaginas(data.totalPages || 1);
+  } catch (error) {
+    setError(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   useEffect(() => {
@@ -223,7 +270,7 @@ const [totalPaginas, setTotalPaginas] = useState(1);
       const params = new URLSearchParams();
       params.append("page", paginaActual);
       params.append("limit", 10);
-      params.append("vendedora", cedulaVendedora);
+      params.append("cedula_vendedora", cedulaVendedora);
   
       if (estadoFiltro.length > 0) {
         estadoFiltro.forEach((estado) => params.append("estado", estado.value));
@@ -299,20 +346,22 @@ const [totalPaginas, setTotalPaginas] = useState(1);
   const prospectosFiltrados = prospectos.filter((p) =>
     p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
-
+  
+  
   const limpiarFiltros = () => {
     setEstadoFiltro([]);
-    setFechaInicio("");
-    setFechaFin("");
     setSectorFiltro(null);
     setCategoriaFiltro(null);
     setCiudadFiltro(null);
     setProvinciaFiltro(null);
+    establecerFechasUltimos3Meses(); 
+    setPaginaActual(1);
     setBusquedaNombre("");
+    setBusquedaInput("");
     localStorage.removeItem("filtros_prospectos_vendedora");
-    buscarProspectos();
+    
   };
-
+  
 
 
   return (
@@ -336,63 +385,87 @@ const [totalPaginas, setTotalPaginas] = useState(1);
         <div className="filtro-grupo">
           <label>Estado(s)</label>
           <Select
-            options={estados}
-            isMulti
-            placeholder="Seleccionar Estado(s)"
-            className="select-estado"
-            value={estadoFiltro}
-            onChange={setEstadoFiltro}
-          />
+  options={estados}
+  isMulti
+  placeholder="Seleccionar Estado(s)"
+  className="select-estado"
+  value={estadoFiltro}
+  onChange={(ops) => {
+    setEstadoFiltro(ops);
+    setPaginaActual(1);
+    buscarProspectos();
+  }}
+/>
+
         </div>
 
         <div className="filtro-grupo">
           <label>Categoría</label>
           <Select
-            options={categorias}
-            placeholder="Seleccionar Categoría"
+  options={categorias}
+  placeholder="Seleccionar Categoría"
+  className="select-categoria"
+  value={categoriaFiltro}
+  onChange={(op) => {
+    setCategoriaFiltro(op);
+    setPaginaActual(1);
+    buscarProspectos();
+  }}
+  isClearable
+/>
 
-            className="select-categoria"
-            value={categoriaFiltro}
-            onChange={setCategoriaFiltro}
-            isClearable
-          />
         </div>
 
         <div className="filtro-grupo">
           <label>Sector</label>
           <Select
-            options={sectores}
-            placeholder="Seleccionar Sector"
-            className="select-sector"
-            value={sectorFiltro}
-            onChange={setSectorFiltro}
-            isClearable
-          />
+  options={sectores}
+  placeholder="Seleccionar Sector"
+  className="select-sector"
+  value={sectorFiltro}
+  onChange={(op) => {
+    setSectorFiltro(op);
+    setPaginaActual(1);
+    buscarProspectos();
+  }}
+  isClearable
+/>
+
         </div>
 
         <div className="filtro-grupo">
           <label>Ciudad</label>
           <Select
-            options={ciudades}
-            placeholder="Seleccionar Ciudad"
-            className="select-ciudad"
-            value={ciudades.find((c) => c.value === ciudadFiltro) || null}
-            onChange={(op) => setCiudadFiltro(op ? op.value : null)}
-            isClearable
-          />
+  options={ciudades}
+  placeholder="Seleccionar Ciudad"
+  className="select-ciudad"
+  value={ciudades.find((c) => c.value === ciudadFiltro) || null}
+  onChange={(op) => {
+    setCiudadFiltro(op ? op.value : null);
+    setPaginaActual(1);
+    buscarProspectos();
+  }}
+  isClearable
+/>
+
         </div>
 
 
         <div className="filtro-grupo">
           <label>Provincia</label>
           <Select
-            options={provincias}
-            placeholder="Seleccionar Provincia"
-            className="select-provincia"
-            value={provincias.find((p) => p.value === provinciaFiltro)}
-            onChange={(op) => setProvinciaFiltro(op ? op.value : null)}
-            isClearable
-          />
+  options={provincias}
+  placeholder="Seleccionar Provincia"
+  className="select-provincia"
+  value={provincias.find((p) => p.value === provinciaFiltro)}
+  onChange={(op) => {
+    setProvinciaFiltro(op ? op.value : null);
+    setPaginaActual(1);
+    buscarProspectos();
+  }}
+  isClearable
+/>
+
         </div>
 
         
@@ -414,7 +487,10 @@ const [totalPaginas, setTotalPaginas] = useState(1);
             onChange={(e) => setFechaFin(e.target.value)}
           />
         </div>
-        <button onClick={limpiarFiltros}>🧹 Limpiar Filtros</button>
+
+        <button onClick={limpiarFiltros} disabled={loading}>
+  🧹 Limpiar Filtros
+</button>
 
         <button onClick={buscarProspectos} disabled={loading}>
         {loading ? "Cargando..." : "Buscar"}
@@ -437,15 +513,19 @@ const [totalPaginas, setTotalPaginas] = useState(1);
 </div>
 
 <div className="filtro-grupo-nombre">
-          <label>Nombre</label>
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            value={busquedaNombre}
-            onChange={(e) => setBusquedaNombre(e.target.value)}
-            className="input-busqueda-nombre"
-          />
-        </div>
+  <label>Nombre del Prospecto</label>
+  <input
+    type="text"
+    placeholder="Buscar por nombre..."
+    value={busquedaInput}
+    onChange={(e) => {
+      setBusquedaInput(e.target.value);
+      debouncedBuscar(e.target.value);
+    }}
+    className="input-busqueda-nombre"
+  />
+</div>
+
         
       {loading && <p>Cargando prospectos...</p>}
       {error && <p className="error">{error}</p>}

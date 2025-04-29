@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import "../styles/prospectosAdmin1.css";
 import { useNavigate } from "react-router-dom";
+import { debounce } from "lodash";
 
 const ProspectosAdmin = () => {
   const navigate = useNavigate();
@@ -33,7 +34,16 @@ const ProspectosAdmin = () => {
 
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
+  const [busquedaInput, setBusquedaInput] = useState("");
 
+  const debouncedBuscar = useRef(
+    debounce((valor) => {
+      setPaginaActual(1); // primero reinicia la página
+      setBusquedaNombre(valor); // luego actualiza la búsqueda
+    }, 500)
+  ).current;
+  
+  
 
   useEffect(() => {
     obtenerVendedoras();
@@ -57,8 +67,11 @@ const ProspectosAdmin = () => {
 
         if (filtros.ciudadFiltro) setCiudadFiltro(filtros.ciudadFiltro);
         if (filtros.provinciaFiltro) setProvinciaFiltro(filtros.provinciaFiltro);
-        if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
-
+        if (filtros.busquedaNombre) {
+          setBusquedaNombre(filtros.busquedaNombre);
+          setBusquedaInput(filtros.busquedaNombre); 
+        }
+        
 
         setEstadoFiltro(filtros.estadoFiltro || []);
         setCategoriaFiltro(filtros.categoriaFiltro || null);
@@ -150,7 +163,8 @@ const ProspectosAdmin = () => {
     ciudadFiltro,
     provinciaFiltro,
     filtrosInicializados,
-    paginaActual
+    paginaActual,
+    busquedaNombre 
   ]);
 
 
@@ -210,6 +224,7 @@ const ProspectosAdmin = () => {
       if (categoriaFiltro) params.append("id_categoria", categoriaFiltro.value);
       if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
       if (provinciaFiltro) params.append("provincia", provinciaFiltro);
+      if (busquedaNombre.trim() !== "") params.append("nombre", busquedaNombre);
 
       const url = `${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`;
 
@@ -343,6 +358,22 @@ const ProspectosAdmin = () => {
     p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
   );
 
+
+  const limpiarFiltros = () => {
+    setCedulaVendedora("");
+    setEstadoFiltro([]);
+    setSectorFiltro(null);
+    setCategoriaFiltro(null);
+    setCiudadFiltro("");
+    setProvinciaFiltro("");
+    setBusquedaNombre("");
+    setBusquedaInput("");
+    establecerFechasUltimos3Meses(); // vuelve a poner las fechas de los últimos 3 meses
+    setPaginaActual(1);
+    localStorage.removeItem("filtros_prospectos_admin");
+    // No llamamos buscarProspectos directamente, el useEffect ya se encarga
+  };
+   
   return (
     <div className="admin-prospectos-page">
       <h1 className="admin-prospectos-title">Gestión de Prospectos</h1>
@@ -458,6 +489,9 @@ const ProspectosAdmin = () => {
           </div>
 
 
+          <button onClick={limpiarFiltros} disabled={loading}>
+  🧹 Limpiar Filtros
+</button>
 
 
           <button onClick={buscarProspectos} disabled={loading}>
@@ -481,12 +515,17 @@ const ProspectosAdmin = () => {
       <div className="filtro-grupo-nombre">
         <label>Nombre del Prospecto</label>
         <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={busquedaNombre}
-          onChange={(e) => setBusquedaNombre(e.target.value)}
-          className="input-busqueda-nombre"
-        />
+  type="text"
+  placeholder="Buscar por nombre..."
+  value={busquedaInput}
+  onChange={(e) => {
+    setBusquedaInput(e.target.value);
+    debouncedBuscar(e.target.value);
+  }}
+  className="input-busqueda-nombre"
+/>
+
+
       </div>
       {loading && <p>Cargando prospectos...</p>}
 

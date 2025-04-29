@@ -156,7 +156,7 @@ const SeguimientosProspecto = () => {
                       📜 Ver Seguimientos
                     </button>
                     <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                   
+
                   </td>
                 </tr>
 
@@ -215,7 +215,7 @@ const SeguimientosProspecto = () => {
                   📜 Ver
                 </button>
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-               
+
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
@@ -252,7 +252,7 @@ const SeguimientosProspecto = () => {
         </div>
       )}
 
-      
+
 
     </div>
   );
