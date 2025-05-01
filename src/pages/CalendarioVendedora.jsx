@@ -119,7 +119,7 @@ const CalendarioVendedora = () => {
   const cargarProspectos = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?vendedora=${cedula}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/vendedora/${cedula}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -192,9 +192,18 @@ const CalendarioVendedora = () => {
   };
 
   const crearProspectoYVenta = async () => {
+    if (!nuevoObjetivo.trim()) {
+      alert("Por favor, ingresa un objetivo para la prospección.");
+      return;
+    }
+    if (!nuevoNombre.trim()) {
+      alert("Por favor, ingresa un nombre de prospecto.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
-      const res1 = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,28 +213,15 @@ const CalendarioVendedora = () => {
           nombre: nuevoNombre,
           estado: nuevoEstado,
           cedula_vendedora: cedula,
-        }),
-      });
-
-      const { prospecto } = await res1.json();
-
-      const res2 = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          id_prospecto: prospecto.id_prospecto,
           objetivo: nuevoObjetivo,
         }),
       });
-
-      const { venta } = await res2.json();
-
+  
+      const { prospecto, venta } = await res.json(); 
+  
       await cargarProspectos();
       setProspectoSeleccionado({ value: prospecto.id_prospecto, label: prospecto.nombre });
-      setVentaSeleccionada({ value: venta.id_venta, label: nuevoObjetivo });
+      setVentaSeleccionada({ value: venta.id_venta, label: venta.objetivo });
       setMostrarModalNuevoProspecto(false);
       setNuevoNombre("");
       setNuevoObjetivo("");
@@ -233,7 +229,7 @@ const CalendarioVendedora = () => {
       console.error("Error al crear prospecto y venta:", err);
     }
   };
-
+  
   const agendarSeguimiento = async () => {
     if (!ventaSeleccionada || !tipoSeleccionado) {
       setError("Selecciona venta y tipo de seguimiento");

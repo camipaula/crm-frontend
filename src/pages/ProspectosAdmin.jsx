@@ -36,14 +36,16 @@ const ProspectosAdmin = () => {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [busquedaInput, setBusquedaInput] = useState("");
 
+  const [orden, setOrden] = useState(""); // "" o "proximo_contacto"
+
   const debouncedBuscar = useRef(
     debounce((valor) => {
       setPaginaActual(1); // primero reinicia la página
       setBusquedaNombre(valor); // luego actualiza la búsqueda
     }, 500)
   ).current;
-  
-  
+
+
 
   useEffect(() => {
     obtenerVendedoras();
@@ -64,14 +66,15 @@ const ProspectosAdmin = () => {
         if (filtros.cedulaVendedora) setCedulaVendedora(filtros.cedulaVendedora);
         if (filtros.fechaInicio) setFechaInicio(filtros.fechaInicio);
         if (filtros.fechaFin) setFechaFin(filtros.fechaFin);
+        if (filtros.orden) setOrden(filtros.orden); 
 
         if (filtros.ciudadFiltro) setCiudadFiltro(filtros.ciudadFiltro);
         if (filtros.provinciaFiltro) setProvinciaFiltro(filtros.provinciaFiltro);
         if (filtros.busquedaNombre) {
           setBusquedaNombre(filtros.busquedaNombre);
-          setBusquedaInput(filtros.busquedaNombre); 
+          setBusquedaInput(filtros.busquedaNombre);
         }
-        
+
 
         setEstadoFiltro(filtros.estadoFiltro || []);
         setCategoriaFiltro(filtros.categoriaFiltro || null);
@@ -164,7 +167,8 @@ const ProspectosAdmin = () => {
     provinciaFiltro,
     filtrosInicializados,
     paginaActual,
-    busquedaNombre 
+    busquedaNombre,
+
   ]);
 
 
@@ -225,6 +229,7 @@ const ProspectosAdmin = () => {
       if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
       if (provinciaFiltro) params.append("provincia", provinciaFiltro);
       if (busquedaNombre.trim() !== "") params.append("nombre", busquedaNombre);
+      if (orden) params.append("orden", orden);
 
       const url = `${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`;
 
@@ -339,6 +344,7 @@ const ProspectosAdmin = () => {
       ciudadFiltro,
       provinciaFiltro,
       busquedaNombre,
+      orden
     };
     localStorage.setItem("filtros_prospectos_admin", JSON.stringify(filtros));
   }, [
@@ -351,6 +357,7 @@ const ProspectosAdmin = () => {
     ciudadFiltro,
     provinciaFiltro,
     busquedaNombre,
+    orden,
     filtrosInicializados,
   ]);
 
@@ -380,8 +387,8 @@ const ProspectosAdmin = () => {
       debouncedBuscar.cancel();
     };
   }, []);
-  
-   
+
+
   return (
     <div className="admin-prospectos-page">
       <h1 className="admin-prospectos-title">Gestión de Prospectos</h1>
@@ -498,13 +505,11 @@ const ProspectosAdmin = () => {
 
 
           <button onClick={limpiarFiltros} disabled={loading}>
-  🧹 Limpiar Filtros
-</button>
-
-
-          <button onClick={buscarProspectos} disabled={loading}>
-            {loading ? "Cargando..." : "Buscar"}
+            🧹 Limpiar Filtros
           </button>
+
+
+
 
 
         </div>
@@ -523,16 +528,29 @@ const ProspectosAdmin = () => {
       <div className="filtro-grupo-nombre">
         <label>Nombre del Prospecto</label>
         <input
-  type="text"
-  placeholder="Buscar por nombre..."
-  value={busquedaInput}
-  onChange={(e) => {
-    setBusquedaInput(e.target.value);
-    debouncedBuscar(e.target.value);
-  }}
-  className="input-busqueda-nombre"
-/>
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={busquedaInput}
+          onChange={(e) => {
+            setBusquedaInput(e.target.value);
+            debouncedBuscar(e.target.value);
+          }}
+          className="input-busqueda-nombre"
+        />
 
+        <div className="filtro-grupo">
+          <label>Ordenar por:</label>
+          <select value={orden} onChange={(e) => setOrden(e.target.value)}>
+            <option value="">Fecha de creación</option>
+            <option value="proximo_contacto">Próximo contacto</option>
+          </select>
+        </div>
+
+        <div className="paginador-lindo">
+        <button onClick={buscarProspectos} disabled={loading}>
+          {loading ? "Cargando..." : "Buscar"}
+        </button>
+        </div>
 
       </div>
       {loading && <p>Cargando prospectos...</p>}

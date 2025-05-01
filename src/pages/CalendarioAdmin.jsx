@@ -71,17 +71,41 @@ const CalendarioAdmin = () => {
   const cargarProspectos = async (cedula_vendedora) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setProspectos(data.map((p) => ({ value: p.id_prospecto, label: p.nombre })));
+const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`, {
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+const data = await res.json();
+
+if (!Array.isArray(data.prospectos)) {
+  console.error("Formato inesperado al cargar prospectos:", data);
+  return;
+}
+
+setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nombre })));
+
     } catch (err) {
       console.error("Error cargando prospectos:", err);
     }
   };
 
   const crearProspectoYVenta = async () => {
+    if (!nuevoNombre.trim()) {
+      alert("Por favor, ingresa un nombre para el prospecto.");
+      return;
+    }
+    if (!nuevoObjetivo.trim()) {
+      alert("Por favor, ingresa un objetivo para la prospección.");
+      return;
+    }
+    if (!vendedoraNueva?.value) {
+      alert("Selecciona una vendedora para asignar el prospecto.");
+      return;
+    }
+  
     try {
       const token = localStorage.getItem("token");
       const res1 = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
@@ -93,24 +117,13 @@ const CalendarioAdmin = () => {
         body: JSON.stringify({
           nombre: nuevoNombre,
           estado: nuevoEstado,
-          cedula_vendedora: vendedoraNueva?.value,
-        }),
-      });
-      const { prospecto } = await res1.json();
-
-      const res2 = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          id_prospecto: prospecto.id_prospecto,
+          cedula_vendedora: vendedoraNueva.value,
           objetivo: nuevoObjetivo,
         }),
       });
-      const { venta } = await res2.json();
-
+  
+      const { prospecto, venta } = await res1.json();
+  
       await cargarProspectos(vendedoraNueva.value);
       setProspectoSeleccionado({ value: prospecto.id_prospecto, label: prospecto.nombre });
       setVentaSeleccionada({ value: venta.id_venta, label: nuevoObjetivo });
@@ -121,6 +134,7 @@ const CalendarioAdmin = () => {
       console.error("Error al crear prospecto y venta:", err);
     }
   };
+  
 
   const cargarVentas = async (id_prospecto) => {
     try {

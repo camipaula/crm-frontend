@@ -35,6 +35,9 @@ const ProspectosVendedora = () => {
   const [paginaActual, setPaginaActual] = useState(1);
 const [totalPaginas, setTotalPaginas] = useState(1);
 
+const [orden, setOrden] = useState("");
+
+
 
  const debouncedBuscar = useRef(
    debounce((valor) => {
@@ -107,6 +110,8 @@ const obtenerProspectos = async () => {
         if (filtrosParsed.ciudadFiltro) setCiudadFiltro(filtrosParsed.ciudadFiltro);
         if (filtrosParsed.provinciaFiltro) setProvinciaFiltro(filtrosParsed.provinciaFiltro);
         if (filtrosParsed.categoriaFiltro) setCategoriaFiltro(filtrosParsed.categoriaFiltro);
+        if (filtrosParsed.orden) setOrden(filtrosParsed.orden);
+
       }
 
       setFiltrosInicializados(true);
@@ -127,7 +132,8 @@ const obtenerProspectos = async () => {
       busquedaNombre,
       ciudadFiltro,
       provinciaFiltro,
-      categoriaFiltro
+      categoriaFiltro,
+      orden
     };
 
     localStorage.setItem("filtros_prospectos_vendedora", JSON.stringify(filtros));
@@ -139,7 +145,8 @@ const obtenerProspectos = async () => {
     busquedaNombre,
     ciudadFiltro,        
     provinciaFiltro,     
-    categoriaFiltro,     
+    categoriaFiltro,  
+    orden,   
     filtrosInicializados
   ]);
 
@@ -281,7 +288,8 @@ const obtenerProspectos = async () => {
       if (categoriaFiltro) params.append("id_categoria", categoriaFiltro.value);
       if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
       if (provinciaFiltro) params.append("provincia", provinciaFiltro);
-  
+      if (orden) params.append("orden", orden);
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -497,10 +505,7 @@ const obtenerProspectos = async () => {
   🧹 Limpiar Filtros
 </button>
 
-        <button onClick={buscarProspectos} disabled={loading}>
-        {loading ? "Cargando..." : "Buscar"}
-      </button>
-
+      
       </div>
 )}
 
@@ -529,7 +534,20 @@ const obtenerProspectos = async () => {
     }}
     className="input-busqueda-nombre"
   />
+  
+<div className="filtro-grupo">
+  <label>Ordenar por:</label>
+  <select value={orden} onChange={(e) => setOrden(e.target.value)}>
+    <option value="">Fecha de creación</option>
+    <option value="proximo_contacto">Próximo contacto</option>
+  </select>
 </div>
+</div>
+
+
+<button onClick={buscarProspectos} disabled={loading}>
+        {loading ? "Cargando..." : "Buscar"}
+      </button>
 
         
       {loading && <p>Cargando prospectos...</p>}
