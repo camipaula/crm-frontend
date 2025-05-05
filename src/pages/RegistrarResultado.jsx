@@ -88,7 +88,7 @@ const RegistrarResultado = () => {
       return;
     }
   
-    const estadosFinales = ["no_interesado", "ganado", "perdido"];
+    const estadosFinales = ["Cierre", "Competencia"];
     if (!estadosFinales.includes(nombreEstado)) {
       setMostrarModal(true);
       return;
@@ -98,7 +98,7 @@ const RegistrarResultado = () => {
       const token = localStorage.getItem("token");
   
       let monto_cierre = null;
-      if (nombreEstado === "ganado") {
+      if (nombreEstado === "Cierre") {
         const monto = prompt("Por favor, ingresa el monto de cierre de la venta:");
         const montoNumerico = parseFloat(monto);
         if (!monto || isNaN(montoNumerico) || montoNumerico <= 0) {

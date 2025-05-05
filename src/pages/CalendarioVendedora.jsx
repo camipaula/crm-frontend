@@ -31,7 +31,7 @@ const CalendarioVendedora = () => {
   // Modal nuevo prospecto
   const [mostrarModalNuevoProspecto, setMostrarModalNuevoProspecto] = useState(false);
   const [nuevoNombre, setNuevoNombre] = useState("");
-  const [nuevoEstado, setNuevoEstado] = useState("interesado");
+  const [nuevoEstado] = useState("nuevo");
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
   //Modal nueva propseccion
@@ -370,26 +370,28 @@ const CalendarioVendedora = () => {
         </div>
       )}
 
-      {mostrarModalNuevoProspecto && (
-        <div className="modal modal-small">
-          <div className="modal-content">
-            <h3>➕ Nuevo Prospecto</h3>
-            <input type="text" placeholder="Nombre del Prospecto" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
-            <select value={nuevoEstado} onChange={(e) => setNuevoEstado(e.target.value)}>
-              <option value="nuevo">Nuevo</option>
-              <option value="contactar">Contactar</option>
-              <option value="interesado">Interesado</option>
-              <option value="cita">Cita</option>
-              <option value="visita">Visita</option>
-              <option value="en_prueba">En Prueba</option>
-
-            </select>
-            <input type="text" placeholder="Objetivo de la Prospección" value={nuevoObjetivo} onChange={(e) => setNuevoObjetivo(e.target.value)} />
-            <button onClick={crearProspectoYVenta}>Crear y Usar</button>
-            <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
-          </div>
-        </div>
-      )}
+{mostrarModalNuevoProspecto && (
+  <div className="modal modal-small">
+    <div className="modal-content">
+      <h3>➕ Nuevo Prospecto</h3>
+      <input
+        type="text"
+        placeholder="Nombre del Prospecto"
+        value={nuevoNombre}
+        onChange={(e) => setNuevoNombre(e.target.value)}
+      />
+      <p><b>Estado:</b> Nuevo</p>
+      <input
+        type="text"
+        placeholder="Objetivo de la Prospección"
+        value={nuevoObjetivo}
+        onChange={(e) => setNuevoObjetivo(e.target.value)}
+      />
+      <button onClick={crearProspectoYVenta}>Crear y Usar</button>
+      <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
+    </div>
+  </div>
+)}
 
       {mostrarModalNuevaVenta && (
         <div className="modal modal-small">

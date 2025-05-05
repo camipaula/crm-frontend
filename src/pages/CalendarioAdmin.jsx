@@ -31,7 +31,7 @@ const CalendarioAdmin = () => {
   const [mostrarModalNuevaVenta, setMostrarModalNuevaVenta] = useState(false);
   const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
   const [nuevoNombre, setNuevoNombre] = useState("");
-  const [nuevoEstado, setNuevoEstado] = useState("interesado");
+  const [nuevoEstado] = useState("nuevo");
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
   const [modoEdicion, setModoEdicion] = useState(false);
 
@@ -663,26 +663,29 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
       )}
 
 
-      {mostrarModalNuevoProspecto && (
-        <div className="modal modal-small">
-          <div className="modal-content">
-            <h3>➕ Nuevo Prospecto</h3>
-            <input type="text" placeholder="Nombre del Prospecto" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
-            <select value={nuevoEstado} onChange={(e) => setNuevoEstado(e.target.value)}>
-              <option value="nuevo">Nuevo</option>
-              <option value="contactar">Contactar</option>
-              <option value="interesado">Interesado</option>
-              <option value="cita">Cita</option>
-              <option value="visita">Visita</option>
-              <option value="en_prueba">En Prueba</option>
+{mostrarModalNuevoProspecto && (
+  <div className="modal modal-small">
+    <div className="modal-content">
+      <h3>➕ Nuevo Prospecto</h3>
+      <input
+        type="text"
+        placeholder="Nombre del Prospecto"
+        value={nuevoNombre}
+        onChange={(e) => setNuevoNombre(e.target.value)}
+      />
+      <p><b>Estado:</b> Nuevo</p> {/* <-- aquí */}
+      <input
+        type="text"
+        placeholder="Objetivo de la Prospección"
+        value={nuevoObjetivo}
+        onChange={(e) => setNuevoObjetivo(e.target.value)}
+      />
+      <button onClick={crearProspectoYVenta}>Crear y Usar</button>
+      <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
+    </div>
+  </div>
+)}
 
-            </select>
-            <input type="text" placeholder="Objetivo de la Prospección" value={nuevoObjetivo} onChange={(e) => setNuevoObjetivo(e.target.value)} />
-            <button onClick={crearProspectoYVenta}>Crear y Usar</button>
-            <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
-          </div>
-        </div>
-      )}
 
       {mostrarModalNuevaVenta && (
         <div className="modal modal-small">

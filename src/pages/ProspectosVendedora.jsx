@@ -608,7 +608,7 @@ const obtenerProspectos = async () => {
 
                 <td>{p.nombre}</td>
                 <td>
-  {p.estado_prospecto?.nombre === "ganado" && p.ventas?.[0]?.monto_cierre
+  {p.estado_prospecto?.nombre === "Cierre" && p.ventas?.[0]?.monto_cierre
     ? `Ganado ($${p.ventas[0].monto_cierre})`
     : p.estado_prospecto?.nombre || "Sin estado"}
 </td>
@@ -659,7 +659,7 @@ const obtenerProspectos = async () => {
               <h3>{p.nombre}</h3>
               <p>
   <strong>Estado:</strong>{" "}
-  {p.estado_prospecto?.nombre === "ganado" && p.ventas?.[0]?.monto_cierre
+  {p.estado_prospecto?.nombre === "Cierre" && p.ventas?.[0]?.monto_cierre
     ? `Ganado ($${p.ventas[0].monto_cierre})`
     : p.estado_prospecto?.nombre || "Sin estado"}
 </p>
