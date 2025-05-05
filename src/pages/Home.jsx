@@ -10,6 +10,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "../styles/home.css";
+import { obtenerCedulaDesdeToken } from "../utils/auth";
+
+
+
 
 const Home = () => {
   const rol = getRol();
@@ -23,16 +27,30 @@ const Home = () => {
   const [sector, setSector] = useState("");
   const [ciudad, setCiudad] = useState("");
   const [idCategoria, setIdCategoria] = useState("");
+  
   const [idOrigen, setIdOrigen] = useState("");
   const [vendedoras, setVendedoras] = useState([]);
   const [sectores, setSectores] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [origenes, setOrigenes] = useState([]);
+  const [categorias, setCategorias] = useState([]);
 
   const [mostrarFiltros, setMostrarFiltros] = useState(false)
 
   const COLORS = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad"];
 
+  const fetchCategorias = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const data = await res.json();
+      setCategorias(data);
+    } catch (error) {
+      console.error("❌ Error cargando categorías:", error);
+    }
+  };
+  
 
   const fetchVendedoras = async () => {
     try {
@@ -85,6 +103,7 @@ const Home = () => {
     };
 
     fetchData();
+    fetchCategorias(); 
     fetchDashboardData();
   }, []);
 
@@ -110,7 +129,7 @@ const Home = () => {
       }
 
       if (rol === "vendedora") {
-        params.cedula_vendedora = localStorage.getItem("cedula");
+        params.cedula_vendedora = obtenerCedulaDesdeToken(); 
       } else if (cedulaVendedora) {
         params.cedula_vendedora = cedulaVendedora;
       }
@@ -139,6 +158,7 @@ const Home = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     fetchDashboardData();
   };
 
@@ -194,6 +214,16 @@ const Home = () => {
               ))}
             </select>
 
+            <select value={idCategoria} onChange={(e) => setIdCategoria(e.target.value)}>
+  <option value="">Todas las categorías</option>
+  {categorias.map((c) => (
+    <option key={c.id_categoria} value={c.id_categoria}>
+      {c.nombre}
+    </option>
+  ))}
+</select>
+
+
             <button type="submit">Filtrar</button>
           </form>
         )}
@@ -204,17 +234,48 @@ const Home = () => {
 
            <div className="dashboard-card">
             <h3>🥧 Prospecciones Abiertas, Ganadas y Perdidas</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={dashboardData.graficoVentas} dataKey="cantidad" nameKey="estado" outerRadius={80}>
-                  {dashboardData.graficoVentas.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={250}>
+  <PieChart>
+    <Pie
+      data={dashboardData.graficoVentas}
+      dataKey="cantidad"
+      nameKey="estado"
+      outerRadius={80}
+      labelLine={false}
+      label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+        const RADIAN = Math.PI / 180;
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+        const total = dashboardData.graficoVentas.reduce((sum, d) => sum + d.cantidad, 0);
+        const value = dashboardData.graficoVentas[index].cantidad;
+        const porcentaje = ((value / total) * 100).toFixed(1);
+
+        return (
+          <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+            {`${porcentaje}%`}
+          </text>
+        );
+      }}
+    >
+      {dashboardData.graficoVentas.map((_, idx) => (
+        <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+      ))}
+    </Pie>
+    <Tooltip
+      formatter={(value, name) => [`${value} ventas`, name]}
+    />
+    <Legend
+      formatter={(value) => {
+        const item = dashboardData.graficoVentas.find((d) => d.estado === value);
+        const total = dashboardData.graficoVentas.reduce((sum, d) => sum + d.cantidad, 0);
+        const porcentaje = item ? ((item.cantidad / total) * 100).toFixed(1) : 0;
+        return `${value} (${porcentaje}%)`;
+      }}
+    />
+  </PieChart>
+</ResponsiveContainer>
+
           </div>
           <div className="dashboard-card">
             <h3>📊 Resumen de Prospecciones</h3>
@@ -235,30 +296,49 @@ const Home = () => {
             <h4>💵 Promedio del Monto de Cierre</h4>
             <p>${dashboardData.promedioMontoCierre}</p>
           </div>
-
-          <div className="dashboard-card">
-            <h3>💡 Interés Generado</h3>
-            <p>Total interesados: {dashboardData.interes.total}</p>
-            <p>Porcentaje: {dashboardData.interes.porcentaje.toFixed(1)}%</p>
-            <p>Cerrados desde interesados: {dashboardData.interes.cerrados}</p>
-          </div>
-
          
 
           <div className="dashboard-card">
-            <h3>📌 Estados de Prospectos</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={dashboardData.graficoEstadosProspecto} dataKey="cantidad" nameKey="estado" outerRadius={80}>
-                  {dashboardData.graficoEstadosProspecto.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+  <h3>📌 Fases de Prospectos</h3>
+  <ResponsiveContainer width="100%" height={250}>
+    <PieChart>
+      <Pie
+        data={dashboardData.graficoEstadosProspecto}
+        dataKey="cantidad"
+        nameKey="estado"
+        outerRadius={80}
+        labelLine={false}
+
+        label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+          const RADIAN = Math.PI / 180;
+          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+          const x = cx + radius * Math.cos(-midAngle * RADIAN);
+          const y = cy + radius * Math.sin(-midAngle * RADIAN);
+          const porcentaje = dashboardData.graficoEstadosProspecto[index].porcentaje;
+      
+          return (
+            <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+              {`${porcentaje}%`}
+            </text>
+          );
+        }}      >
+        {dashboardData.graficoEstadosProspecto.map((_, idx) => (
+          <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+        ))}
+      </Pie>
+      <Tooltip
+        formatter={(value, name) => [`${value} prospectos`, name]}
+      />
+      <Legend
+        formatter={(value) => {
+          const item = dashboardData.graficoEstadosProspecto.find((d) => d.estado === value);
+          return `${value} (${item?.porcentaje ?? 0}%)`;
+        }}
+      />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
+
 
           <div className="dashboard-card tabla-cierres">
             <h3>📋 Detalle de Prospecciones Ganadas</h3>

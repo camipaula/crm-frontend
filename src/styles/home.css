@@ -142,6 +142,16 @@
   width: 78%;
 }
 
+
+.dashboard-card h3 {
+  margin-bottom: 12px;
+}
+
+.dashboard-card .recharts-legend-item {
+  font-size: 14px;
+}
+
+
 /* ❗ Error */
 .error {
   color: red;
