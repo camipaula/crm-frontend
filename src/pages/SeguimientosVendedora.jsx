@@ -322,7 +322,7 @@ const SeguimientosVendedora = () => {
               <th>Prospecto</th>
               <th>Objetivo</th>
               <th>Estado del Prospecto</th>
-              <th>Estado de la Venta</th>
+              <th>Estado de la Prospección</th>
               <th>Última Fecha</th>
               <th>Último Tipo</th>
               <th>Último Resultado</th>
@@ -420,7 +420,7 @@ const SeguimientosVendedora = () => {
               <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
               <p><strong>Estado del Prospecto:</strong> {p.prospecto?.estado_prospecto?.nombre || "No definido"}</p>
               <p>
-                <strong>Estado de la Venta:</strong>{" "}
+                <strong>Estado de la Prospección:</strong>{" "}
                 {p.abierta
                   ? "Abierta"
                   : p.monto_cierre

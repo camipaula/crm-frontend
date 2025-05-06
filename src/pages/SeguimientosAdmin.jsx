@@ -479,7 +479,7 @@ const SeguimientosAdmin = () => {
 
               <th>Objetivo</th>
               <th>Estado del Prospecto</th>
-              <th>Estado de la Venta</th>
+              <th>Estado de la Prospección</th>
               <th>Última Fecha</th>
               <th>Último Tipo</th>
               <th>Último Resultado</th>
@@ -603,7 +603,7 @@ const SeguimientosAdmin = () => {
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
               <p><strong>Estado del Prospecto:</strong> {capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</p>
               <p>
-                <strong>Estado de la Venta:</strong>{" "}
+                <strong>Estado de la Prospección:</strong>{" "}
                 {p.abierta
                   ? "Abierta"
                   : `Cerrada${typeof p.monto_cierre === "number" ? ` ($${p.monto_cierre.toFixed(2)})` : ""}`}

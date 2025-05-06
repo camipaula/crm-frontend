@@ -587,6 +587,7 @@ const ProspectosAdmin = () => {
 
               <th>Prospecto</th>
               <th>Vendedora</th>
+              <th>Objetivo</th>
               <th>Estado</th>
               <th>Próximo Contacto</th>
               <th>Última Nota</th>
@@ -623,6 +624,7 @@ const ProspectosAdmin = () => {
                         ? `${p.vendedora_prospecto.nombre}${p.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
                         : "Sin asignar"}
                     </td>
+                    <td>{p.ventas?.[0]?.objetivo || "Sin objetivo"}</td>
                     <td>
                       {p.estado_prospecto?.nombre === "Cierre" && p.ventas?.[0]?.monto_cierre
                         ? `Ganado ($${p.ventas[0].monto_cierre})`
@@ -711,6 +713,8 @@ const ProspectosAdmin = () => {
                     "Sin asignar"
                   )}
                 </p>
+                <p><strong>Objetivo:</strong> {p.ventas?.[0]?.objetivo || "Sin objetivo"}</p>
+
                 <p>
                   <strong>Estado:</strong>{" "}
                   {p.estado_prospecto?.nombre === "Cierre" && p.ventas?.[0]?.monto_cierre

@@ -233,7 +233,7 @@ const Home = () => {
         <div className="dashboard-grid">
 
            <div className="dashboard-card">
-            <h3>🥧 Prospecciones Abiertas, Ganadas y Perdidas</h3>
+            <h3>🥧 Prospecciones Abiertas, Cerradas  y Competencia</h3>
             <ResponsiveContainer width="100%" height={250}>
   <PieChart>
     <Pie
@@ -281,13 +281,13 @@ const Home = () => {
             <h3>📊 Resumen de Prospecciones</h3>
             <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
             <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-            <p>✅ Ganadas: <strong>{dashboardData.totalVentasGanadas + " " + (dashboardData.porcentajeGanadas ?? 0).toFixed(1)}% </strong></p>
-            <p>❌ Perdidas: <strong>{dashboardData.totalVentasPerdidas + " " + (dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%</strong></p>
+            <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas + " " + (dashboardData.porcentajeGanadas ?? 0).toFixed(1)}% </strong></p>
+            <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas + " " + (dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%</strong></p>
 
           </div>
 
           <div className="dashboard-card">
-            <h4>✅ Porcentaje de Prospecciones Ganadas</h4>
+            <h4>✅ Porcentaje de Prospecciones Cerradas</h4>
             <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
 
             <h4>📅 Promedio de días hasta el cierre</h4>

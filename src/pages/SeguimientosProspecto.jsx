@@ -114,7 +114,7 @@ const SeguimientosProspecto = () => {
         <thead>
           <tr>
             <th>Objetivo</th>
-            <th>Estado de la Venta</th>
+            <th>Estado de la Prospección</th>
             <th>Monto de Cierre</th>
             <th>Última Fecha</th>
             <th>Último Tipo</th>
@@ -195,7 +195,7 @@ const SeguimientosProspecto = () => {
           return (
             <div className="card-seguimiento" key={p.id_venta}>
               <h3>🎯 Objetivo: {p.objetivo || "No definido"}</h3>
-              <p><strong>Estado Venta:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
+              <p><strong>Estado Prospección:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
               {!p.abierta && (
                 <p>
                   <strong>Monto Cierre:</strong>{" "}
