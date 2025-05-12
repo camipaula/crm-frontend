@@ -461,7 +461,7 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
             // Solo en la vista mensual mostramos tipo con sigla
             return (
               <div>
-                <b>[{prospecto.toUpperCase()}]</b>-{tipo}
+        <b>[{prospecto.substring(0, 4).toUpperCase()}]</b> - {tipo}
               </div>
             );
           } else {
