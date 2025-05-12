@@ -316,7 +316,7 @@ const CalendarioVendedora = () => {
     if (view.type === "dayGridMonth") {
       return (
         <div>
-          <b>[{prospecto.toUpperCase()}]</b>- {tipo}
+        <b>[{prospecto.substring(0, 4).toUpperCase()}]</b> - {tipo}
         </div>
       );
     } else {
