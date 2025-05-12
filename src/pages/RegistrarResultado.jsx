@@ -55,7 +55,7 @@ const RegistrarResultado = () => {
       setSeguimiento(data);
       if (data.venta?.prospecto) {
         setProspecto(data.venta.prospecto);
-        setEstadoProspecto(data.venta.prospecto.id_estado || "");
+        setEstadoProspecto(data.venta.estado_venta?.id_estado || "");
       }
       setResultado(data.resultado || "");
       setNota(data.nota || "");

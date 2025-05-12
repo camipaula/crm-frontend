@@ -46,40 +46,7 @@ const [orden, setOrden] = useState("");
    }, 500)
  ).current;
 
- useEffect(() => {
-  obtenerProspectos();
-}, [paginaActual, busquedaNombre]);
 
-const obtenerProspectos = async () => {
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-
-    let params = new URLSearchParams();
-    params.append("page", paginaActual);
-    params.append("limit", 10); // O el límite que tú prefieras
-
-    if (busquedaNombre.trim() !== "") {
-      params.append("nombre", busquedaNombre);
-    }
-
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Error obteniendo prospectos");
-
-    const data = await res.json();
-    setProspectos(data.prospectos || []);
-    setTotalPaginas(data.totalPages || 1);
-  } catch (error) {
-    setError(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
 
 
   useEffect(() => {
@@ -249,7 +216,8 @@ const obtenerProspectos = async () => {
     ciudadFiltro,
     provinciaFiltro,
     busquedaNombre,
-    paginaActual
+    paginaActual,
+    orden 
   ]);
   
   
@@ -324,7 +292,8 @@ const obtenerProspectos = async () => {
       if (sectorFiltro) url += `&sector=${sectorFiltro.value}`;
       if (ciudadFiltro) url += `&ciudad=${encodeURIComponent(ciudadFiltro)}`;
       if (provinciaFiltro) url += `&provincia=${encodeURIComponent(provinciaFiltro)}`;
-  
+      if (orden) url += `&orden=${orden}`;
+
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -351,9 +320,8 @@ const obtenerProspectos = async () => {
     }
   };
   
-  const prospectosFiltrados = prospectos.filter((p) =>
-    p.nombre.toLowerCase().includes(busquedaNombre.toLowerCase())
-  );
+  const prospectosFiltrados = prospectos; // usa el array directo
+
   
   
   const limpiarFiltros = () => {
@@ -376,6 +344,16 @@ const obtenerProspectos = async () => {
     };
   }, []);
   
+  const estadoCierre = estados.find(e => e.label.toLowerCase() === "cierre");
+
+const mostrarEstado = (venta) => {
+  if (!venta) return "Sin estado";
+  if (venta.id_estado === estadoCierre?.value && venta.monto_cierre) {
+    return `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`;
+  }
+  return estados.find(e => e.value === venta.id_estado)?.label || "Sin estado";
+};
+
 
   return (
     <div className="vendedora-prospectos-page">
@@ -579,110 +557,138 @@ const obtenerProspectos = async () => {
           <tr>
             <th>#</th>
             <th>Prospecto</th>
+            <th>Objetivo</th>
+
             <th>Estado</th>
+
             <th>Próximo Contacto</th>
             <th>Última Nota</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {prospectosFiltrados.map((p, index) => {
-            const ultimaNota = p.ventas
-              ?.flatMap((v) => v.seguimientos)
-              .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
+  {prospectosFiltrados.length > 0 ? (
+    prospectosFiltrados.flatMap((p, index) =>
+      p.ventas.length > 0
+        ? p.ventas.map((venta) => {
+            const ultimaNota = venta.seguimientos
+              ?.sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
 
-            const proximoContacto = p.ventas
-              ?.flatMap((v) => v.seguimientos)
-              .filter((s) => s.estado === "pendiente")
+            const proximoContacto = venta.seguimientos
+              ?.filter((s) => s.estado === "pendiente")
               .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
 
             const proximoContactoFormateado = proximoContacto
               ? new Date(proximoContacto).toLocaleDateString("es-EC")
               : "Sin programar";
 
-            const tieneVentas = p.ventas?.length > 0;
-
             return (
-              <tr key={p.id_prospecto}>
+              <tr key={`${p.id_prospecto}-${venta.id_venta}`}>
                 <td>{index + 1}</td>
-
                 <td>{p.nombre}</td>
-                <td>
-  {p.estado_prospecto?.nombre === "Cierre" && p.ventas?.[0]?.monto_cierre
-    ? `Ganado ($${p.ventas[0].monto_cierre})`
-    : p.estado_prospecto?.nombre || "Sin estado"}
-</td>
+                <td>{venta.objetivo || "Sin objetivo"}</td>
+                <td>{mostrarEstado(venta)}</td>
                 <td>{proximoContactoFormateado}</td>
                 <td>{ultimaNota}</td>
                 <td>
-                  {tieneVentas ? (
-                    <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
-                      🔍 Ver Seguimientos
-                    </button>
-                  ) : (
-                    <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
-                      ➕ Abrir Prospección
-                    </button>
-                  )}
+                  <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
+                    🔍 Ver Seguimientos
+                  </button>
                   <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                     Ver Información
-
                   </button>
                 </td>
               </tr>
             );
-          })}
-        </tbody>
+          })
+        : [
+            <tr key={`solo-${p.id_prospecto}`}>
+              <td>{index + 1}</td>
+              <td>{p.nombre}</td>
+              <td>Sin estado</td>
+              <td>Sin programar</td>
+              <td>Sin nota</td>
+              <td>
+                <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
+                  ➕ Abrir Prospección
+                </button>
+                <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
+                  Ver Información
+                </button>
+              </td>
+            </tr>,
+          ]
+    )
+  ) : (
+    <tr>
+      <td colSpan="6" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
+        No hay prospectos disponibles
+      </td>
+    </tr>
+  )}
+</tbody>
+
       </table>
       </div>
       <div className="vendedora-cards-mobile">
-        {prospectosFiltrados.map((p, index) => {
-          const ultimaNota = p.ventas
-            ?.flatMap((v) => v.seguimientos)
-            .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
+  {prospectosFiltrados.length > 0 ? (
+    prospectosFiltrados.flatMap((p) =>
+      p.ventas.length > 0
+        ? p.ventas.map((venta) => {
+            const ultimaNota = venta.seguimientos
+              ?.sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
 
-          const proximoContacto = p.ventas
-            ?.flatMap((v) => v.seguimientos)
-            .filter((s) => s.estado === "pendiente")
-            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
+            const proximoContacto = venta.seguimientos
+              ?.filter((s) => s.estado === "pendiente")
+              .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
 
-          const proximoContactoFormateado = proximoContacto
-            ? new Date(proximoContacto).toLocaleDateString("es-EC")
-            : "Sin programar";
+            const proximoContactoFormateado = proximoContacto
+              ? new Date(proximoContacto).toLocaleDateString("es-EC")
+              : "Sin programar";
 
-          const tieneVentas = p.ventas?.length > 0;
+            return (
+              <div className="vendedora-prospecto-card" key={`venta-${p.id_prospecto}-${venta.id_venta}`}>
+                <h3>{p.nombre}</h3>
+                <p><strong>Objetivo:</strong> {venta.objetivo || "Sin objetivo"}</p>
 
-          return (
-            <div className="vendedora-prospecto-card" key={p.id_prospecto}>
-              <p><strong>#</strong> {index + 1}</p>
+                <p><strong>Estado:</strong> {mostrarEstado(venta)}</p>
 
-              <h3>{p.nombre}</h3>
-              <p>
-  <strong>Estado:</strong>{" "}
-  {p.estado_prospecto?.nombre === "Cierre" && p.ventas?.[0]?.monto_cierre
-    ? `Ganado ($${p.ventas[0].monto_cierre})`
-    : p.estado_prospecto?.nombre || "Sin estado"}
-</p>
-              <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>
-              <p><strong>Última Nota:</strong> {ultimaNota}</p>
-              <div className="acciones">
-                {tieneVentas ? (
+                <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>
+                <p><strong>Última Nota:</strong> {ultimaNota}</p>
+                <div className="acciones">
                   <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
                     Ver Seguimientos
                   </button>
-                ) : (
-                  <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
-                    Abrir Prospección
+                  <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
+                    Ver Información
                   </button>
-                )}
+                </div>
+              </div>
+            );
+          })
+        : [
+            <div className="vendedora-prospecto-card" key={`solo-${p.id_prospecto}`}>
+              <h3>{p.nombre}</h3>
+              
+              <p><strong>Estado:</strong> Sin estado</p>
+              <p><strong>Próximo Contacto:</strong> Sin programar</p>
+              <p><strong>Última Nota:</strong> Sin nota</p>
+              <div className="acciones">
+                <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
+                  Abrir Prospección
+                </button>
                 <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                   Ver Información
                 </button>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            </div>,
+          ]
+    )
+  ) : (
+    <p style={{ textAlign: "center", fontWeight: "bold" }}>No hay prospectos disponibles</p>
+  )}
+</div>
+
     </div>
   );
 };

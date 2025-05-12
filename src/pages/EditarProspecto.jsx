@@ -13,7 +13,6 @@ const EditarProspecto = () => {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(true);
   const [modoEdicion, setModoEdicion] = useState(false);
-  const [estados, setEstados] = useState([]);
   const [origenes, setOrigenes] = useState([]);
 
   const rolUsuario = getRol();
@@ -55,12 +54,7 @@ const EditarProspecto = () => {
         });
         if (!resCategorias.ok) throw new Error("Error al cargar categorías.");
         setCategorias(await resCategorias.json());
-        const resEstados = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!resEstados.ok) throw new Error("Error al cargar estados.");
-        const dataEstados = await resEstados.json();
-        setEstados(dataEstados);
+        
 
       } catch (err) {
         setError(err.message);
@@ -151,39 +145,6 @@ const EditarProspecto = () => {
 
         <label>Nota:</label>
         <textarea name="nota" value={prospecto?.nota || ""} onChange={handleChange} disabled={!modoEdicion} />
-
-        {!modoEdicion ? (
-          <div>
-            <label>Estado:</label>
-            <p><strong>
-              {prospecto?.estado_prospecto?.nombre
-                ? prospecto.estado_prospecto.nombre
-                  .replace(/_/g, " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase())
-                : "Sin estado"}
-            </strong></p>
-          </div>
-        ) : (
-          <>
-            <label>Estado:</label>
-            <select
-              name="id_estado"
-              value={prospecto?.id_estado || ""}
-              onChange={handleChange}
-              disabled={!modoEdicion}
-            >
-              <option value="">Seleccione un estado...</option>
-              {estados.map((e) => (
-                <option key={e.id_estado} value={e.id_estado}>
-                  {e.nombre.charAt(0).toUpperCase() + e.nombre.slice(1).replace(/_/g, " ")}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
-
-
-
 
         <label>Correo:</label>
         <input type="email" name="correo" value={prospecto?.correo || ""} onChange={handleChange} disabled={!modoEdicion} />

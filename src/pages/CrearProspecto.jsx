@@ -9,7 +9,6 @@
     const [mensaje, setMensaje] = useState(null);
     const [error, setError] = useState(null);
     const [esAdmin, setEsAdmin] = useState(false);
-    const [estados, setEstados] = useState([]);
     const [enviando, setEnviando] = useState(false);
 
     const [categorias, setCategorias] = useState([]);
@@ -22,7 +21,6 @@
       id_categoria: null,
       id_origen: null,
       nota: "",
-      id_estado: null,
       correo: "",
       telefono: "",
       direccion: "",
@@ -38,7 +36,6 @@
     useEffect(() => {
 
       obtenerCategorias();
-      cargarEstados();
       cargarOrigenes();
       const rol = getRol();
       const cedula = obtenerCedulaDesdeToken();
@@ -68,28 +65,7 @@
       }
     };
 
-    const cargarEstados = async () => {
-      try {
-        const token = localStorage.getItem("token"); //
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        const data = await res.json();
-        setEstados(data);
-
-        // Establecer el estado por defecto como "nuevo"
-        const estadoNuevo = data.find((e) => e.nombre === "nuevo");
-        if (estadoNuevo) {
-          setFormData((prev) => ({ ...prev, id_estado: estadoNuevo.id_estado }));
-        }
-      } catch (err) {
-        console.error("Error al cargar estados:", err);
-        setError("No se pudieron cargar los estados.");
-      }
-    };
+    
 
 
     const cargarVendedoras = async () => {
@@ -131,10 +107,11 @@
       setMensaje(null);
       setEnviando(true); // empieza a enviar
 
-      if (!formData.nombre || !formData.id_estado) {
+      if (!formData.nombre) {
         setEnviando(false);
-        return setError("El nombre y el estado son obligatorios.");
+        return setError("El nombre es obligatorio.");
       }
+      
 
       if (!formData.id_origen) {
         setEnviando(false);
@@ -250,11 +227,7 @@ navigate(esAdmin ? "/prospectos-admin" : "/prospectos-vendedora");
           <label>Nota:</label>
           <textarea name="nota" value={formData.nota} onChange={handleChange} />
 
-          <label>Estado:</label>
-          <p className="estado-label">
-            {estados.find((e) => e.id_estado === formData.id_estado)?.nombre || "nuevo"}
-          </p>
-
+         
 
 
           <label>Fecha de Creación:</label>

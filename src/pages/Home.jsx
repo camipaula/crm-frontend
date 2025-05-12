@@ -52,6 +52,7 @@ const Home = () => {
   };
   
 
+  
   const fetchVendedoras = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras`, {
@@ -155,6 +156,45 @@ const Home = () => {
       setLoading(false);
     }
   };
+
+  const handleMontoChange = (index, nuevoMonto) => {
+    const copia = [...dashboardData.tablaCierres];
+    copia[index].monto = nuevoMonto;
+    setDashboardData(prev => ({ ...prev, tablaCierres: copia }));
+  };
+
+  const guardarMontosActualizados = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      for (const fila of dashboardData.tablaCierres) {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/actualizar-monto`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            id_venta: fila.id_venta,
+            monto: parseFloat(fila.monto)
+          })
+        });
+  
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "Error actualizando monto");
+        }
+      }
+  
+      alert("Montos actualizados correctamente");
+  
+      setLoading(true);         
+      fetchDashboardData();
+  
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
+  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -299,7 +339,7 @@ const Home = () => {
          
 
           <div className="dashboard-card">
-  <h3>📌 Fases de Prospectos</h3>
+  <h3>📌 Fases de Prospección</h3>
   <ResponsiveContainer width="100%" height={250}>
     <PieChart>
       <Pie
@@ -362,12 +402,31 @@ const Home = () => {
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{new Date(fila.fecha_cierre).toLocaleDateString()}</td>
                       <td>{fila.dias}</td>
-                      <td>${fila.monto}</td>
+                      <td>
+  {rol === "admin" ? (
+    <input
+      type="number"
+      min="0"
+      value={fila.monto}
+      onChange={(e) => handleMontoChange(i, e.target.value)}
+      style={{ width: "80px" }}
+    />
+  ) : (
+    `$${fila.monto}`
+  )}
+</td>
+
+
 
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {rol === "admin" && (
+  <button onClick={guardarMontosActualizados}>
+    💾 Guardar montos editados
+  </button>
+)}
             </div>
           </div>
         </div>

@@ -479,7 +479,6 @@ const SeguimientosAdmin = () => {
 
               <th>Objetivo</th>
               <th>Estado del Prospecto</th>
-              <th>Estado de la Prospección</th>
               <th>Última Fecha</th>
               <th>Último Tipo</th>
               <th>Último Resultado</th>
@@ -518,12 +517,12 @@ const SeguimientosAdmin = () => {
                     </td>
 
                     <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
-                    <td>{capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</td>
                     <td>
-                      {p.abierta
-                        ? "Abierta"
-                        : `Cerrada${typeof p.monto_cierre === "number" ? ` ($${p.monto_cierre.toFixed(2)})` : ""}`}
-                    </td>
+  {p.estado_venta?.nombre === "Cierre"
+    ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+    : capitalizar(p.estado_venta?.nombre) || "No definido"}
+</td>
+                   
                     <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                     <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                     <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
@@ -601,13 +600,8 @@ const SeguimientosAdmin = () => {
               </p>
 
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
-              <p><strong>Estado del Prospecto:</strong> {capitalizar(p.prospecto?.estado_prospecto?.nombre) || "No definido"}</p>
-              <p>
-                <strong>Estado de la Prospección:</strong>{" "}
-                {p.abierta
-                  ? "Abierta"
-                  : `Cerrada${typeof p.monto_cierre === "number" ? ` ($${p.monto_cierre.toFixed(2)})` : ""}`}
-              </p>
+              <p><strong>Estado del Prospecto:</strong> {capitalizar(p.estado_venta?.nombre) || "No definido"}</p>
+              
               <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Resultado:</strong> {ultimo?.resultado || "Pendiente"}</p>
