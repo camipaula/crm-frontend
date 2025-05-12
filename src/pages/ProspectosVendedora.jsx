@@ -20,6 +20,9 @@ const ProspectosVendedora = () => {
   const [estadoFiltro, setEstadoFiltro] = useState([]);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
+  const [fechaInicioDefecto, setFechaInicioDefecto] = useState("");
+const [fechaFinDefecto, setFechaFinDefecto] = useState("");
+
   const [sectorFiltro, setSectorFiltro] = useState(null);
   const [estados, setEstados] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -181,18 +184,20 @@ const [orden, setOrden] = useState("");
   };
 
 
+const establecerFechasUltimos3Meses = () => {
+  const hoy = new Date();
+  const fin = hoy.toISOString().split("T")[0];
 
-  const establecerFechasUltimos3Meses = () => {
-    const fechaActual = new Date();
-    const fechaFin = fechaActual.toISOString().split("T")[0];
+  const inicio = new Date();
+  inicio.setMonth(inicio.getMonth() - 3);
+  const inicioFormateado = inicio.toISOString().split("T")[0];
 
-    const fechaInicio = new Date();
-    fechaInicio.setMonth(fechaInicio.getMonth() - 3);
-    const fechaInicioFormateada = fechaInicio.toISOString().split("T")[0];
+  setFechaInicio(inicioFormateado);
+  setFechaFin(fin);
 
-    setFechaInicio(fechaInicioFormateada);
-    setFechaFin(fechaFin);
-  };
+  setFechaInicioDefecto(inicioFormateado);
+  setFechaFinDefecto(fin);
+};
 
 
 
@@ -274,6 +279,20 @@ const [orden, setOrden] = useState("");
       setLoading(false);
     }
   };
+  const hayFiltrosActivos = () => {
+  return (
+    estadoFiltro.length > 0 ||
+    sectorFiltro ||
+    categoriaFiltro ||
+    ciudadFiltro ||
+    provinciaFiltro ||
+    busquedaNombre.trim() !== "" ||
+    orden ||
+    fechaInicio !== fechaInicioDefecto ||
+    fechaFin !== fechaFinDefecto
+  );
+};
+
   
   const exportarExcel = async () => {
     try {
@@ -361,11 +380,13 @@ const mostrarEstado = (venta) => {
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <button
-  className="btn-toggle-filtros"
+  className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
   onClick={() => setMostrarFiltros((prev) => !prev)}
 >
   {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
+  {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
 </button>
+
 
 
       

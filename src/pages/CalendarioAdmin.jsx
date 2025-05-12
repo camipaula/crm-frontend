@@ -450,25 +450,25 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
         eventContent={({ event, view }) => {
           const prospecto = event.extendedProps.prospecto || "";
           const tipo = event.extendedProps.tipo || "";
-          const motivo = event.title;
-          const hora = new Date(event.start).toLocaleTimeString("es-EC", {
+          //const motivo = event.title;
+         /* const hora = new Date(event.start).toLocaleTimeString("es-EC", {
             hour: "2-digit",
             minute: "2-digit",
             hour12: false,
-          });
+          });*/
 
           if (view.type === "dayGridMonth") {
             // Solo en la vista mensual mostramos tipo con sigla
             return (
               <div>
-                <b>[{prospecto.substring(0, 3).toUpperCase()}]</b>{hora}-{tipo}
+                <b>[{prospecto.toUpperCase()}]</b>-{tipo}
               </div>
             );
           } else {
             // En semana/día mostramos hora y motivo
             return (
               <div>
-                <b>[{prospecto.substring(0, 3).toUpperCase()}]</b> {hora} - {motivo}
+    <b>{prospecto}</b> - {tipo}
               </div>
             );
           }
