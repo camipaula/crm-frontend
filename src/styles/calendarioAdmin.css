@@ -40,6 +40,14 @@
   background: #0056b3;
 }
 
+.evento-mes {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  max-width: 100%;
+  display: block;
+}
 
 /* 📅 Estilos del Calendario */
 .fc {

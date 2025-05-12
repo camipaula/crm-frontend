@@ -458,13 +458,13 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
           });*/
 
           if (view.type === "dayGridMonth") {
-            // Solo en la vista mensual mostramos tipo con sigla
-            return (
-              <div>
-        <b>[{prospecto.substring(0, 4).toUpperCase()}]</b> - {tipo}
-              </div>
-            );
-          } else {
+  return (
+    <div className="evento-mes" title={`${prospecto} - ${tipo}`}>
+      <b>{prospecto}</b> - {tipo}
+    </div>
+  );
+}
+ else {
             // En semana/día mostramos hora y motivo
             return (
               <div>
