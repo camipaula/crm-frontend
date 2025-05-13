@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { getRol } from "../utils/auth"; // 👈 IMPORTANTE
 import "../styles/editarVendedora.css";
 
 const EditarVendedora = () => {
   const { cedula_ruc } = useParams();
   const navigate = useNavigate();
+    const rol = getRol(); // 👈 OBTENER ROL
+  const esSoloLectura = rol === "lectura"; // 👈 MARCAR SI ES SOLO LECTURA
+
+
   const [vendedora, setVendedora] = useState(null);
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
@@ -109,6 +114,7 @@ const EditarVendedora = () => {
           type="text"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
+          disabled={esSoloLectura}
         />
       </div>
 
@@ -118,6 +124,7 @@ const EditarVendedora = () => {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={esSoloLectura}
         />
       </div>
 
@@ -128,9 +135,11 @@ const EditarVendedora = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Ingrese una nueva contraseña"
+          disabled={esSoloLectura}
         />
       </div>
-
+ {!esSoloLectura && (
+        <>
       <button onClick={guardarCambios} className="btn-guardar">
         Guardar Cambios
       </button>
@@ -138,6 +147,8 @@ const EditarVendedora = () => {
       <button onClick={toggleEstado} className={`btn-estado ${estado === 1 ? "inactiva" : "activa"}`}>
         {estado === 1 ? "Marcar como Inactiva" : "Activar Vendedora"}
       </button>
+       </>
+       )}
     </div>
   );
 };

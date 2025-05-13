@@ -3,9 +3,15 @@
   import "../styles/prospectosAdmin1.css";
   import { useNavigate } from "react-router-dom";
   import { debounce } from "lodash";
+import { getRol } from "../utils/auth";
+
 
   const ProspectosAdmin = () => {
     const navigate = useNavigate();
+    
+ const rol = getRol(); 
+  const esSoloLectura = rol === "lectura";
+
     const [prospectos, setProspectos] = useState([]);
     const [vendedoras, setVendedoras] = useState([]);
     const [sectores, setSectores] = useState([]);
@@ -546,9 +552,12 @@ const hayFiltrosActivos = () => {
         <button className="exportar-btn" onClick={exportarExcel}>
           📥 Exportar Excel
         </button>
+        {!esSoloLectura && (
         <button className="admin-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
           ➕ Crear Prospecto
         </button>
+        )}
+
 
         <div className="filtro-grupo-nombre">
           <label>Nombre del Prospecto</label>
@@ -666,13 +675,18 @@ const hayFiltrosActivos = () => {
                     >
                       Información del Prospecto
                     </button>
+                            {!esSoloLectura && (
+
                     <button
                       className="admin-btn-eliminar"
                       onClick={() => eliminarProspecto(p.id_prospecto)}
                     >
                       Eliminar
                     </button>
+                    )}
+
                   </div>
+
                 </td>
               </tr>
             );

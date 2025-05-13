@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { getRol } from "../utils/auth"; // 👈 IMPORTANTE
+
 import "../styles/seguimientosVendedora.css";
 import React from "react";
 
@@ -15,7 +17,8 @@ const SeguimientosProspecto = () => {
   const [modalEditar, setModalEditar] = useState(false);
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
-
+  const rol = getRol();
+  const esSoloLectura = rol === "lectura";
 
   useEffect(() => {
     buscarSeguimientos();
@@ -155,7 +158,9 @@ const SeguimientosProspecto = () => {
                     >
                       📜 Ver Seguimientos
                     </button>
-                    <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+                    {!esSoloLectura && (
+                      <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+                    )}
 
                   </td>
                 </tr>

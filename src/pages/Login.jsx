@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/login.css"; 
+import "../styles/login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -29,9 +29,18 @@ const Login = () => {
 
       //Redirigir según el rol
       setTimeout(() => {
-        navigate(data.rol === "admin" ? "/admin" : "/vendedora");
+        if (data.rol === "admin") {
+          navigate("/admin");
+        } else if (data.rol === "vendedora") {
+          navigate("/vendedora");
+        } else if (data.rol === "lectura") {
+          navigate("/admin"); // 👈 esta nueva vista la creas abajo
+        } else {
+          navigate("/");
+        }
         window.location.reload();
       }, 100);
+
 
     } catch (error) {
       setError(error.message);

@@ -5,6 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { getRol } from "../utils/auth";
 import Select from "react-select";
 import "../styles/calendarioAdmin.css";
 
@@ -38,7 +39,8 @@ const CalendarioAdmin = () => {
   const [tipoSeleccionadoTexto, setTipoSeleccionadoTexto] = useState("");
   const [prospectoDatos, setProspectoDatos] = useState({});
   const [formDataExtra, setFormDataExtra] = useState({});
-
+  const rol = getRol();
+  const esSoloLectura = rol === "lectura";
 
   const colores = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad", "#16a085"];
 
@@ -71,21 +73,21 @@ const CalendarioAdmin = () => {
   const cargarProspectos = async (cedula_vendedora) => {
     try {
       const token = localStorage.getItem("token");
-const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`, {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-});
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-const data = await res.json();
+      const data = await res.json();
 
-if (!Array.isArray(data.prospectos)) {
-  console.error("Formato inesperado al cargar prospectos:", data);
-  return;
-}
+      if (!Array.isArray(data.prospectos)) {
+        console.error("Formato inesperado al cargar prospectos:", data);
+        return;
+      }
 
-setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nombre })));
+      setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nombre })));
 
     } catch (err) {
       console.error("Error cargando prospectos:", err);
@@ -105,7 +107,7 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
       alert("Selecciona una vendedora para asignar el prospecto.");
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
       const res1 = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos`, {
@@ -121,9 +123,9 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
           objetivo: nuevoObjetivo,
         }),
       });
-  
+
       const { prospecto, venta } = await res1.json();
-  
+
       await cargarProspectos(vendedoraNueva.value);
       setProspectoSeleccionado({ value: prospecto.id_prospecto, label: prospecto.nombre });
       setVentaSeleccionada({ value: venta.id_venta, label: nuevoObjetivo });
@@ -134,7 +136,7 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
       console.error("Error al crear prospecto y venta:", err);
     }
   };
-  
+
 
   const cargarVentas = async (id_prospecto) => {
     try {
@@ -451,24 +453,24 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
           const prospecto = event.extendedProps.prospecto || "";
           const tipo = event.extendedProps.tipo || "";
           //const motivo = event.title;
-         /* const hora = new Date(event.start).toLocaleTimeString("es-EC", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          });*/
+          /* const hora = new Date(event.start).toLocaleTimeString("es-EC", {
+             hour: "2-digit",
+             minute: "2-digit",
+             hour12: false,
+           });*/
 
           if (view.type === "dayGridMonth") {
-  return (
-    <div className="evento-mes" title={`${prospecto} - ${tipo}`}>
-      <b>{prospecto}</b> - {tipo}
-    </div>
-  );
-}
- else {
+            return (
+              <div className="evento-mes" title={`${prospecto} - ${tipo}`}>
+                <b>{prospecto}</b> - {tipo}
+              </div>
+            );
+          }
+          else {
             // En semana/día mostramos hora y motivo
             return (
               <div>
-    <b>{prospecto}</b> - {tipo}
+                <b>{prospecto}</b> - {tipo}
               </div>
             );
           }
@@ -525,7 +527,7 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
               </>
             )}
 
-            <div className="modal-actions">
+            {!esSoloLectura && (<div className="modal-actions">
               <button
                 onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
                 className="btn-registrar"
@@ -541,8 +543,10 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
                 <button onClick={() => setModoEdicion(true)}>✏️ Editar</button>
               )}
               <button onClick={() => eliminarSeguimientoDesdeModal(modalDetalle.id)}>🗑️ Eliminar</button>
-              <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
-            </div>
+            </div>)}
+
+            <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
+
           </div>
         </div>
       )}
@@ -663,28 +667,28 @@ setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nomb
       )}
 
 
-{mostrarModalNuevoProspecto && (
-  <div className="modal modal-small">
-    <div className="modal-content">
-      <h3>➕ Nuevo Prospecto</h3>
-      <input
-        type="text"
-        placeholder="Nombre del Prospecto"
-        value={nuevoNombre}
-        onChange={(e) => setNuevoNombre(e.target.value)}
-      />
-      <p><b>Estado:</b> Nuevo</p> {/* <-- aquí */}
-      <input
-        type="text"
-        placeholder="Objetivo de la Prospección"
-        value={nuevoObjetivo}
-        onChange={(e) => setNuevoObjetivo(e.target.value)}
-      />
-      <button onClick={crearProspectoYVenta}>Crear y Usar</button>
-      <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
-    </div>
-  </div>
-)}
+      {mostrarModalNuevoProspecto && (
+        <div className="modal modal-small">
+          <div className="modal-content">
+            <h3>➕ Nuevo Prospecto</h3>
+            <input
+              type="text"
+              placeholder="Nombre del Prospecto"
+              value={nuevoNombre}
+              onChange={(e) => setNuevoNombre(e.target.value)}
+            />
+            <p><b>Estado:</b> Nuevo</p> {/* <-- aquí */}
+            <input
+              type="text"
+              placeholder="Objetivo de la Prospección"
+              value={nuevoObjetivo}
+              onChange={(e) => setNuevoObjetivo(e.target.value)}
+            />
+            <button onClick={crearProspectoYVenta}>Crear y Usar</button>
+            <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
 
 
       {mostrarModalNuevaVenta && (

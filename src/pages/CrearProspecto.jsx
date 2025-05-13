@@ -10,6 +10,8 @@
     const [error, setError] = useState(null);
     const [esAdmin, setEsAdmin] = useState(false);
     const [enviando, setEnviando] = useState(false);
+ 
+
 
     const [categorias, setCategorias] = useState([]);
     const [origenes, setOrigenes] = useState([]);

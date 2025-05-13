@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import "../styles/seguimientosAdmin.css";
 import React from "react";
+import { getRol } from "../utils/auth";
 
 const SeguimientosAdmin = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const SeguimientosAdmin = () => {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [limitePorPagina] = useState(10); // puedes cambiar el valor
 
+  const rol = getRol();
+  const esSoloLectura = rol === "lectura";
 
 
   useEffect(() => {
@@ -320,10 +323,10 @@ const SeguimientosAdmin = () => {
 
   useEffect(() => {
     return () => {
-      debouncedBuscar.cancel(); 
+      debouncedBuscar.cancel();
     };
   }, []);
-  
+
 
 
   const limpiarFiltros = () => {
@@ -500,7 +503,7 @@ const SeguimientosAdmin = () => {
             {prospecciones.map((p) => {
 
               const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
-              const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null; // 🔹 Obtener el más reciente
+              const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
               const siguienteSeguimiento = p.seguimientos
                 ?.filter((s) => s.estado === "pendiente")
                 .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
@@ -518,11 +521,11 @@ const SeguimientosAdmin = () => {
 
                     <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
                     <td>
-  {p.estado_venta?.nombre === "Cierre"
-    ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
-    : capitalizar(p.estado_venta?.nombre) || "No definido"}
-</td>
-                   
+                      {p.estado_venta?.nombre === "Cierre"
+                        ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+                        : capitalizar(p.estado_venta?.nombre) || "No definido"}
+                    </td>
+
                     <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                     <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
                     <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
@@ -544,12 +547,12 @@ const SeguimientosAdmin = () => {
                         </button>
                       )}
 
-                      {/* Botón pequeño Editar */}
-                      <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-
-
-                      {/* Botón pequeño Eliminar */}
-                      <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                      {/* Botón pequeño Editar y eliminar */}
+                      {!esSoloLectura && (
+                        <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>,
+                        <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                      )}
+                    
                     </td>
                     <td>{etiquetaSeguimiento(p)}</td>
 
@@ -601,7 +604,7 @@ const SeguimientosAdmin = () => {
 
               <p><strong>Objetivo:</strong> {p.objetivo || "No definido"}</p>
               <p><strong>Estado del Prospecto:</strong> {capitalizar(p.estado_venta?.nombre) || "No definido"}</p>
-              
+
               <p><strong>Última Fecha:</strong> {ultimo?.fecha_programada ? new Date(ultimo.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Tipo:</strong> {ultimo?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Resultado:</strong> {ultimo?.resultado || "Pendiente"}</p>

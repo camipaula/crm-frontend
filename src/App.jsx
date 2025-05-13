@@ -50,7 +50,7 @@ const App = () => {
         <Route path="/" element={<Login />} />
 
         {/* Rutas para ADMINISTRADORA */}
-        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+        <Route element={<ProtectedRoute allowedRoles={["admin","lectura"]} />}>
           <Route path="/admin" element={<Layout><Home /></Layout>} />
           <Route path="/prospectos-admin" element={<Layout><ProspectosAdmin /></Layout>} />
           <Route path="/crear-vendedora" element={<Layout><CrearVendedora /></Layout>} />
@@ -60,8 +60,10 @@ const App = () => {
           <Route path="/calendario-admin" element={<Layout><CalendarioAdmin  /></Layout>} />
           <Route path="/mi-informacion" element={<Layout><MiInformacionAdmin /></Layout>} />
 
-
         </Route>
+
+      
+
 
         {/* Rutas para VENDEDORA */}
         <Route element={<ProtectedRoute allowedRoles={["vendedora"]} />}>
@@ -72,7 +74,7 @@ const App = () => {
         </Route>
 
         {/* Rutas comunes */}
-        <Route element={<ProtectedRoute allowedRoles={["admin", "vendedora"]} />}>
+        <Route element={<ProtectedRoute allowedRoles={["admin", "vendedora","lectura"]} />}>
           <Route path="/crear-prospecto" element={<Layout><CrearProspecto /></Layout>} />
           <Route path="/editar-prospecto/:id_prospecto" element={<Layout><EditarProspecto /></Layout>} />
           <Route path="/agendar-seguimiento/:id_venta" element={<Layout><AgendarSeguimiento /></Layout>} />

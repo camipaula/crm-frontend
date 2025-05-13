@@ -16,7 +16,7 @@ const EditarProspecto = () => {
   const [origenes, setOrigenes] = useState([]);
 
   const rolUsuario = getRol();
-
+  const esSoloLectura = rolUsuario === "lectura";
   useEffect(() => {
 
 
@@ -54,7 +54,7 @@ const EditarProspecto = () => {
         });
         if (!resCategorias.ok) throw new Error("Error al cargar categorías.");
         setCategorias(await resCategorias.json());
-        
+
 
       } catch (err) {
         setError(err.message);
@@ -111,7 +111,12 @@ const EditarProspecto = () => {
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <h1>Información del Prospecto</h1>
-      <button type="button" className="btn-editar" onClick={() => setModoEdicion(true)}>✏️ Editar</button>
+      {!esSoloLectura && (
+        <button type="button"
+          className="btn-editar"
+          onClick={() => setModoEdicion(true)}
+        >✏️ Editar</button>
+      )}
 
       {mensaje && <p className="success">{mensaje}</p>}
       {error && <p className="error">{error}</p>}

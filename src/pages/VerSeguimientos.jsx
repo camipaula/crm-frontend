@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/verSeguimientos.css";
+import { getRol } from "../utils/auth"; // 👈 IMPORTANTE
 
 const VerSeguimientos = () => {
   const { id_venta } = useParams();
@@ -9,7 +10,8 @@ const VerSeguimientos = () => {
   const [seguimientos, setSeguimientos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+const rol = getRol();
+  const esSoloLectura = rol === "lectura"; 
   useEffect(() => {
     obtenerSeguimientos();
   }, []);
@@ -87,12 +89,13 @@ const VerSeguimientos = () => {
         </div>
       ) : (
         <>
-          <button
+        {!esSoloLectura &&(  <button
             className="btn-agendar"
             onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
           >
             ➕ Agendar Siguiente Interacción
-          </button>
+          </button>)}
+        
 
           <table className="ver-seguimientos-table">
             <thead>
@@ -116,7 +119,7 @@ const VerSeguimientos = () => {
                   <td>{s.nota || "Sin nota"}</td>
                   <td>{s.resultado || "Pendiente"}</td>
                   <td>
-                    {!s.resultado && (
+                    {!s.resultado && !esSoloLectura && (
                       <button
                         className="btn-resultado"
                         onClick={() => navigate(`/registrar-resultado/${s.id_seguimiento}`)}
