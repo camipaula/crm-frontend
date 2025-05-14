@@ -24,7 +24,7 @@ const Home = () => {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [fechaInicioDefecto, setFechaInicioDefecto] = useState("");
-const [fechaFinDefecto, setFechaFinDefecto] = useState("");
+  const [fechaFinDefecto, setFechaFinDefecto] = useState("");
 
   const [cedulaVendedora, setCedulaVendedora] = useState("");
   const [sector, setSector] = useState("");
@@ -39,19 +39,19 @@ const [fechaFinDefecto, setFechaFinDefecto] = useState("");
   const [categorias, setCategorias] = useState([]);
 
   const [mostrarFiltros, setMostrarFiltros] = useState(false)
-const [paginaCompetencia, setPaginaCompetencia] = useState(1);
-const [paginaAbiertas, setPaginaAbiertas] = useState(1);
+  const [paginaCompetencia, setPaginaCompetencia] = useState(1);
+  const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
-const filasPorPagina =5;
+  const filasPorPagina = 5;
 
-const competenciaPaginada = dashboardData?.tablaCompetencia?.slice(
-  (paginaCompetencia - 1) * filasPorPagina,
-  paginaCompetencia * filasPorPagina
-);
-const abiertasPaginada = dashboardData?.tablaAbiertas?.slice(
-  (paginaAbiertas - 1) * filasPorPagina,
-  paginaAbiertas * filasPorPagina
-);
+  const competenciaPaginada = dashboardData?.tablaCompetencia?.slice(
+    (paginaCompetencia - 1) * filasPorPagina,
+    paginaCompetencia * filasPorPagina
+  );
+  const abiertasPaginada = dashboardData?.tablaAbiertas?.slice(
+    (paginaAbiertas - 1) * filasPorPagina,
+    paginaAbiertas * filasPorPagina
+  );
 
 
   const COLORS = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad"];
@@ -69,17 +69,46 @@ const abiertasPaginada = dashboardData?.tablaAbiertas?.slice(
   };
 
 
-const hayFiltrosActivos = () => {
-  return (
-    (rol === "admin" && cedulaVendedora) ||
-    ciudad ||
-    sector ||
-    idCategoria ||
-    idOrigen ||
-    fechaInicio !== fechaInicioDefecto ||
-    fechaFin !== fechaFinDefecto
-  );
+  const hayFiltrosActivos = () => {
+    return (
+      (rol === "admin" && cedulaVendedora) ||
+      ciudad ||
+      sector ||
+      idCategoria ||
+      idOrigen ||
+      fechaInicio !== fechaInicioDefecto ||
+      fechaFin !== fechaFinDefecto
+    );
+  };
+
+const limpiarFiltros = () => {
+  const hoy = new Date();
+  const haceTresMeses = new Date();
+  haceTresMeses.setMonth(hoy.getMonth() - 3);
+
+  // ⚠️ SETEAR fecha fin como mañana
+  const manana = new Date(hoy);
+  manana.setDate(hoy.getDate() + 1); // ⬅️ suma un día
+
+  const inicio = haceTresMeses.toISOString().slice(0, 10);
+  const fin = manana.toISOString().slice(0, 10); // ✅ ahora incluye todo lo de hoy
+
+  setFechaInicio(inicio);
+  setFechaFin(fin);
+  setFechaInicioDefecto(inicio);
+  setFechaFinDefecto(fin);
+  setCedulaVendedora("");
+  setSector("");
+  setCiudad("");
+  setIdCategoria("");
+  setIdOrigen("");
+  setPaginaAbiertas(1);
+  setPaginaCompetencia(1);
+
 };
+
+
+
 
   const fetchVendedoras = async () => {
     try {
@@ -96,17 +125,17 @@ const hayFiltrosActivos = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-  const hoy = new Date();
-const haceTresMeses = new Date();
-haceTresMeses.setMonth(hoy.getMonth() - 3);
+    const hoy = new Date();
+    const haceTresMeses = new Date();
+    haceTresMeses.setMonth(hoy.getMonth() - 3);
 
-const inicio = haceTresMeses.toISOString().slice(0, 10);
-const fin = hoy.toISOString().slice(0, 10);
+    const inicio = haceTresMeses.toISOString().slice(0, 10);
+    const fin = hoy.toISOString().slice(0, 10);
 
-setFechaInicio(inicio);
-setFechaFin(fin);
-setFechaInicioDefecto(inicio);
-setFechaFinDefecto(fin);
+    setFechaInicio(inicio);
+    setFechaFin(fin);
+    setFechaInicioDefecto(inicio);
+    setFechaFinDefecto(fin);
 
     if (rol === "admin") fetchVendedoras();
 
@@ -151,6 +180,19 @@ setFechaFinDefecto(fin);
 
 
 
+  const handleMesChange = (mesSeleccionado) => {
+    if (!mesSeleccionado) return;
+
+    const anioActual = new Date().getFullYear();
+    const primerDia = new Date(`${anioActual}-${mesSeleccionado}-01`);
+    const ultimoDia = new Date(anioActual, parseInt(mesSeleccionado), 0); // el día 0 del siguiente mes es el último día del mes actual
+
+    const inicio = primerDia.toISOString().slice(0, 10);
+    const fin = ultimoDia.toISOString().slice(0, 10);
+
+    setFechaInicio(inicio);
+    setFechaFin(fin);
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -243,18 +285,34 @@ setFechaFinDefecto(fin);
       <div className="home-container">
         <h1>Bienvenida, {rol === "vendedora" ? "Vendedora" : "Administradora"}</h1>
         <button
-  type="button"
-  className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
-  onClick={() => setMostrarFiltros(!mostrarFiltros)}
-  style={{ marginBottom: "10px" }}
->
-  {mostrarFiltros ? "🔼 Ocultar filtros" : "🔽 Mostrar filtros"}
-  {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
-</button>
+          type="button"
+          className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
+          onClick={() => setMostrarFiltros(!mostrarFiltros)}
+          style={{ marginBottom: "10px" }}
+        >
+          {mostrarFiltros ? "🔼 Ocultar filtros" : "🔽 Mostrar filtros"}
+          {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
+        </button>
 
         {mostrarFiltros && (
 
           <form className="filtros-dashboard" onSubmit={handleSubmit}>
+            <select onChange={(e) => handleMesChange(e.target.value)} defaultValue="">
+              <option value="">Filtrar por mes...</option>
+              <option value="01">Enero</option>
+              <option value="02">Febrero</option>
+              <option value="03">Marzo</option>
+              <option value="04">Abril</option>
+              <option value="05">Mayo</option>
+              <option value="06">Junio</option>
+              <option value="07">Julio</option>
+              <option value="08">Agosto</option>
+              <option value="09">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+
             <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
             <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
 
@@ -298,7 +356,13 @@ setFechaFinDefecto(fin);
             </select>
 
 
-            <button type="submit">Filtrar</button>
+            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <button type="submit">Filtrar</button>
+              <button type="button" onClick={limpiarFiltros} className="btn-limpiar">
+                Limpiar filtros
+              </button>
+            </div>
+
           </form>
         )}
 
@@ -340,14 +404,14 @@ setFechaFinDefecto(fin);
                 <Tooltip
                   formatter={(value, name) => [`${value} ventas`, name]}
                 />
-               <Legend
-  formatter={(value) => {
-    const item = dashboardData.graficoVentas.find((d) => d.estado === value);
-    const total = dashboardData.graficoVentas.reduce((sum, d) => sum + d.cantidad, 0);
-    const porcentaje = item ? ((item.cantidad / total) * 100).toFixed(1) : 0;
-    return `${value}: ${item?.cantidad || 0} (${porcentaje}%)`;
-  }}
-/>
+                <Legend
+                  formatter={(value) => {
+                    const item = dashboardData.graficoVentas.find((d) => d.estado === value);
+                    const total = dashboardData.graficoVentas.reduce((sum, d) => sum + d.cantidad, 0);
+                    const porcentaje = item ? ((item.cantidad / total) * 100).toFixed(1) : 0;
+                    return `${value}: ${item?.cantidad || 0} (${porcentaje}%)`;
+                  }}
+                />
 
               </PieChart>
             </ResponsiveContainer>
@@ -357,8 +421,8 @@ setFechaFinDefecto(fin);
             <h3>📊 Resumen de Prospecciones</h3>
             <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
             <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-            <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas + " " + (dashboardData.porcentajeGanadas ?? 0).toFixed(1)}% </strong></p>
-            <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas + " " + (dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%</strong></p>
+            <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas + "     (" + (dashboardData.porcentajeGanadas ?? 0).toFixed(1)+ "%)"} </strong></p>
+            <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas + "  (" + (dashboardData.porcentajePerdidas ?? 0).toFixed(1)+ "%)"}</strong></p>
 
           </div>
 
@@ -386,18 +450,18 @@ setFechaFinDefecto(fin);
                   labelLine={false}
 
                   label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-  const RADIAN = Math.PI / 180;
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-  const item = dashboardData.graficoEstadosProspecto[index];
-  return (
-    <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
-      {`${item.cantidad} `}
-    </text>
-  );
-}}
-      >
+                    const RADIAN = Math.PI / 180;
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    const item = dashboardData.graficoEstadosProspecto[index];
+                    return (
+                      <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+                        {`${item.cantidad} `}
+                      </text>
+                    );
+                  }}
+                >
                   {dashboardData.graficoEstadosProspecto.map((_, idx) => (
                     <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                   ))}
@@ -405,12 +469,12 @@ setFechaFinDefecto(fin);
                 <Tooltip
                   formatter={(value, name) => [`${value} prospectos`, name]}
                 />
-               <Legend
-  formatter={(value) => {
-    const item = dashboardData.graficoEstadosProspecto.find((d) => d.estado === value);
-    return `${value}: ${item?.cantidad || 0} (${item?.porcentaje || 0}%)`;
-  }}
-/>
+                <Legend
+                  formatter={(value) => {
+                    const item = dashboardData.graficoEstadosProspecto.find((d) => d.estado === value);
+                    return `${value}: ${item?.cantidad || 0} (${item?.porcentaje || 0}%)`;
+                  }}
+                />
 
               </PieChart>
             </ResponsiveContainer>
@@ -425,9 +489,11 @@ setFechaFinDefecto(fin);
                 <thead>
                   <tr>
                     <th>Prospecto</th>
+                        <th>Empleados</th>
                     <th>Apertura</th>
                     <th>Cierre</th>
                     <th>Días</th>
+                        <th>Monto Proyectado</th>
                     <th>Monto</th>
 
                   </tr>
@@ -436,9 +502,12 @@ setFechaFinDefecto(fin);
                   {dashboardData.tablaCierres.map((fila, i) => (
                     <tr key={i}>
                       <td>{fila.prospecto}</td>
+<td>{fila.numero_empleados}</td>
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{new Date(fila.fecha_cierre).toLocaleDateString()}</td>
                       <td>{fila.dias}</td>
+                            <td>{fila.monto_proyectado != null ? `$${parseFloat(fila.monto_proyectado).toFixed(2)}` : "No definido"}</td>
+
                       <td>
                         {rol === "admin" ? (
                           <input
@@ -449,7 +518,7 @@ setFechaFinDefecto(fin);
                             className="sin-spinners"
 
                             style={{ width: "80px" }}
-                              onWheel={(e) => e.target.blur()} // ❌ Previene scroll accidental
+                            onWheel={(e) => e.target.blur()} // ❌ Previene scroll accidental
 
                           />
                         ) : (
@@ -471,68 +540,81 @@ setFechaFinDefecto(fin);
             </div>
           </div>
 
-         <div className="dashboard-card tabla-cierres">
-  <h3>❌ Prospecciones en Competencia</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Prospecto</th>
-        <th>Apertura</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {competenciaPaginada.map((fila, i) => (
-        <tr key={i}>
-          <td>{fila.prospecto}</td>
-          <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
-          <td>{fila.estado}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-  <div className="paginador-competencia">
-    {paginaCompetencia > 1 && (
-      <button onClick={() => setPaginaCompetencia(paginaCompetencia - 1)}>Anterior</button>
-    )}
-    <span>Página {paginaCompetencia}</span>
-    {paginaCompetencia * filasPorPagina < dashboardData.tablaCompetencia.length && (
-      <button onClick={() => setPaginaCompetencia(paginaCompetencia + 1)}>Siguiente</button>
-    )}
-  </div>
-</div>
+          <div className="dashboard-card tabla-cierres">
+            <h3>❌ Prospecciones en Competencia</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Prospecto</th>
+                      <th>Empleados</th> 
+                  <th>Apertura</th>
+                  <th>Estado</th>
+                      <th>Último Resultado</th>
 
-<div className="dashboard-card tabla-cierres">
-  <h3>🔓 Prospecciones Abiertas</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Prospecto</th>
-        <th>Apertura</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {abiertasPaginada.map((fila, i) => (
-        <tr key={i}>
-          <td>{fila.prospecto}</td>
-          <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
-          <td>{fila.estado}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-  <div className="paginador-abiertas">
-    {paginaAbiertas > 1 && (
-      <button onClick={() => setPaginaAbiertas(paginaAbiertas - 1)}>Anterior</button>
-    )}
-    <span>Página {paginaAbiertas}</span>
-    {paginaAbiertas * filasPorPagina < dashboardData.tablaAbiertas.length && (
-      <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
-    )}
-  </div>
-</div>
-</div>
+                </tr>
+              </thead>
+              <tbody>
+                {competenciaPaginada.map((fila, i) => (
+                  <tr key={i}>
+                    <td>{fila.prospecto}</td>
+                          <td>{fila.numero_empleados}</td> 
+                    <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
+                    <td>{fila.estado}</td>
+                          <td>{fila.ultimo_resultado}</td> 
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="paginador-competencia">
+              {paginaCompetencia > 1 && (
+                <button onClick={() => setPaginaCompetencia(paginaCompetencia - 1)}>Anterior</button>
+              )}
+              <span>Página {paginaCompetencia}</span>
+              {paginaCompetencia * filasPorPagina < dashboardData.tablaCompetencia.length && (
+                <button onClick={() => setPaginaCompetencia(paginaCompetencia + 1)}>Siguiente</button>
+              )}
+            </div>
+          </div>
+
+          <div className="dashboard-card tabla-cierres">
+            <h3>🔓 Prospecciones Abiertas</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Prospecto</th>
+                      <th>Empleados</th> 
+                  <th>Apertura</th>
+                  <th>Estado</th>
+                                        <th>Último Resultado</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {abiertasPaginada.map((fila, i) => (
+                  <tr key={i}>
+                    <td>{fila.prospecto}</td>
+                          <td>{fila.numero_empleados}</td> 
+
+                    <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
+                    <td>{fila.estado}</td>
+                                              <td>{fila.ultimo_resultado}</td> 
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="paginador-abiertas">
+              {paginaAbiertas > 1 && (
+                <button onClick={() => setPaginaAbiertas(paginaAbiertas - 1)}>Anterior</button>
+              )}
+              <span>Página {paginaAbiertas}</span>
+              {paginaAbiertas * filasPorPagina < dashboardData.tablaAbiertas.length && (
+                <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
+              )}
+            </div>
+          </div>
+        </div>
 
       </div>
     </Layout>

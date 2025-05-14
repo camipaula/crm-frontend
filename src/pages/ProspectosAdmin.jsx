@@ -622,6 +622,7 @@ const hayFiltrosActivos = () => {
                 <th>Prospecto</th>
                 <th>Vendedora</th>
                 <th>Objetivo</th>
+                <th># Empleados</th>
                 <th>Estado</th>
                 <th>Próximo Contacto</th>
                 <th>Última Nota</th>
@@ -654,6 +655,8 @@ const hayFiltrosActivos = () => {
                     : "Sin asignar"}
                 </td>
                 <td>{venta.objetivo || "Sin objetivo"}</td>
+                <td>{p.empleados ?? "No registrado"}</td>
+
                 <td>
                   {venta.estado_venta?.nombre?.toLowerCase() === "cierre" && venta.monto_cierre
                     ? `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`
@@ -697,6 +700,8 @@ const hayFiltrosActivos = () => {
               <td>{p.nombre}</td>
               <td>{p.vendedora_prospecto?.nombre || "Sin asignar"}</td>
               <td>Sin objetivo</td>
+              <td>{p.empleados ?? "No registrado"}</td>
+
               <td>Sin estado</td>
               <td>Sin programar</td>
               <td>Sin nota</td>
@@ -765,6 +770,8 @@ const hayFiltrosActivos = () => {
                 <h3>{p.nombre}</h3>
                 <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre || "Sin asignar"}</p>
                 <p><strong>Objetivo:</strong> {venta.objetivo || "Sin objetivo"}</p>
+                <p><strong>Empleados:</strong> {p.empleados ?? "No registrado"}</p>
+
                 <p><strong>Estado:</strong> 
                   {venta.estado_venta?.nombre?.toLowerCase() === "cierre" && venta.monto_cierre
                     ? `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`

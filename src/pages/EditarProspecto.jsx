@@ -167,6 +167,17 @@ const EditarProspecto = () => {
 
         <label>Sector:</label>
         <input type="text" name="sector" value={prospecto?.sector || ""} onChange={handleChange} disabled={!modoEdicion} />
+        <label># Empleados:</label>
+        <input
+          type="number"
+          name="empleados"
+          value={prospecto?.empleados ?? ""}
+          onWheel={(e) => e.target.blur()}
+          min="0"
+          onChange={handleChange}
+          disabled={!modoEdicion}
+
+        />
 
         <label>Cédula/RUC:</label>
         <input type="text" name="cedula_ruc" value={prospecto?.cedula_ruc || ""} onChange={handleChange} disabled={!modoEdicion} />

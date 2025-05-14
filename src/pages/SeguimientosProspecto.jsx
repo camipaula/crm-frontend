@@ -17,12 +17,23 @@ const SeguimientosProspecto = () => {
   const [modalEditar, setModalEditar] = useState(false);
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
+  const [nuevoMontoProyectado, setNuevoMontoProyectado] = useState("");
+
   const rol = getRol();
   const esSoloLectura = rol === "lectura";
 
   useEffect(() => {
     buscarSeguimientos();
   }, [filtroEstado]);
+
+  const formatearMonto = (monto) => {
+  return monto != null
+    ? `$${parseFloat(monto).toLocaleString("es-EC", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
+    : "No definido";
+};
 
 
   const buscarSeguimientos = async () => {
@@ -52,9 +63,11 @@ const SeguimientosProspecto = () => {
       setLoading(false);
     }
   };
-  const abrirModalEditar = (id_venta, objetivoActual) => {
+  const abrirModalEditar = (id_venta, objetivoActual, montoProyectadoActual) => {
     setIdVentaSeleccionada(id_venta);
     setNuevoObjetivo(objetivoActual);
+    setNuevoMontoProyectado(montoProyectadoActual ?? "");
+
     setModalEditar(true);
   };
 
@@ -78,17 +91,21 @@ const SeguimientosProspecto = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ objetivo: nuevoObjetivo }),
+        body: JSON.stringify({
+          objetivo: nuevoObjetivo,
+          monto_proyectado: parseFloat(nuevoMontoProyectado)
+        }),
       });
 
-      if (!res.ok) throw new Error("Error actualizando objetivo");
-      alert("Objetivo actualizado correctamente");
+      if (!res.ok) throw new Error("Error actualizando objetivo y monto");
+      alert("Actualización exitosa");
       setModalEditar(false);
-      buscarSeguimientos(); // Recargar la tabla
+      buscarSeguimientos();
     } catch (err) {
       alert("Error: " + err.message);
     }
   };
+
 
 
 
@@ -118,6 +135,8 @@ const SeguimientosProspecto = () => {
           <tr>
             <th>Objetivo</th>
             <th>Estado de la Prospección</th>
+            <th>Monto Proyectado</th>
+
             <th>Monto de Cierre</th>
             <th>Última Fecha</th>
             <th>Último Tipo</th>
@@ -139,14 +158,17 @@ const SeguimientosProspecto = () => {
                 <tr key={p.id_venta}>
                   <td>{p.objetivo || "Sin Objetivo"}</td>
                   <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
-                  <td>
-                    {typeof p.monto_cierre === "number"
-                      ? `$${p.monto_cierre.toFixed(2)}`
-                      : p.abierta
-                        ? "—"
-                        : "Sin monto"}
+                 <td>{formatearMonto(p.monto_proyectado)}</td>
 
-                  </td>
+
+                 <td>
+  {p.abierta
+    ? "—"
+    : typeof p.monto_cierre === "number"
+      ? formatearMonto(p.monto_cierre)
+      : "Sin monto"}
+</td>
+
                   <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                   <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion || "No registrado"}</td>
                   <td>{ultimoSeguimiento.resultado || "Pendiente"}</td>
@@ -158,8 +180,8 @@ const SeguimientosProspecto = () => {
                     >
                       📜 Ver Seguimientos
                     </button>
-                    {!esSoloLectura && (
-                      <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
+                    {!esSoloLectura && rol === "admin" && (
+                      <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo, p.monto_proyectado)}>✏️</button>
                     )}
 
                   </td>
@@ -200,14 +222,20 @@ const SeguimientosProspecto = () => {
           return (
             <div className="card-seguimiento" key={p.id_venta}>
               <h3>🎯 Objetivo: {p.objetivo || "No definido"}</h3>
+              <p>
+  <strong>Monto Proyectado:</strong> {formatearMonto(p.monto_proyectado)}
+</p>
+
+
               <p><strong>Estado Prospección:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
               {!p.abierta && (
-                <p>
-                  <strong>Monto Cierre:</strong>{" "}
-                  {typeof p.monto_cierre === "number"
-                    ? `$${p.monto_cierre.toFixed(2)}`
-                    : "Sin monto"}
-                </p>
+               <p>
+  <strong>Monto Cierre:</strong>{" "}
+  {typeof p.monto_cierre === "number"
+    ? formatearMonto(p.monto_cierre)
+    : "Sin monto"}
+</p>
+
               )}
 
               <p><strong>Fecha:</strong> {s.fecha_programada ? new Date(s.fecha_programada).toLocaleDateString() : "Sin fecha"}</p>
@@ -219,8 +247,9 @@ const SeguimientosProspecto = () => {
                 <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
                   📜 Ver
                 </button>
-                <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-
+                 {!esSoloLectura && rol === "admin" && (
+                <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo,p.monto_proyectado)}>✏️</button>
+                 )}
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
@@ -248,6 +277,14 @@ const SeguimientosProspecto = () => {
             <textarea
               value={nuevoObjetivo}
               onChange={(e) => setNuevoObjetivo(e.target.value)}
+            />
+            <label>Monto Proyectado:</label>
+            <input
+              type="number"
+              value={nuevoMontoProyectado}
+              onChange={(e) => setNuevoMontoProyectado(e.target.value)}
+              min="0"
+              step="0.01"
             />
             <div className="modal-buttons">
               <button onClick={guardarObjetivo}>Guardar</button>

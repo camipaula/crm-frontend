@@ -10,8 +10,8 @@ const VerSeguimientos = () => {
   const [seguimientos, setSeguimientos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-const rol = getRol();
-  const esSoloLectura = rol === "lectura"; 
+  const rol = getRol();
+  const esSoloLectura = rol === "lectura";
   useEffect(() => {
     obtenerSeguimientos();
   }, []);
@@ -52,17 +52,36 @@ const rol = getRol();
 
       {venta && (
         <div className="info-venta">
-          
+
           <h2>📌 Prospección: {venta.prospecto?.nombre || "Sin Prospecto"}</h2>
           <p><strong>Vendedora:</strong>{" "}
-  {venta.prospecto?.vendedora_prospecto
-    ? `${venta.prospecto.vendedora_prospecto.nombre}${venta.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
-    : "Sin asignar"}
-</p>
+            {venta.prospecto?.vendedora_prospecto
+              ? `${venta.prospecto.vendedora_prospecto.nombre}${venta.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+              : "Sin asignar"}
+          </p>
 
           <p><strong>Contacto:</strong> {venta.prospecto?.nombre_contacto || "No registrado"}</p>
           <p><strong>Correo:</strong> {venta.prospecto?.correo || "No registrado"}</p>
           <p><strong>Objetivo:</strong> {venta.objetivo}</p>
+          <p><strong>Monto Proyectado:</strong>{" "}
+            {venta.monto_proyectado != null
+              ? `$${parseFloat(venta.monto_proyectado).toLocaleString("es-EC", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+              : "No definido"}
+          </p>
+          {!venta.abierta && (
+  <p><strong>Monto de Cierre:</strong>{" "}
+    {typeof venta.monto_cierre === "number"
+      ? `$${parseFloat(venta.monto_cierre).toLocaleString("es-EC", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`
+      : "Sin monto"}
+  </p>
+)}
+
           <p><strong>Estado:</strong> {venta.abierta ? "Abierta" : "Cerrada"}</p>
           <p><strong>📅 Prospecto creado:</strong>{" "}
             {venta.prospecto?.created_at
@@ -89,13 +108,13 @@ const rol = getRol();
         </div>
       ) : (
         <>
-        {!esSoloLectura &&(  <button
+          {!esSoloLectura && (<button
             className="btn-agendar"
             onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
           >
             ➕ Agendar Siguiente Interacción
           </button>)}
-        
+
 
           <table className="ver-seguimientos-table">
             <thead>
