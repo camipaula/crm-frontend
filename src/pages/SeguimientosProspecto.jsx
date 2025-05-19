@@ -18,6 +18,9 @@ const SeguimientosProspecto = () => {
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
   const [nuevoMontoProyectado, setNuevoMontoProyectado] = useState("");
+  const [modalReabrir, setModalReabrir] = useState(false);
+  const [notaReapertura, setNotaReapertura] = useState("");
+  const [fechaReapertura, setFechaReapertura] = useState("");
 
   const rol = getRol();
   const esSoloLectura = rol === "lectura";
@@ -27,13 +30,27 @@ const SeguimientosProspecto = () => {
   }, [filtroEstado]);
 
   const formatearMonto = (monto) => {
-  return monto != null
-    ? `$${parseFloat(monto).toLocaleString("es-EC", {
+    return monto != null
+      ? `$${parseFloat(monto).toLocaleString("es-EC", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}`
-    : "No definido";
+      : "No definido";
+  };
+
+const abrirModalReabrir = (id_venta) => {
+  setIdVentaSeleccionada(id_venta);
+  setNotaReapertura("");
+
+  // Setear la fecha actual a las 08:00
+  const hoy = new Date();
+  hoy.setHours(8, 0, 0, 0);
+  const isoFecha = hoy.toISOString().slice(0, 16); // formato para datetime-local
+
+  setFechaReapertura(isoFecha);
+  setModalReabrir(true);
 };
+
 
 
   const buscarSeguimientos = async () => {
@@ -106,6 +123,30 @@ const SeguimientosProspecto = () => {
     }
   };
 
+  const confirmarReapertura = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}/reabrir`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          nota: notaReapertura,
+          fecha_programada: fechaReapertura,
+        }),
+      });
+
+      if (!res.ok) throw new Error("No se pudo reabrir la venta");
+      alert("Venta reabierta correctamente");
+      setModalReabrir(false);
+      buscarSeguimientos();
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
 
 
 
@@ -158,16 +199,16 @@ const SeguimientosProspecto = () => {
                 <tr key={p.id_venta}>
                   <td>{p.objetivo || "Sin Objetivo"}</td>
                   <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
-                 <td>{formatearMonto(p.monto_proyectado)}</td>
+                  <td>{formatearMonto(p.monto_proyectado)}</td>
 
 
-                 <td>
-  {p.abierta
-    ? "—"
-    : typeof p.monto_cierre === "number"
-      ? formatearMonto(p.monto_cierre)
-      : "Sin monto"}
-</td>
+                  <td>
+                    {p.abierta
+                      ? "—"
+                      : typeof p.monto_cierre === "number"
+                        ? formatearMonto(p.monto_cierre)
+                        : "Sin monto"}
+                  </td>
 
                   <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
                   <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion || "No registrado"}</td>
@@ -183,11 +224,14 @@ const SeguimientosProspecto = () => {
                     {!esSoloLectura && rol === "admin" && (
                       <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo, p.monto_proyectado)}>✏️</button>
                     )}
+                    {!esSoloLectura && rol === "admin" && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
+                      <button className="btn-mini" onClick={() => abrirModalReabrir(p.id_venta)}>REABIR</button>
+                    )}
 
                   </td>
                 </tr>
 
-                {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
+                {/* Nueva fila con la siguiente fecha y motivo */}
                 <tr className="fila-info-extra">
                   <td colSpan="7" style={{ fontStyle: "italic", color: "#555", backgroundColor: "#c9edec" }}>
                     <strong>Siguiente fecha programada:</strong>{" "}
@@ -223,18 +267,18 @@ const SeguimientosProspecto = () => {
             <div className="card-seguimiento" key={p.id_venta}>
               <h3>🎯 Objetivo: {p.objetivo || "No definido"}</h3>
               <p>
-  <strong>Monto Proyectado:</strong> {formatearMonto(p.monto_proyectado)}
-</p>
+                <strong>Monto Proyectado:</strong> {formatearMonto(p.monto_proyectado)}
+              </p>
 
 
               <p><strong>Estado Prospección:</strong> {p.abierta ? "Abierta" : "Cerrada"}</p>
               {!p.abierta && (
-               <p>
-  <strong>Monto Cierre:</strong>{" "}
-  {typeof p.monto_cierre === "number"
-    ? formatearMonto(p.monto_cierre)
-    : "Sin monto"}
-</p>
+                <p>
+                  <strong>Monto Cierre:</strong>{" "}
+                  {typeof p.monto_cierre === "number"
+                    ? formatearMonto(p.monto_cierre)
+                    : "Sin monto"}
+                </p>
 
               )}
 
@@ -247,9 +291,13 @@ const SeguimientosProspecto = () => {
                 <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
                   📜 Ver
                 </button>
-                 {!esSoloLectura && rol === "admin" && (
-                <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo,p.monto_proyectado)}>✏️</button>
-                 )}
+                {!esSoloLectura && rol === "admin" && (
+                  <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo, p.monto_proyectado)}>✏️</button>
+                )}
+                {!esSoloLectura && rol === "admin" && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
+                  <button className="btn-mini azul" onClick={() => abrirModalReabrir(p.id_venta)}>🔁</button>
+                )}
+
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
@@ -295,9 +343,40 @@ const SeguimientosProspecto = () => {
       )}
 
 
+      {modalReabrir && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>Reabrir Venta</h3>
+            <label>Fecha del nuevo seguimiento:</label>
+            <input
+              type="datetime-local"
+              value={fechaReapertura}
+              onChange={(e) => setFechaReapertura(e.target.value)}
+              readOnly 
+            />
+            <label>Nota o motivo:</label>
+            <textarea
+              value={notaReapertura}
+              onChange={(e) => setNotaReapertura(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={confirmarReapertura}>Confirmar</button>
+              <button onClick={() => setModalReabrir(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
 
     </div>
+
   );
+
+
+
 };
+
 
 export default SeguimientosProspecto;

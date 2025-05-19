@@ -16,7 +16,6 @@ const SeguimientosAdmin = () => {
   const [filtroEstado, setFiltroEstado] = useState("todas");
 
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
   const [idVentaSeleccionada, setIdVentaSeleccionada] = useState(null);
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
@@ -28,6 +27,10 @@ const SeguimientosAdmin = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [limitePorPagina] = useState(10); // puedes cambiar el valor
+  const [modalReabrir, setModalReabrir] = useState(false);
+  const [notaReapertura, setNotaReapertura] = useState("");
+  const [fechaReapertura, setFechaReapertura] = useState("");
+
 
   const rol = getRol();
   const esSoloLectura = rol === "lectura";
@@ -78,6 +81,41 @@ const SeguimientosAdmin = () => {
     localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
   }, [vendedoraSeleccionada, filtroEstado, busquedaNombre, filtrosInicializados]);
 
+  const abrirModalReabrir = (id_venta) => {
+    setIdVentaSeleccionada(id_venta);
+    setNotaReapertura("");
+// Establecer fecha actual a las 08:00 AM en formato 'yyyy-MM-ddTHH:mm'
+const ahora = new Date();
+ahora.setHours(8, 0, 0, 0); // 08:00 AM
+const isoFecha = ahora.toISOString().slice(0, 16); // formato compatible con <input type="datetime-local">
+setFechaReapertura(isoFecha);
+    setModalReabrir(true);
+  };
+
+  const confirmarReapertura = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}/reabrir`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          nota: notaReapertura,
+          fecha_programada: fechaReapertura,
+
+        }),
+      });
+
+      if (!res.ok) throw new Error("No se pudo reabrir la venta");
+      alert("Venta reabierta correctamente");
+      setModalReabrir(false);
+      buscarSeguimientos(vendedoraSeleccionada?.value || "");
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
 
 
   const capitalizar = (texto) => {
@@ -218,29 +256,6 @@ const SeguimientosAdmin = () => {
       if (!res.ok) throw new Error("Error actualizando objetivo");
       alert("Objetivo actualizado correctamente");
       setModalEditar(false);
-      buscarSeguimientos(vendedoraSeleccionada?.value || "");
-    } catch (err) {
-      alert("Error: " + err.message);
-    }
-  };
-
-  const abrirModalEliminar = (id_venta) => {
-    setIdVentaSeleccionada(id_venta);
-    setModalEliminar(true);
-  };
-
-  const confirmarEliminar = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${idVentaSeleccionada}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Error al eliminar venta");
-      alert("Venta eliminada correctamente");
-      setModalEliminar(false);
-      navigate("/prospectos-admin");
       buscarSeguimientos(vendedoraSeleccionada?.value || "");
     } catch (err) {
       alert("Error: " + err.message);
@@ -547,12 +562,14 @@ const SeguimientosAdmin = () => {
                         </button>
                       )}
 
-                      {/* Botón pequeño Editar y eliminar */}
+                      {/* Botón pequeño Editar */}
                       {!esSoloLectura && (
-                        <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>,
-                        <button className="btn-mini red" onClick={() => abrirModalEliminar(p.id_venta)}>🗑️</button>
+                        <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>)}
+                      {!esSoloLectura && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
+                        <button className="btn-mini red" onClick={() => abrirModalReabrir(p.id_venta)}>Reabrir</button>
                       )}
-                    
+
+
                     </td>
                     <td>{etiquetaSeguimiento(p)}</td>
 
@@ -629,14 +646,10 @@ const SeguimientosAdmin = () => {
                   ✏️
                 </button>
 
-
-                {/* 👉 Botón pequeño para eliminar */}
-                <button
-                  className="btn-mini red"
-                  onClick={() => abrirModalEliminar(p.id_venta)}
-                >
-                  🗑️
-                </button>
+               
+ {!esSoloLectura && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
+                        <button className="btn-mini red" onClick={() => abrirModalReabrir(p.id_venta)}>Reabrir</button>
+                      )}
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
@@ -682,14 +695,26 @@ const SeguimientosAdmin = () => {
       )}
 
       {/* 🟥 Modal para confirmar eliminación */}
-      {modalEliminar && (
+      
+      {modalReabrir && (
         <div className="modal-backdrop">
           <div className="modal-content">
-            <h3>¿Eliminar esta venta?</h3>
-            <p>🟥 Se eliminarán también los seguimientos relacionados.</p>
+            <h3>Reabrir Venta</h3>
+            <label>Fecha del nuevo seguimiento:</label>
+            <input
+              type="datetime-local"
+              value={fechaReapertura}
+              onChange={(e) => setFechaReapertura(e.target.value)}
+              readOnly
+            />
+            <label>Nota o motivo:</label>
+            <textarea
+              value={notaReapertura}
+              onChange={(e) => setNotaReapertura(e.target.value)}
+            />
             <div className="modal-buttons">
-              <button className="btn-mini red" onClick={confirmarEliminar}>Eliminar</button>
-              <button onClick={() => setModalEliminar(false)}>Cancelar</button>
+              <button onClick={confirmarReapertura}>Confirmar</button>
+              <button onClick={() => setModalReabrir(false)}>Cancelar</button>
             </div>
           </div>
         </div>

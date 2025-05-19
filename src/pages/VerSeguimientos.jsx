@@ -108,12 +108,14 @@ const VerSeguimientos = () => {
         </div>
       ) : (
         <>
-          {!esSoloLectura && (<button
-            className="btn-agendar"
-            onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
-          >
-            ➕ Agendar Siguiente Interacción
-          </button>)}
+          {!esSoloLectura && venta?.abierta && (
+  <button
+    className="btn-agendar"
+    onClick={() => navigate(`/agendar-seguimiento/${id_venta}`)}
+  >
+    ➕ Agendar Siguiente Interacción
+  </button>
+)}
 
 
           <table className="ver-seguimientos-table">

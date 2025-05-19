@@ -261,11 +261,14 @@ const RegistrarResultado = () => {
       <label>Estado del Prospecto:</label>
       <select value={estadoProspecto} onChange={(e) => setEstadoProspecto(e.target.value)}>
         <option value="">-- Seleccionar estado --</option>
-        {estados.map((estado) => (
-          <option key={estado.id_estado} value={estado.id_estado}>
-            {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
-          </option>
-        ))}
+        {estados
+  .filter((estado) => estado.nombre.toLowerCase() !== "reabierto")
+  .map((estado) => (
+    <option key={estado.id_estado} value={estado.id_estado}>
+      {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+    </option>
+))}
+
       </select>
 
       <button onClick={guardarResultado}>

@@ -479,6 +479,44 @@ const limpiarFiltros = () => {
               </PieChart>
             </ResponsiveContainer>
           </div>
+          <div className="dashboard-card">
+  <h3>🏷️ Prospectos por Categoría</h3>
+  <ResponsiveContainer width="100%" height={250}>
+    <PieChart>
+      <Pie
+        data={dashboardData.graficoCategorias}
+        dataKey="cantidad"
+        nameKey="categoria"
+        outerRadius={80}
+        labelLine={false}
+        label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+          const RADIAN = Math.PI / 180;
+          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+          const x = cx + radius * Math.cos(-midAngle * RADIAN);
+          const y = cy + radius * Math.sin(-midAngle * RADIAN);
+          const value = dashboardData.graficoCategorias[index].cantidad;
+          return (
+            <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+              {`${value}`}
+            </text>
+          );
+        }}
+      >
+        {dashboardData.graficoCategorias.map((_, idx) => (
+          <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+        ))}
+      </Pie>
+      <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
+      <Legend
+        formatter={(value) => {
+          const item = dashboardData.graficoCategorias.find((d) => d.categoria === value);
+          return `${value}: ${item?.cantidad || 0}`;
+        }}
+      />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
+
 
 
           <div className="dashboard-card tabla-cierres">
