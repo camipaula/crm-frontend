@@ -82,21 +82,21 @@ const RegistrarResultado = () => {
   const guardarResultado = async () => {
     const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
     const nombreEstado = estadoSeleccionado?.nombre;
-  
+
     if (!nombreEstado) {
       alert("Selecciona un estado válido.");
       return;
     }
-  
+
     const estadosFinales = ["Cierre", "Competencia"];
     if (!estadosFinales.includes(nombreEstado)) {
       setMostrarModal(true);
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
-  
+
       let monto_cierre = null;
       if (nombreEstado === "Cierre") {
         const monto = prompt("Por favor, ingresa el monto de cierre de la venta:");
@@ -107,17 +107,17 @@ const RegistrarResultado = () => {
         }
         monto_cierre = montoNumerico;
       }
-  
+
       const body = {
         resultado,
         nota,
         estado: nombreEstado,
       };
-  
+
       if (monto_cierre !== null) {
         body.monto_cierre = monto_cierre;
       }
-  
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
         headers: {
@@ -126,7 +126,7 @@ const RegistrarResultado = () => {
         },
         body: JSON.stringify(body)
       });
-  
+
       if (!res.ok) throw new Error("Error guardando resultado");
       alert("Resultado guardado correctamente");
       navigate(-1);
@@ -134,7 +134,7 @@ const RegistrarResultado = () => {
       setError(err.message);
     }
   };
-  
+
 
   const agendarDesdeModal = async () => {
 
@@ -189,7 +189,7 @@ const RegistrarResultado = () => {
       }
 
       // Agendar el nuevo seguimiento primero
-      const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
+      const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/auto`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,12 +204,13 @@ const RegistrarResultado = () => {
           nota: notaSiguiente,
         }),
       });
+      const seguimientoData = await resSeguimiento.json();
+
       if (!resSeguimiento.ok) {
-        const errorData = await resSeguimiento.json();
-        throw new Error(errorData.message || "Error agendando siguiente seguimiento");
+        throw new Error(seguimientoData.message || "Error agendando siguiente seguimiento");
       }
 
-      // Si todo fue bien, ahora sí guardar el resultado del seguimiento actual
+      // Guardar el resultado del seguimiento actual
       const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
       const nombreEstado = estadoSeleccionado?.nombre;
 
@@ -224,7 +225,7 @@ const RegistrarResultado = () => {
 
       if (!resResultado.ok) throw new Error("Error guardando resultado");
 
-      alert("Resultado y seguimiento agendado correctamente");
+      alert(`Resultado guardado y seguimiento agendado correctamente a las ${seguimientoData.hora_formateada}`);
       setMostrarModal(false);
       navigate(-1);
     } catch (err) {
@@ -262,12 +263,12 @@ const RegistrarResultado = () => {
       <select value={estadoProspecto} onChange={(e) => setEstadoProspecto(e.target.value)}>
         <option value="">-- Seleccionar estado --</option>
         {estados
-  .filter((estado) => estado.nombre.toLowerCase() !== "reabierto")
-  .map((estado) => (
-    <option key={estado.id_estado} value={estado.id_estado}>
-      {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
-    </option>
-))}
+          .filter((estado) => estado.nombre.toLowerCase() !== "reabierto")
+          .map((estado) => (
+            <option key={estado.id_estado} value={estado.id_estado}>
+              {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+            </option>
+          ))}
 
       </select>
 
@@ -287,12 +288,12 @@ const RegistrarResultado = () => {
 
 
             <input
-              type="datetime-local"
+              type="date"
               value={fechaSiguiente}
               onChange={(e) => setFechaSiguiente(e.target.value)}
-              max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
               required
             />
+
 
 
             <select

@@ -81,31 +81,31 @@ const Home = () => {
     );
   };
 
-const limpiarFiltros = () => {
-  const hoy = new Date();
-  const haceTresMeses = new Date();
-  haceTresMeses.setMonth(hoy.getMonth() - 3);
+  const limpiarFiltros = () => {
+    const hoy = new Date();
+    const haceTresMeses = new Date();
+    haceTresMeses.setMonth(hoy.getMonth() - 3);
 
-  // ⚠️ SETEAR fecha fin como mañana
-  const manana = new Date(hoy);
-  manana.setDate(hoy.getDate() + 1); // ⬅️ suma un día
+    // SETEAR fecha fin como mañana
+    const manana = new Date(hoy);
+    manana.setDate(hoy.getDate() + 1); // suma un día
 
-  const inicio = haceTresMeses.toISOString().slice(0, 10);
-  const fin = manana.toISOString().slice(0, 10); // ✅ ahora incluye todo lo de hoy
+    const inicio = haceTresMeses.toISOString().slice(0, 10);
+    const fin = manana.toISOString().slice(0, 10); // ahora incluye todo lo de hoy
 
-  setFechaInicio(inicio);
-  setFechaFin(fin);
-  setFechaInicioDefecto(inicio);
-  setFechaFinDefecto(fin);
-  setCedulaVendedora("");
-  setSector("");
-  setCiudad("");
-  setIdCategoria("");
-  setIdOrigen("");
-  setPaginaAbiertas(1);
-  setPaginaCompetencia(1);
+    setFechaInicio(inicio);
+    setFechaFin(fin);
+    setFechaInicioDefecto(inicio);
+    setFechaFinDefecto(fin);
+    setCedulaVendedora("");
+    setSector("");
+    setCiudad("");
+    setIdCategoria("");
+    setIdOrigen("");
+    setPaginaAbiertas(1);
+    setPaginaCompetencia(1);
 
-};
+  };
 
 
 
@@ -325,6 +325,14 @@ const limpiarFiltros = () => {
               </select>
             )}
 
+            <select value={ciudad} onChange={(e) => setCiudad(e.target.value)}>
+              <option value="">Todas las ciudades</option>
+              {ciudades.map((c, i) => (
+                <option key={i} value={c}>{c}</option>
+              ))}
+            </select>
+
+
             <select value={sector} onChange={(e) => setSector(e.target.value)}>
               <option value="">Todos los sectores</option>
               {sectores.map((s, i) => (
@@ -332,12 +340,6 @@ const limpiarFiltros = () => {
               ))}
             </select>
 
-            <select value={ciudad} onChange={(e) => setCiudad(e.target.value)}>
-              <option value="">Todas las ciudades</option>
-              {ciudades.map((c, i) => (
-                <option key={i} value={c}>{c}</option>
-              ))}
-            </select>
 
             <select value={idOrigen} onChange={(e) => setIdOrigen(e.target.value)}>
               <option value="">Todos los orígenes</option>
@@ -421,8 +423,8 @@ const limpiarFiltros = () => {
             <h3>📊 Resumen de Prospecciones</h3>
             <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
             <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-            <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas + "     (" + (dashboardData.porcentajeGanadas ?? 0).toFixed(1)+ "%)"} </strong></p>
-            <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas + "  (" + (dashboardData.porcentajePerdidas ?? 0).toFixed(1)+ "%)"}</strong></p>
+            <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas + "     (" + (dashboardData.porcentajeGanadas ?? 0).toFixed(1) + "%)"} </strong></p>
+            <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas + "  (" + (dashboardData.porcentajePerdidas ?? 0).toFixed(1) + "%)"}</strong></p>
 
           </div>
 
@@ -480,42 +482,42 @@ const limpiarFiltros = () => {
             </ResponsiveContainer>
           </div>
           <div className="dashboard-card">
-  <h3>🏷️ Prospectos por Categoría</h3>
-  <ResponsiveContainer width="100%" height={250}>
-    <PieChart>
-      <Pie
-        data={dashboardData.graficoCategorias}
-        dataKey="cantidad"
-        nameKey="categoria"
-        outerRadius={80}
-        labelLine={false}
-        label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-          const RADIAN = Math.PI / 180;
-          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-          const x = cx + radius * Math.cos(-midAngle * RADIAN);
-          const y = cy + radius * Math.sin(-midAngle * RADIAN);
-          const value = dashboardData.graficoCategorias[index].cantidad;
-          return (
-            <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
-              {`${value}`}
-            </text>
-          );
-        }}
-      >
-        {dashboardData.graficoCategorias.map((_, idx) => (
-          <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-        ))}
-      </Pie>
-      <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
-      <Legend
-        formatter={(value) => {
-          const item = dashboardData.graficoCategorias.find((d) => d.categoria === value);
-          return `${value}: ${item?.cantidad || 0}`;
-        }}
-      />
-    </PieChart>
-  </ResponsiveContainer>
-</div>
+            <h3>🏷️ Prospectos por Categoría</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={dashboardData.graficoCategorias}
+                  dataKey="cantidad"
+                  nameKey="categoria"
+                  outerRadius={80}
+                  labelLine={false}
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+                    const RADIAN = Math.PI / 180;
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    const value = dashboardData.graficoCategorias[index].cantidad;
+                    return (
+                      <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+                        {`${value}`}
+                      </text>
+                    );
+                  }}
+                >
+                  {dashboardData.graficoCategorias.map((_, idx) => (
+                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
+                <Legend
+                  formatter={(value) => {
+                    const item = dashboardData.graficoCategorias.find((d) => d.categoria === value);
+                    return `${value}: ${item?.cantidad || 0}`;
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
 
 
@@ -527,11 +529,11 @@ const limpiarFiltros = () => {
                 <thead>
                   <tr>
                     <th>Prospecto</th>
-                        <th>Empleados</th>
+                    <th>Empleados</th>
                     <th>Apertura</th>
                     <th>Cierre</th>
                     <th>Días</th>
-                        <th>Monto Proyectado</th>
+                    <th>Monto Proyectado</th>
                     <th>Monto</th>
 
                   </tr>
@@ -540,11 +542,11 @@ const limpiarFiltros = () => {
                   {dashboardData.tablaCierres.map((fila, i) => (
                     <tr key={i}>
                       <td>{fila.prospecto}</td>
-<td>{fila.numero_empleados}</td>
+                      <td>{fila.numero_empleados}</td>
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{new Date(fila.fecha_cierre).toLocaleDateString()}</td>
                       <td>{fila.dias}</td>
-                            <td>{fila.monto_proyectado != null ? `$${parseFloat(fila.monto_proyectado).toFixed(2)}` : "No definido"}</td>
+                      <td>{fila.monto_proyectado != null ? `$${parseFloat(fila.monto_proyectado).toFixed(2)}` : "No definido"}</td>
 
                       <td>
                         {rol === "admin" ? (
@@ -580,14 +582,16 @@ const limpiarFiltros = () => {
 
           <div className="dashboard-card tabla-cierres">
             <h3>❌ Prospecciones en Competencia</h3>
+                        <div className="tabla-detalle-cierres">
+
             <table>
               <thead>
                 <tr>
                   <th>Prospecto</th>
-                      <th>Empleados</th> 
+                  <th>Empleados</th>
                   <th>Apertura</th>
                   <th>Estado</th>
-                      <th>Último Resultado</th>
+                  <th>Último Resultado</th>
 
                 </tr>
               </thead>
@@ -595,10 +599,10 @@ const limpiarFiltros = () => {
                 {competenciaPaginada.map((fila, i) => (
                   <tr key={i}>
                     <td>{fila.prospecto}</td>
-                          <td>{fila.numero_empleados}</td> 
+                    <td>{fila.numero_empleados}</td>
                     <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                     <td>{fila.estado}</td>
-                          <td>{fila.ultimo_resultado}</td> 
+                    <td>{fila.ultimo_resultado}</td>
 
                   </tr>
                 ))}
@@ -613,18 +617,21 @@ const limpiarFiltros = () => {
                 <button onClick={() => setPaginaCompetencia(paginaCompetencia + 1)}>Siguiente</button>
               )}
             </div>
+            </div>
           </div>
 
           <div className="dashboard-card tabla-cierres">
             <h3>🔓 Prospecciones Abiertas</h3>
+                        <div className="tabla-detalle-cierres">
+
             <table>
               <thead>
                 <tr>
                   <th>Prospecto</th>
-                      <th>Empleados</th> 
+                  <th>Empleados</th>
                   <th>Apertura</th>
                   <th>Estado</th>
-                                        <th>Último Resultado</th>
+                  <th>Último Resultado</th>
 
                 </tr>
               </thead>
@@ -632,11 +639,11 @@ const limpiarFiltros = () => {
                 {abiertasPaginada.map((fila, i) => (
                   <tr key={i}>
                     <td>{fila.prospecto}</td>
-                          <td>{fila.numero_empleados}</td> 
+                    <td>{fila.numero_empleados}</td>
 
                     <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                     <td>{fila.estado}</td>
-                                              <td>{fila.ultimo_resultado}</td> 
+                    <td>{fila.ultimo_resultado}</td>
 
                   </tr>
                 ))}
@@ -651,6 +658,7 @@ const limpiarFiltros = () => {
                 <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
               )}
             </div>
+          </div>
           </div>
         </div>
 

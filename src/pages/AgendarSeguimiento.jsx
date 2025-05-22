@@ -61,15 +61,15 @@ const AgendarSeguimiento = () => {
 
   const agendar = async (e) => {
     e.preventDefault();
-    
+
     try {
       const token = localStorage.getItem("token");
-  
+
       const fechaSeleccionada = new Date(fecha_programada);
       const hoy = new Date();
       const unAnioDespues = new Date();
       unAnioDespues.setFullYear(hoy.getFullYear() + 1);
-  
+
       if (fechaSeleccionada > unAnioDespues) {
         setError("La fecha programada es muy lejana.");
         return;
@@ -107,7 +107,7 @@ const AgendarSeguimiento = () => {
       }
 
       // Agendar el seguimiento
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/auto`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,10 +123,11 @@ const AgendarSeguimiento = () => {
         }),
       });
 
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error al agendar seguimiento");
 
-      alert("Seguimiento agendado con éxito");
+      alert(data.message || "Seguimiento agendado con éxito");
       navigate(-1);
     } catch (err) {
       console.error("Error:", err);
@@ -144,13 +145,23 @@ const AgendarSeguimiento = () => {
       )}
 
       <form onSubmit={agendar}>
-      <input
-  type="datetime-local"
+        {/* 
+       <input
+          type="datetime-local"
+          value={fecha_programada}
+          onChange={(e) => setFechaProgramada(e.target.value)}
+          required
+          max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
+        />
+       */}
+        <input
+  type="date"
   value={fecha_programada}
   onChange={(e) => setFechaProgramada(e.target.value)}
   required
-  max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
 />
+
+
 
 
         <Select
@@ -180,48 +191,48 @@ const AgendarSeguimiento = () => {
 
         {/* Campos condicionales si faltan */}
         {tipoSeleccionado === "email" && (
-  <>
-    <label>Correo del Prospecto *</label>
-    <input
-      type="email"
-      value={formDataExtra.correo !== undefined ? formDataExtra.correo : (prospecto.correo || "")}
-      onChange={(e) =>
-        setFormDataExtra({ ...formDataExtra, correo: e.target.value })
-      }
-      required
-    />
-  </>
-)}
+          <>
+            <label>Correo del Prospecto *</label>
+            <input
+              type="email"
+              value={formDataExtra.correo !== undefined ? formDataExtra.correo : (prospecto.correo || "")}
+              onChange={(e) =>
+                setFormDataExtra({ ...formDataExtra, correo: e.target.value })
+              }
+              required
+            />
+          </>
+        )}
 
 
 
-{["llamada", "whatsapp"].includes(tipoSeleccionado) && (
-  <>
-    <label>Teléfono del Prospecto *</label>
-    <input
-      type="text"
-      value={formDataExtra.telefono !== undefined ? formDataExtra.telefono : (prospecto.telefono || "")}
-      onChange={(e) =>
-        setFormDataExtra({ ...formDataExtra, telefono: e.target.value })
-      }
-      required
-    />
-  </>
-)}
+        {["llamada", "whatsapp"].includes(tipoSeleccionado) && (
+          <>
+            <label>Teléfono del Prospecto *</label>
+            <input
+              type="text"
+              value={formDataExtra.telefono !== undefined ? formDataExtra.telefono : (prospecto.telefono || "")}
+              onChange={(e) =>
+                setFormDataExtra({ ...formDataExtra, telefono: e.target.value })
+              }
+              required
+            />
+          </>
+        )}
 
- {tipoSeleccionado === "visita" && (
-  <>
-    <label>Dirección del Prospecto *</label>
-    <input
-      type="text"
-      value={formDataExtra.direccion !== undefined ? formDataExtra.direccion : (prospecto.direccion || "")}
-      onChange={(e) =>
-        setFormDataExtra({ ...formDataExtra, direccion: e.target.value })
-      }
-      required
-    />
-  </>
-)}
+        {tipoSeleccionado === "visita" && (
+          <>
+            <label>Dirección del Prospecto *</label>
+            <input
+              type="text"
+              value={formDataExtra.direccion !== undefined ? formDataExtra.direccion : (prospecto.direccion || "")}
+              onChange={(e) =>
+                setFormDataExtra({ ...formDataExtra, direccion: e.target.value })
+              }
+              required
+            />
+          </>
+        )}
 
 
 
