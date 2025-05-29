@@ -8,6 +8,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  FunnelChart,
+  Funnel,
+  LabelList, 
 } from "recharts";
 import "../styles/home.css";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
@@ -372,7 +375,7 @@ const Home = () => {
 
         <div className="dashboard-grid">
 
-          <div className="dashboard-card">
+          <div className="dashboard-card-c">
             <h3>🥧 Prospecciones Abiertas, Cerradas  y Competencia</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -419,105 +422,136 @@ const Home = () => {
             </ResponsiveContainer>
 
           </div>
+         <div className="dashboard-resumen-container">
+  <div className="dashboard-card resumen">
+    <h3>📊 Resumen de Prospecciones</h3>
+    <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
+    <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
+    <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas} ({(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%)</strong></p>
+    <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas} ({(dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%)</strong></p>
+  </div>
+
+  <div className="dashboard-card resumen-secundario">
+    <h4>✅ Porcentaje de Prospecciones Cerradas</h4>
+    <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
+
+    <h4>📅 Promedio de días hasta el cierre</h4>
+    <p>{dashboardData.promedioDiasCierre} días</p>
+
+    <h4>💵 Promedio del Monto de Cierre</h4>
+    <p>${dashboardData.promedioMontoCierre}</p>
+  </div>
+</div>
+
+          {/* Fases de Prospección */}
+        <div className="dashboard-card">
+  <h3>📌 Fases de Prospección</h3>
+  <ResponsiveContainer width="100%" height={300}>
+    <FunnelChart>
+      <Tooltip formatter={(value) => [`${value} prospectos`]} />
+      <Funnel
+        dataKey="cantidad"
+        nameKey="estado"
+        data={[...dashboardData.graficoEstadosProspecto].sort((a, b) => b.cantidad - a.cantidad)}
+        isAnimationActive
+      >
+        {dashboardData.graficoEstadosProspecto.map((_, idx) => (
+          <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+        ))}
+        <LabelList
+          dataKey="cantidad"
+          position="inside"
+          style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
+        />
+      </Funnel>
+    </FunnelChart>
+  </ResponsiveContainer>
+
+  {/* Leyenda manual */}
+  <div style={{ marginTop: "10px" }}>
+    {[...dashboardData.graficoEstadosProspecto]
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .map((fase, idx) => (
+        <div
+          key={idx}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "4px",
+          }}
+        >
+          <div
+            style={{
+              width: "12px",
+              height: "12px",
+              backgroundColor: COLORS[idx % COLORS.length],
+              marginRight: "8px",
+              borderRadius: "2px",
+            }}
+          ></div>
+          <span style={{ fontSize: "13px", color: "#333" }}>
+            {fase.estado}: {fase.cantidad} ({fase.porcentaje}%)
+          </span>
+        </div>
+      ))}
+  </div>
+</div>
+
+
+
           <div className="dashboard-card">
-            <h3>📊 Resumen de Prospecciones</h3>
-            <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
-            <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-            <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas + "     (" + (dashboardData.porcentajeGanadas ?? 0).toFixed(1) + "%)"} </strong></p>
-            <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas + "  (" + (dashboardData.porcentajePerdidas ?? 0).toFixed(1) + "%)"}</strong></p>
+  <h3>🏷️ Prospectos por Categoría</h3>
+  <ResponsiveContainer width="100%" height={300}>
+    <FunnelChart>
+      <Tooltip formatter={(value) => [`${value} prospectos`]} />
+      <Funnel
+        dataKey="cantidad"
+        nameKey="categoria"
+        data={[...dashboardData.graficoCategorias].sort((a, b) => b.cantidad - a.cantidad)}
+        isAnimationActive
+      >
+        {dashboardData.graficoCategorias.map((_, idx) => (
+          <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+        ))}
+        <LabelList
+          dataKey="cantidad"
+          position="inside"
+          style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
+        />
+      </Funnel>
+    </FunnelChart>
+  </ResponsiveContainer>
 
-          </div>
+  {/* Leyenda manual */}
+  <div style={{ marginTop: "10px" }}>
+    {[...dashboardData.graficoCategorias]
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .map((cat, idx) => (
+        <div
+          key={idx}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "4px",
+          }}
+        >
+          <div
+            style={{
+              width: "12px",
+              height: "12px",
+              backgroundColor: COLORS[idx % COLORS.length],
+              marginRight: "8px",
+              borderRadius: "2px",
+            }}
+          ></div>
+          <span style={{ fontSize: "13px", color: "#333" }}>
+            {cat.categoria}: {cat.cantidad}
+          </span>
+        </div>
+      ))}
+  </div>
+</div>
 
-          <div className="dashboard-card">
-            <h4>✅ Porcentaje de Prospecciones Cerradas</h4>
-            <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
-
-            <h4>📅 Promedio de días hasta el cierre</h4>
-            <p>{dashboardData.promedioDiasCierre} días</p>
-
-            <h4>💵 Promedio del Monto de Cierre</h4>
-            <p>${dashboardData.promedioMontoCierre}</p>
-          </div>
-
-
-          <div className="dashboard-card">
-            <h3>📌 Fases de Prospección</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={dashboardData.graficoEstadosProspecto}
-                  dataKey="cantidad"
-                  nameKey="estado"
-                  outerRadius={80}
-                  labelLine={false}
-
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                    const item = dashboardData.graficoEstadosProspecto[index];
-                    return (
-                      <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
-                        {`${item.cantidad} `}
-                      </text>
-                    );
-                  }}
-                >
-                  {dashboardData.graficoEstadosProspecto.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value, name) => [`${value} prospectos`, name]}
-                />
-                <Legend
-                  formatter={(value) => {
-                    const item = dashboardData.graficoEstadosProspecto.find((d) => d.estado === value);
-                    return `${value}: ${item?.cantidad || 0} (${item?.porcentaje || 0}%)`;
-                  }}
-                />
-
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="dashboard-card">
-            <h3>🏷️ Prospectos por Categoría</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={dashboardData.graficoCategorias}
-                  dataKey="cantidad"
-                  nameKey="categoria"
-                  outerRadius={80}
-                  labelLine={false}
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                    const value = dashboardData.graficoCategorias[index].cantidad;
-                    return (
-                      <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
-                        {`${value}`}
-                      </text>
-                    );
-                  }}
-                >
-                  {dashboardData.graficoCategorias.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
-                <Legend
-                  formatter={(value) => {
-                    const item = dashboardData.graficoCategorias.find((d) => d.categoria === value);
-                    return `${value}: ${item?.cantidad || 0}`;
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
 
 
 
@@ -582,83 +616,83 @@ const Home = () => {
 
           <div className="dashboard-card tabla-cierres">
             <h3>❌ Prospecciones en Competencia</h3>
-                        <div className="tabla-detalle-cierres">
+            <div className="tabla-detalle-cierres">
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Prospecto</th>
-                  <th>Empleados</th>
-                  <th>Apertura</th>
-                  <th>Estado</th>
-                  <th>Último Resultado</th>
-
-                </tr>
-              </thead>
-              <tbody>
-                {competenciaPaginada.map((fila, i) => (
-                  <tr key={i}>
-                    <td>{fila.prospecto}</td>
-                    <td>{fila.numero_empleados}</td>
-                    <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
-                    <td>{fila.estado}</td>
-                    <td>{fila.ultimo_resultado}</td>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Prospecto</th>
+                    <th>Empleados</th>
+                    <th>Apertura</th>
+                    <th>Estado</th>
+                    <th>Último Resultado</th>
 
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="paginador-competencia">
-              {paginaCompetencia > 1 && (
-                <button onClick={() => setPaginaCompetencia(paginaCompetencia - 1)}>Anterior</button>
-              )}
-              <span>Página {paginaCompetencia}</span>
-              {paginaCompetencia * filasPorPagina < dashboardData.tablaCompetencia.length && (
-                <button onClick={() => setPaginaCompetencia(paginaCompetencia + 1)}>Siguiente</button>
-              )}
-            </div>
+                </thead>
+                <tbody>
+                  {competenciaPaginada.map((fila, i) => (
+                    <tr key={i}>
+                      <td>{fila.prospecto}</td>
+                      <td>{fila.numero_empleados}</td>
+                      <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
+                      <td>{fila.estado}</td>
+                      <td>{fila.ultimo_resultado}</td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="paginador-competencia">
+                {paginaCompetencia > 1 && (
+                  <button onClick={() => setPaginaCompetencia(paginaCompetencia - 1)}>Anterior</button>
+                )}
+                <span>Página {paginaCompetencia}</span>
+                {paginaCompetencia * filasPorPagina < dashboardData.tablaCompetencia.length && (
+                  <button onClick={() => setPaginaCompetencia(paginaCompetencia + 1)}>Siguiente</button>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="dashboard-card tabla-cierres">
             <h3>🔓 Prospecciones Abiertas</h3>
-                        <div className="tabla-detalle-cierres">
+            <div className="tabla-detalle-cierres">
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Prospecto</th>
-                  <th>Empleados</th>
-                  <th>Apertura</th>
-                  <th>Estado</th>
-                  <th>Último Resultado</th>
-
-                </tr>
-              </thead>
-              <tbody>
-                {abiertasPaginada.map((fila, i) => (
-                  <tr key={i}>
-                    <td>{fila.prospecto}</td>
-                    <td>{fila.numero_empleados}</td>
-
-                    <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
-                    <td>{fila.estado}</td>
-                    <td>{fila.ultimo_resultado}</td>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Prospecto</th>
+                    <th>Empleados</th>
+                    <th>Apertura</th>
+                    <th>Estado</th>
+                    <th>Último Resultado</th>
 
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="paginador-abiertas">
-              {paginaAbiertas > 1 && (
-                <button onClick={() => setPaginaAbiertas(paginaAbiertas - 1)}>Anterior</button>
-              )}
-              <span>Página {paginaAbiertas}</span>
-              {paginaAbiertas * filasPorPagina < dashboardData.tablaAbiertas.length && (
-                <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
-              )}
+                </thead>
+                <tbody>
+                  {abiertasPaginada.map((fila, i) => (
+                    <tr key={i}>
+                      <td>{fila.prospecto}</td>
+                      <td>{fila.numero_empleados}</td>
+
+                      <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
+                      <td>{fila.estado}</td>
+                      <td>{fila.ultimo_resultado}</td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="paginador-abiertas">
+                {paginaAbiertas > 1 && (
+                  <button onClick={() => setPaginaAbiertas(paginaAbiertas - 1)}>Anterior</button>
+                )}
+                <span>Página {paginaAbiertas}</span>
+                {paginaAbiertas * filasPorPagina < dashboardData.tablaAbiertas.length && (
+                  <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
+                )}
+              </div>
             </div>
-          </div>
           </div>
         </div>
 
