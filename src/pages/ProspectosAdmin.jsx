@@ -678,7 +678,7 @@ const hayFiltrosActivos = () => {
                     >
                       INFORMACIÓN DEL PROSPECTO
                     </button>
-                    {/* 
+                     
                             {!esSoloLectura && (
 
                     <button
@@ -688,7 +688,7 @@ const hayFiltrosActivos = () => {
                       Eliminar
                     </button>
                     )}
-*/}
+
                   </div>
 
                 </td>
