@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { logout } from "../utils/auth"; // 👈 asegúrate que esté importado
+import { logout } from "../utils/auth"; // asegúrate que esté importado
 import "../styles/miInformacionAdmin.css";
  
 const MiInformacionAdmin = () => {
@@ -17,7 +17,7 @@ const MiInformacionAdmin = () => {
   
       if (res.status === 401) {
         alert("Tu sesión ha expirado.");
-        logout(); // 👈 Redirige al login y limpia token
+        logout(); // Redirige al login y limpia token
         return;
       }
   
