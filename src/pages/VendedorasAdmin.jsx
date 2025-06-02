@@ -45,10 +45,10 @@ const VendedorasAdmin = () => {
       <div className="vendedoras-container">
         <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
-        <h1 className="title">Vendedor/a</h1>
+        <h1 className="title">VENDEDOR/A</h1>
 
         <div className="filtros">
-          <label>Filtrar por estado:</label>
+          <label>FILTRAR POR ESTADO:</label>
           <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
             <option value="todas">Todas</option>
             <option value="1">Activas</option>
@@ -58,7 +58,7 @@ const VendedorasAdmin = () => {
 
         {!esSoloLectura && (
           <button className="btn-crear" onClick={() => navigate("/crear-vendedora")}>
-            ➕ Crear Vendedor/a
+            ➕ CREAR VENDEDOR/A
           </button>
         )}
 
@@ -80,12 +80,12 @@ const VendedorasAdmin = () => {
             {vendedoras.map((v) => (
               <tr key={v.cedula_ruc}>
                 <td>{v.cedula_ruc}</td>
-                <td>{v.nombre}</td>
-                <td>{v.email}</td>
-                <td>{v.estado === 1 ? "✅ Activa" : "❌ Inactiva"}</td>
+                <td>{v.nombre.toUpperCase()}</td>
+                <td>{v.email.toUpperCase()}</td>
+                <td>{v.estado === 1 ? "✅ ACTIVA" : "❌ INACTIVA"}</td>
                 <td>
                   <button className="btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>
-                    ✏️ Editar
+                    ✏️ EDITAR
                   </button>
 
                 </td>
@@ -101,7 +101,7 @@ const VendedorasAdmin = () => {
                 <h3>{v.nombre}</h3>
                 <p><strong>Cédula:</strong> {v.cedula_ruc}</p>
                 <p><strong>Email:</strong> {v.email}</p>
-                <p><strong>Estado:</strong> {v.estado === 1 ? "✅ Activa" : "❌ Inactiva"}</p>
+                <p><strong>Estado:</strong> {v.estado === 1 ? "✅ ACTIVA" : "❌ INACTIVA"}</p>
               </div>
               <div className="acciones">
                 <button className="btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>

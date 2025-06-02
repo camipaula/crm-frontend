@@ -393,7 +393,7 @@ const CalendarioAdmin = () => {
 
   return (
     <div className="calendario-container">
-      <h2>📅 Agenda de Vendedoras</h2>
+      <h2>📅 AGENDA VENDEDORAS</h2>
       {vendedoraSeleccionada && (
         <p className="info">
           Agenda de: <strong>{vendedoraSeleccionada.label}</strong>

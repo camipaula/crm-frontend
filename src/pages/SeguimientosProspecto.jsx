@@ -197,8 +197,8 @@ const abrirModalReabrir = (id_venta) => {
               <React.Fragment key={p.id_venta}>
 
                 <tr key={p.id_venta}>
-                  <td>{p.objetivo || "Sin Objetivo"}</td>
-                  <td>{p.abierta ? "Abierta" : "Cerrada"}</td>
+                  <td>{p.objetivo.toUpperCase() || "SIN OBJETIVO"}</td>
+                  <td>{p.abierta ? "ABIERTA" : "CERRADA"}</td>
                   <td>{formatearMonto(p.monto_proyectado)}</td>
 
 
@@ -207,13 +207,13 @@ const abrirModalReabrir = (id_venta) => {
                       ? "—"
                       : typeof p.monto_cierre === "number"
                         ? formatearMonto(p.monto_cierre)
-                        : "Sin monto"}
+                        : "SIN  MONTO"}
                   </td>
 
                   <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                  <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion || "No registrado"}</td>
-                  <td>{ultimoSeguimiento.resultado || "Pendiente"}</td>
-                  <td>{ultimoSeguimiento.nota || "Sin nota"}</td>
+                  <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion.toUpperCase() || "No registrado"}</td>
+                  <td>{ultimoSeguimiento.resultado.toUpperCase() || "Pendiente"}</td>
+                  <td>{ultimoSeguimiento.nota.toUpperCase() || "Sin nota"}</td>
                   <td>
                     <button
                       className="btn-ver-seguimientos"

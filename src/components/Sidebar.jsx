@@ -16,25 +16,25 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
         {rol === "vendedora" ? (
           <>
             <li><NavLink to="/vendedora" className="nav-link" onClick={ toggleSidebar }
-            >👩 <span className={isOpen ? "show" : "hide"}>home</span></NavLink></li>
+            >👩 <span className={isOpen ? "show" : "hide"}>HOME</span></NavLink></li>
 
 
 
 
             <li><NavLink to="/prospectos-vendedora" className="nav-link" onClick={() => {
               if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-            }}>📋 <span className={isOpen ? "show" : "hide"}>Prospectos</span></NavLink></li>
+            }}>📋 <span className={isOpen ? "show" : "hide"}>PROSPECTOS</span></NavLink></li>
 
             <li><NavLink to="/seguimientos-vendedora" className="nav-link" onClick={() => {
               if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
             }}
-            >🛠 <span className={isOpen ? "show" : "hide"}>Seguimientos</span></NavLink></li>
+            >🛠 <span className={isOpen ? "show" : "hide"}>SEGUIMIENTOS</span></NavLink></li>
             {/* <li><NavLink to="/vendedora" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
             <li><NavLink to="/vendedora" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>*/}
             <li><NavLink to="/calendario-vendedora" className="nav-link" onClick={() => {
               if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
             }}
-            >📅 <span className={isOpen ? "show" : "hide"}>Calendario</span></NavLink></li>
+            >📅 <span className={isOpen ? "show" : "hide"}>CALENDARIO</span></NavLink></li>
           </>
           //Para venedora 
         ) : rol === "admin"  || rol === "lectura" ? (
@@ -42,7 +42,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
             <li>
               <NavLink to="/admin" className="nav-link"
                 onClick={toggleSidebar}
-              >👩 <span className={isOpen ? "show" : "hide"}> home</span></NavLink>
+              >👩 <span className={isOpen ? "show" : "hide"}> HOME</span></NavLink>
             </li>
 
             <li>
@@ -50,7 +50,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
                 onClick={() => {
                   if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
                 }}
-              >👩‍💼 <span className={isOpen ? "show" : "hide"}> Vendedoras</span></NavLink>
+              >👩‍💼 <span className={isOpen ? "show" : "hide"}> VENDEDORAS</span></NavLink>
             </li>
 
             <li>
@@ -58,7 +58,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
               onClick={() => {
                 if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
               }}
-              >📋 <span className={isOpen ? "show" : "hide"}>Prospectos</span></NavLink>
+              >📋 <span className={isOpen ? "show" : "hide"}>PROSPECTOS</span></NavLink>
             </li>
 
             <li>
@@ -66,7 +66,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
                 onClick={() => {
                   if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
                 }}
-              > 🛠 <span className={isOpen ? "show" : "hide"} >Seguimientos</span></NavLink>
+              > 🛠 <span className={isOpen ? "show" : "hide"} >SEGUIMIENTOS</span></NavLink>
             </li>
             <li>
               <NavLink to="/calendario-admin" className="nav-link" 
@@ -74,7 +74,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
 
                 if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
               }}
-              >📅 <span className={isOpen ? "show" : "hide"}>Calendario Vendedoras</span></NavLink>
+              >📅 <span className={isOpen ? "show" : "hide"}>CALENDARIO VENDEDORAS</span></NavLink>
               </li>
             {rol === "admin" && (
   <li>
@@ -83,7 +83,7 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
         if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
       }}
     >
-      🧍 <span className={isOpen ? "show" : "hide"}>Mi Información</span>
+      🧍 <span className={isOpen ? "show" : "hide"}>MI INFORMACION</span>
     </NavLink>
   </li>
 )}

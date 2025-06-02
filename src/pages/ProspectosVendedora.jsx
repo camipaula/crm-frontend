@@ -376,14 +376,14 @@ const ProspectosVendedora = () => {
 
   return (
     <div className="vendedora-prospectos-page">
-      <h1 className="vendedora-prospectos-title">Mis Prospectos</h1>
+      <h1 className="vendedora-prospectos-title">PROSPECTOS</h1>
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <button
         className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
         onClick={() => setMostrarFiltros((prev) => !prev)}
       >
-        {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
+        {mostrarFiltros ? "🔼 OCULTAR FILTROS" : "🔽 MOSTRAR FILTROS"}
         {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
       </button>
 
@@ -511,7 +511,7 @@ const ProspectosVendedora = () => {
       <div className="botones-acciones">
 
         <button className="vendedora-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
-          ➕ Crear Prospecto
+          ➕ CREAR PROSPECTO
         </button>
 
 
@@ -605,13 +605,13 @@ const ProspectosVendedora = () => {
                     return (
                       <tr key={`${p.id_prospecto}-${venta.id_venta}`}>
                         <td>{index + 1}</td>
-                        <td>{p.nombre}</td>
-                        <td>{venta.objetivo || "Sin objetivo"}</td>
-                        <td>{p.empleados ?? "No registrado"}</td>
+                        <td>{p.nombre.toUpperCase()}</td>
+                        <td>{venta.objetivo.toUpperCase() || "SIN OBJETIVO"}</td>
+                        <td>{p.empleados ?? "NO REGISTRADO"}</td>
 
                         <td>{mostrarEstado(venta)}</td>
                         <td>{proximoContactoFormateado}</td>
-                        <td>{ultimaNota}</td>
+                        <td>{ultimaNota.toUpperCase()}</td>
                         <td>
                           <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
                             🔍 Ver Seguimientos
@@ -627,10 +627,10 @@ const ProspectosVendedora = () => {
                     <tr key={`solo-${p.id_prospecto}`}>
                       <td>{index + 1}</td>
                       <td>{p.nombre}</td>
-                      <td>{p.empleados ?? "No registrado"}</td>
-                      <td>Sin estado</td>
-                      <td>Sin programar</td>
-                      <td>Sin nota</td>
+                      <td>{p.empleados ?? "NO REGISTRADO"}</td>
+                      <td>SIN ESTADO</td>
+                      <td>SIN PROGRAMAR</td>
+                      <td>SIN NOTA</td>
                       <td>
                         <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
                           ➕ Abrir Prospección

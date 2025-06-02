@@ -233,28 +233,28 @@ const RegistrarResultado = () => {
     }
   };
 
-  if (loading) return <p>Cargando seguimiento...</p>;
+  if (loading) return <p>CARGANDO SEGUIMIENTO...</p>;
 
   return (
     <div className="resultado-container">
       <h1>{seguimiento.estado === "pendiente" ? "Registrar Resultado" : "Editar Resultado"}</h1>
       <div className="seguimiento-info">
-        <p><strong>Prospecto:</strong> {seguimiento.venta.prospecto.nombre}</p>
-        <p><strong>Venta:</strong> {seguimiento.venta.objetivo}</p>
-        <p><strong>Tipo de Seguimiento:</strong> {seguimiento.tipo_seguimiento.descripcion}</p>
+        <p><strong>Prospecto:</strong> {seguimiento.venta.prospecto.nombre.toUpperCase()}</p>
+        <p><strong>Objetivo de Venta:</strong> {seguimiento.venta.objetivo.toUpperCase()}</p>
+        <p><strong>Tipo de Seguimiento:</strong> {seguimiento.tipo_seguimiento.descripcion.toUpperCase()}</p>
         <p><strong>Fecha Programada:</strong> {new Date(seguimiento.fecha_programada).toLocaleDateString()}</p>
-        <p><strong>Estado Actual:</strong> {seguimiento.estado}</p>
-        <p><strong>Motivo:</strong> {seguimiento.motivo}</p>
+        <p><strong>Estado Actual:</strong> {seguimiento.estado.toUpperCase()}</p>
+        <p><strong>Motivo:</strong> {seguimiento.motivo.toUpperCase()}</p>
       </div>
 
       <textarea
-        placeholder="Resultado de la interacción"
+        placeholder="RESULTADO DE LA INTERACCIÓN"
         value={resultado}
         onChange={(e) => setResultado(e.target.value)}
       />
 
       <textarea
-        placeholder="Notas adicionales (opcional)"
+        placeholder="NOTAS ADICIONALES (OPCIONAL)"
         value={nota}
         onChange={(e) => setNota(e.target.value)}
       />
@@ -281,7 +281,7 @@ const RegistrarResultado = () => {
       {mostrarModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
-            <h3>Agendar siguiente seguimiento</h3>
+            <h3>AGENDAR SIGUIENTE SEGUIMIENTO</h3>
             {error && (
               <p className="error-modal">{error}</p>
             )}
@@ -306,20 +306,20 @@ const RegistrarResultado = () => {
               }}
               required
             >
-              <option value="">-- Seleccionar tipo --</option>
+              <option value="">-- SELECCIONAR TIPO --</option>
               {tiposSeguimiento.map((tipo) => (
                 <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
               ))}
             </select>
             <input
               type="text"
-              placeholder="Motivo"
+              placeholder="MOTIVO"
               value={motivoSiguiente}
               onChange={(e) => setMotivoSiguiente(e.target.value)}
               required
             />
             <textarea
-              placeholder="Nota (opcional)"
+              placeholder="NOTA (opcional)"
               value={notaSiguiente}
               onChange={(e) => setNotaSiguiente(e.target.value)}
             />
@@ -354,7 +354,7 @@ const RegistrarResultado = () => {
               </>
             )}
             <div className="modal-buttons">
-              <button className="btn-mini" onClick={agendarDesdeModal}>Agendar</button>
+              <button className="btn-mini" onClick={agendarDesdeModal}>AGENDAR</button>
               <button
                 className="btn-mini red"
                 onClick={() => {
@@ -362,7 +362,7 @@ const RegistrarResultado = () => {
                   setError(""); // limpiar error cuando cierra
                 }}
               >
-                Cancelar
+                CANCELAR
               </button>
             </div>
           </div>

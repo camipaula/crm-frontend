@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/verSeguimientos.css";
-import { getRol } from "../utils/auth"; // 👈 IMPORTANTE
+import { getRol } from "../utils/auth"; 
 
 const VerSeguimientos = () => {
   const { id_venta } = useParams();
@@ -134,11 +134,11 @@ const VerSeguimientos = () => {
               {seguimientos.map((s) => (
                 <tr key={s.id_seguimiento}>
                   <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
-                  <td>{s.tipo_seguimiento?.descripcion || "Sin tipo"}</td>
-                  <td>{s.estado}</td>
-                  <td>{s.motivo || "Sin motivo"}</td>
-                  <td>{s.nota || "Sin nota"}</td>
-                  <td>{s.resultado || "Pendiente"}</td>
+                  <td>{s.tipo_seguimiento?.descripcion.toUpperCase() || "SIN TIPO"}</td>
+                  <td>{s.estado.toUpperCase()}</td>
+                  <td>{s.motivo.toUpperCase() || "SIN MOTIVO"}</td>
+                  <td>{s.nota.toUpperCase() || "SIN NOTA"}</td>
+                  <td>{s.resultado || "PENDIENTE"}</td>
                   <td>
                     {!s.resultado && !esSoloLectura && (
                       <button

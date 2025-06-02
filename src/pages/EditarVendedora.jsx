@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRol } from "../utils/auth"; // 👈 IMPORTANTE
+import { getRol } from "../utils/auth"; 
 import "../styles/editarVendedora.css";
 
 const EditarVendedora = () => {
   const { cedula_ruc } = useParams();
   const navigate = useNavigate();
-    const rol = getRol(); // 👈 OBTENER ROL
-  const esSoloLectura = rol === "lectura"; // 👈 MARCAR SI ES SOLO LECTURA
+    const rol = getRol(); // OBTENER ROL
+  const esSoloLectura = rol === "lectura"; // MARCAR SI ES SOLO LECTURA
 
 
   const [vendedora, setVendedora] = useState(null);
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); // ✅ Para cambiar la contraseña
-  const [estado, setEstado] = useState(1); // ✅ Para inactivar/activar
+  const [password, setPassword] = useState(""); // Para cambiar la contraseña
+  const [estado, setEstado] = useState(1); // Para inactivar/activar
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const EditarVendedora = () => {
     <div className="editar-vendedora-container">
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
-      <h1>Editar Vendedora</h1>
+      <h1>EDITAR VENDEDOR/A</h1>
 
       <div className="form-group">
         <label>Nombre:</label>
@@ -141,11 +141,11 @@ const EditarVendedora = () => {
  {!esSoloLectura && (
         <>
       <button onClick={guardarCambios} className="btn-guardar">
-        Guardar Cambios
+        GUARDAR CAMBIOS
       </button>
 
       <button onClick={toggleEstado} className={`btn-estado ${estado === 1 ? "inactiva" : "activa"}`}>
-        {estado === 1 ? "Marcar como Inactiva" : "Activar Vendedora"}
+        {estado === 1 ? "MARCAR COMO INACTIVO" : "ACTIVAR VENDEDOR/A"}
       </button>
        </>
        )}

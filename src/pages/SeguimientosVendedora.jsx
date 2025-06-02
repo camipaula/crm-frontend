@@ -237,7 +237,7 @@ const SeguimientosVendedora = () => {
   return (
     <div className="seguimientos-container">
 
-      <h1 className="title">Mis Seguimientos de Prospectos</h1>
+      <h1 className="title">SEGUIMIENTO DE PROSPECTOS</h1>
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
       <button className="exportar-btn" onClick={exportarExcel}>
@@ -344,18 +344,18 @@ const SeguimientosVendedora = () => {
 
 
                   <tr key={p.id_venta}>
-                    <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
-                    <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
+                    <td>{p.prospecto?.nombre.toUpperCase() || "SIN PROSPECTO"}</td>
+                    <td>{capitalizar(p.objetivo.toUpperCase()) || "SIN OBJETIVO"}</td>
                     <td>
   {p.estado_venta?.nombre === "Cierre"
     ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
-    : capitalizar(p.estado_venta?.nombre) || "No definido"}
+    : capitalizar(p.estado_venta?.nombre) || "NO DEFINIDO"}
 </td>
                     
                     <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
-                    <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
-                    <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion.toUpperCase() || "NO REGISTRADO"}</td>
+                    <td>{ultimoSeguimiento?.resultado || "PENDIENTE"}</td>
+                    <td>{ultimoSeguimiento?.nota.toUpperCase() || "SIN NOTA"}</td>
                     <td>{etiquetaSeguimiento(p)}</td>
 
                     <td>
@@ -380,7 +380,7 @@ const SeguimientosVendedora = () => {
                     </td>
                   </tr>
 
-                  {/* 🔽 Nueva fila con la siguiente fecha y motivo */}
+                  {/* Nueva fila con la siguiente fecha y motivo */}
                   <tr className="fila-info-extra">
                     <td colSpan="7" style={{ fontStyle: "italic", color: "#555", backgroundColor: "#c9edec" }}>
                       <strong>Siguiente fecha programada:</strong>{" "}

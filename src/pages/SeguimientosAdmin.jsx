@@ -357,7 +357,7 @@ setFechaReapertura(isoFecha);
     <div className="seguimientos-container">
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
-      <h1 className="title">Seguimientos de Prospecciones</h1>
+      <h1 className="title">SEGUIMIENTOS DE PROSPECCIONES</h1>
 
       <button className="exportar-btn" onClick={exportarExcel}>
         📥 Exportar a Excel
@@ -527,14 +527,14 @@ setFechaReapertura(isoFecha);
                 <React.Fragment key={p.id_venta}>
 
                   <tr key={p.id_venta}>
-                    <td>{p.prospecto?.nombre || "Sin Prospecto"}</td>
+                    <td>{p.prospecto?.nombre.toUpperCase() || "SIN PROSPECTO"}</td>
                     <td>
                       {p.prospecto?.vendedora_prospecto
-                        ? `${p.prospecto.vendedora_prospecto.nombre}${p.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+                        ? `${p.prospecto.vendedora_prospecto.nombre.toUpperCase()}${p.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
                         : "Sin asignar"}
                     </td>
 
-                    <td>{capitalizar(p.objetivo) || "Sin Objetivo"}</td>
+                    <td>{capitalizar(p.objetivo.toUpperCase()) || "SIN OBJETIVO"}</td>
                     <td>
                       {p.estado_venta?.nombre === "Cierre"
                         ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
@@ -542,9 +542,9 @@ setFechaReapertura(isoFecha);
                     </td>
 
                     <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</td>
-                    <td>{ultimoSeguimiento?.resultado || "Pendiente"}</td>
-                    <td>{ultimoSeguimiento?.nota || "Sin nota"}</td>
+                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion.toUpperCase()|| "No registrado"}</td>
+                    <td>{ultimoSeguimiento?.resultado || "PENDIENTE"}</td>
+                    <td>{ultimoSeguimiento?.nota || "SIN NOTA"}</td>
                     <td>
                       {!tieneSeguimientos ? (
                         <button
@@ -558,7 +558,7 @@ setFechaReapertura(isoFecha);
                           className="btn-ver-seguimientos"
                           onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
                         >
-                          📜 Ver Seguimientos
+                          📜 VER SEGUIMIENTOS
                         </button>
                       )}
 
@@ -566,7 +566,7 @@ setFechaReapertura(isoFecha);
                       {!esSoloLectura && (
                         <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>)}
                       {!esSoloLectura && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
-                        <button className="btn-mini red" onClick={() => abrirModalReabrir(p.id_venta)}>Reabrir</button>
+                        <button className="btn-mini red" onClick={() => abrirModalReabrir(p.id_venta)}>REABRIR</button>
                       )}
 
 

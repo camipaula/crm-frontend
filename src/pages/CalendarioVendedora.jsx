@@ -266,7 +266,7 @@ const CalendarioVendedora = () => {
 
   return (
     <div className="calendario-container">
-      <h2>📅 Mi Agenda</h2>
+      <h2>📅 MI AGENDA</h2>
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
       <button className="btn-agendar" onClick={() => setMostrarModal(true)}>➕ Agendar Cita</button>
 

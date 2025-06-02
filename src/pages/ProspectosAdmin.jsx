@@ -420,7 +420,7 @@ const hayFiltrosActivos = () => {
 
     return (
       <div className="admin-prospectos-page">
-        <h1 className="admin-prospectos-title">Gestión de Prospectos</h1>
+        <h1 className="admin-prospectos-title">GESTIÓN DE PROSPECTOS</h1>
         <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
 
         {error && <p className="error">{error}</p>}
@@ -428,7 +428,7 @@ const hayFiltrosActivos = () => {
   className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
   onClick={() => setMostrarFiltros((prev) => !prev)}
 >
-  {mostrarFiltros ? "🔼 Ocultar Filtros" : "🔽 Mostrar Filtros"}
+  {mostrarFiltros ? "🔼 OCULTAR FILTROS" : "🔽 MOSTRAR FILTROS"}
   {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
 </button>
 
@@ -550,11 +550,11 @@ const hayFiltrosActivos = () => {
 
 
         <button className="exportar-btn" onClick={exportarExcel}>
-          📥 Exportar Excel
+          📥 EXPORTAR EXCEL
         </button>
         {!esSoloLectura && (
         <button className="admin-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
-          ➕ Crear Prospecto
+          ➕ CREAR PROSPECTO
         </button>
         )}
 
@@ -582,7 +582,7 @@ const hayFiltrosActivos = () => {
 
           <div className="paginador-lindo">
           <button onClick={buscarProspectos} disabled={loading}>
-            {loading ? "Cargando..." : "Buscar"}
+            {loading ? "Cargando..." : "BUSCAR"}
           </button>
           </div>
 
@@ -643,41 +643,42 @@ const hayFiltrosActivos = () => {
 
             const proximoContactoFormateado = proximoContacto
               ? new Date(proximoContacto).toLocaleDateString("es-EC")
-              : "Sin programar";
+              : "SIN PROGRMAR";
 
             return (
               <tr key={`${p.id_prospecto}-${venta.id_venta}`}>
                 <td>{index + 1}</td>
-                <td>{p.nombre}</td>
+                <td>{p.nombre.toUpperCase()}</td>
                 <td>
                   {p.vendedora_prospecto
-                    ? `${p.vendedora_prospecto.nombre}${p.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
-                    : "Sin asignar"}
+                    ? `${p.vendedora_prospecto.nombre.toUpperCase()}${p.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+                    : "SIN ASIGNAR"}
                 </td>
-                <td>{venta.objetivo || "Sin objetivo"}</td>
-                <td>{p.empleados ?? "No registrado"}</td>
+                <td>{venta.objetivo.toUpperCase()|| "Sin objetivo"}</td>
+                <td>{p.empleados ?? "NO REGISTRADO"}</td>
 
                 <td>
                   {venta.estado_venta?.nombre?.toLowerCase() === "cierre" && venta.monto_cierre
                     ? `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`
-                    : venta.estado_venta?.nombre || "Sin estado"}
+                    : venta.estado_venta?.nombre.toUpperCase()|| "Sin estado"}
                 </td>
                 <td>{proximoContactoFormateado}</td>
-                <td>{ultimaNota}</td>
+                <td>{ultimaNota.toUpperCase()}</td>
                 <td>
                   <div className="admin-botones-acciones">
                     <button
                       className="admin-btn-seguimientos"
                       onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}
                     >
-                      🔍 Ver Seguimientos
+                      🔍 VER SEGUIMIENTOS
                     </button>
                     <button
                       className="admin-btn-editar"
                       onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}
                     >
-                      Información del Prospecto
+                      INFORMACIÓN DEL PROSPECTO
                     </button>
+                    {/* 
                             {!esSoloLectura && (
 
                     <button
@@ -687,7 +688,7 @@ const hayFiltrosActivos = () => {
                       Eliminar
                     </button>
                     )}
-
+*/}
                   </div>
 
                 </td>
@@ -698,13 +699,13 @@ const hayFiltrosActivos = () => {
             <tr key={`solo-${p.id_prospecto}`}>
               <td>{index + 1}</td>
               <td>{p.nombre}</td>
-              <td>{p.vendedora_prospecto?.nombre || "Sin asignar"}</td>
-              <td>Sin objetivo</td>
-              <td>{p.empleados ?? "No registrado"}</td>
+              <td>{p.vendedora_prospecto?.nombre || "SIN ASIGNAR"}</td>
+              <td>SIN OBJETIVO</td>
+              <td>{p.empleados ?? "NO REGISTRADO"}</td>
 
-              <td>Sin estado</td>
-              <td>Sin programar</td>
-              <td>Sin nota</td>
+              <td>SIN ESTADO</td>
+              <td>SIN PROGRAMAR</td>
+              <td>SIN NOTA</td>
               <td>
                 <div className="admin-botones-acciones">
                   <button
@@ -763,14 +764,14 @@ const hayFiltrosActivos = () => {
 
             const proximoContactoFormateado = proximoContacto
               ? new Date(proximoContacto).toLocaleDateString("es-EC")
-              : "Sin programar";
+              : "SIN PROGRAMAR";
 
             return (
               <div className="admin-prospecto-card" key={`venta-${p.id_prospecto}-${venta.id_venta}`}>
                 <h3>{p.nombre}</h3>
-                <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre || "Sin asignar"}</p>
-                <p><strong>Objetivo:</strong> {venta.objetivo || "Sin objetivo"}</p>
-                <p><strong>Empleados:</strong> {p.empleados ?? "No registrado"}</p>
+                <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre || "SIN ASIGNAR"}</p>
+                <p><strong>Objetivo:</strong> {venta.objetivo || "SIN OBJETIVO"}</p>
+                <p><strong>Empleados:</strong> {p.empleados ?? "NO REGISTRADO"}</p>
 
                 <p><strong>Estado:</strong> 
                   {venta.estado_venta?.nombre?.toLowerCase() === "cierre" && venta.monto_cierre
@@ -796,11 +797,11 @@ const hayFiltrosActivos = () => {
         : [
             <div className="admin-prospecto-card" key={`solo-${p.id_prospecto}`}>
               <h3>{p.nombre}</h3>
-              <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre || "Sin asignar"}</p>
-              <p><strong>Objetivo:</strong> Sin objetivo</p>
-              <p><strong>Estado:</strong> Sin estado</p>
-              <p><strong>Próximo contacto:</strong> Sin programar</p>
-              <p><strong>Última nota:</strong> Sin nota</p>
+              <p><strong>Vendedora:</strong> {p.vendedora_prospecto?.nombre || "SIN ASIGNAR"}</p>
+              <p><strong>Objetivo:</strong> SIN OBJETIVO</p>
+              <p><strong>Estado:</strong> SIN ESTADO</p>
+              <p><strong>Próximo contacto:</strong> SIN PROGRAMAR</p>
+              <p><strong>Última nota:</strong> SIN NOTA</p>
               <div className="acciones">
                 <button className="btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
                   ➕ Abrir Prospección

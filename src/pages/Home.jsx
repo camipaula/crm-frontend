@@ -293,7 +293,7 @@ const Home = () => {
           onClick={() => setMostrarFiltros(!mostrarFiltros)}
           style={{ marginBottom: "10px" }}
         >
-          {mostrarFiltros ? "🔼 Ocultar filtros" : "🔽 Mostrar filtros"}
+          {mostrarFiltros ? "🔼 OCULTAR FILTROS" : "🔽 MOSTRAR FILTROS"}
           {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
         </button>
 
@@ -376,7 +376,7 @@ const Home = () => {
         <div className="dashboard-grid">
 
           <div className="dashboard-card-c">
-            <h3>🥧 Prospecciones Abiertas, Cerradas  y Competencia</h3>
+            <h3>🥧 PROSPECCIONES ABIERTAS, CERRADAS Y COMPETENCIA</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
@@ -424,28 +424,28 @@ const Home = () => {
           </div>
          <div className="dashboard-resumen-container">
   <div className="dashboard-card resumen">
-    <h3>📊 Resumen de Prospecciones</h3>
-    <p>📂 Totales: <strong>{dashboardData.totalVentas}</strong></p>
-    <p>🔓 Abiertas: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-    <p>✅ Cerradas: <strong>{dashboardData.totalVentasGanadas} ({(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%)</strong></p>
-    <p>❌ Competencia: <strong>{dashboardData.totalVentasPerdidas} ({(dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%)</strong></p>
+    <h3>📊 RESUMEN DE PROSPECCIONES</h3>
+    <p>📂 TOTALES: <strong>{dashboardData.totalVentas}</strong></p>
+    <p>🔓 ABIERTAS: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
+    <p>✅ CERRADAS: <strong>{dashboardData.totalVentasGanadas} ({(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%)</strong></p>
+    <p>❌ COMPETENCIA: <strong>{dashboardData.totalVentasPerdidas} ({(dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%)</strong></p>
   </div>
 
   <div className="dashboard-card resumen-secundario">
-    <h4>✅ Porcentaje de Prospecciones Cerradas</h4>
+    <h4>✅ PORCENTAJE DE PROSPECCINES CERRADAS</h4>
     <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
 
-    <h4>📅 Promedio de días hasta el cierre</h4>
+    <h4>📅 PROMEDIO DE DÍAS HASTA EL CIERRE</h4>
     <p>{dashboardData.promedioDiasCierre} días</p>
 
-    <h4>💵 Promedio del Monto de Cierre</h4>
+    <h4>💵 PROMEDIO DEL MONTO DE CIERRE</h4>
     <p>${dashboardData.promedioMontoCierre}</p>
   </div>
 </div>
 
           {/* Fases de Prospección */}
         <div className="dashboard-card">
-  <h3>📌 Fases de Prospección</h3>
+  <h3>📌 FASES DE PROSPECCIÓN</h3>
   <ResponsiveContainer width="100%" height={300}>
     <FunnelChart>
       <Tooltip formatter={(value) => [`${value} prospectos`]} />
@@ -490,7 +490,7 @@ const Home = () => {
             }}
           ></div>
           <span style={{ fontSize: "13px", color: "#333" }}>
-            {fase.estado}: {fase.cantidad} ({fase.porcentaje}%)
+            {fase.estado.toUpperCase()}: {fase.cantidad} ({fase.porcentaje}%)
           </span>
         </div>
       ))}
@@ -500,7 +500,7 @@ const Home = () => {
 
 
           <div className="dashboard-card">
-  <h3>🏷️ Prospectos por Categoría</h3>
+  <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
   <ResponsiveContainer width="100%" height={300}>
     <FunnelChart>
       <Tooltip formatter={(value) => [`${value} prospectos`]} />
@@ -545,7 +545,7 @@ const Home = () => {
             }}
           ></div>
           <span style={{ fontSize: "13px", color: "#333" }}>
-            {cat.categoria}: {cat.cantidad}
+            {cat.categoria.toUpperCase()}: {cat.cantidad}
           </span>
         </div>
       ))}
@@ -556,7 +556,7 @@ const Home = () => {
 
 
           <div className="dashboard-card tabla-cierres">
-            <h3>📋 Detalle de Prospecciones Ganadas</h3>
+            <h3>📋 DETALLE DE PROSPECCIONES GANADAS</h3>
             <div className="tabla-detalle-cierres">
 
               <table>
@@ -615,7 +615,7 @@ const Home = () => {
           </div>
 
           <div className="dashboard-card tabla-cierres">
-            <h3>❌ Prospecciones en Competencia</h3>
+            <h3>❌ PROSPECCIONES EN COMPETENCIA</h3>
             <div className="tabla-detalle-cierres">
 
               <table>
@@ -655,7 +655,7 @@ const Home = () => {
           </div>
 
           <div className="dashboard-card tabla-cierres">
-            <h3>🔓 Prospecciones Abiertas</h3>
+            <h3>🔓 PROSPECCIONES ABIERTAS</h3>
             <div className="tabla-detalle-cierres">
 
               <table>
