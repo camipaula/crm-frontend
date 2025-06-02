@@ -34,7 +34,7 @@ const Login = () => {
         } else if (data.rol === "vendedora") {
           navigate("/vendedora");
         } else if (data.rol === "lectura") {
-          navigate("/admin"); // 👈 esta nueva vista la creas abajo
+          navigate("/admin"); //  esta nueva vista la creas abajo
         } else {
           navigate("/");
         }
