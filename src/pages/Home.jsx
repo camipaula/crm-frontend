@@ -46,15 +46,14 @@ const Home = () => {
   const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
   const filasPorPagina = 5;
-    const filasPorPagina1 = 20;
 
   const competenciaPaginada = dashboardData?.tablaCompetencia?.slice(
     (paginaCompetencia - 1) * filasPorPagina,
     paginaCompetencia * filasPorPagina
   );
   const abiertasPaginada = dashboardData?.tablaAbiertas?.slice(
-    (paginaAbiertas - 1) * filasPorPagina1,
-    paginaAbiertas * filasPorPagina1
+    (paginaAbiertas - 1) * filasPorPagina,
+    paginaAbiertas * filasPorPagina
   );
 
 
