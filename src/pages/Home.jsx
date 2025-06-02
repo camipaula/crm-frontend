@@ -46,14 +46,15 @@ const Home = () => {
   const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
   const filasPorPagina = 5;
+   const filasPorPagina1 = 20;
 
   const competenciaPaginada = dashboardData?.tablaCompetencia?.slice(
     (paginaCompetencia - 1) * filasPorPagina,
     paginaCompetencia * filasPorPagina
   );
   const abiertasPaginada = dashboardData?.tablaAbiertas?.slice(
-    (paginaAbiertas - 1) * filasPorPagina,
-    paginaAbiertas * filasPorPagina
+    (paginaAbiertas - 1) * filasPorPagina1,
+    paginaAbiertas * filasPorPagina1
   );
 
 
@@ -688,7 +689,7 @@ const Home = () => {
                   <button onClick={() => setPaginaAbiertas(paginaAbiertas - 1)}>Anterior</button>
                 )}
                 <span>Página {paginaAbiertas}</span>
-                {paginaAbiertas * filasPorPagina < dashboardData.tablaAbiertas.length && (
+                {paginaAbiertas * filasPorPagina1 < dashboardData.tablaAbiertas.length && (
                   <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
                 )}
               </div>
