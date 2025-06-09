@@ -84,11 +84,11 @@ const SeguimientosAdmin = () => {
   const abrirModalReabrir = (id_venta) => {
     setIdVentaSeleccionada(id_venta);
     setNotaReapertura("");
-// Establecer fecha actual a las 08:00 AM en formato 'yyyy-MM-ddTHH:mm'
-const ahora = new Date();
-ahora.setHours(8, 0, 0, 0); // 08:00 AM
-const isoFecha = ahora.toISOString().slice(0, 16); // formato compatible con <input type="datetime-local">
-setFechaReapertura(isoFecha);
+    // Establecer fecha actual a las 08:00 AM en formato 'yyyy-MM-ddTHH:mm'
+    const ahora = new Date();
+    ahora.setHours(8, 0, 0, 0); // 08:00 AM
+    const isoFecha = ahora.toISOString().slice(0, 16); // formato compatible con <input type="datetime-local">
+    setFechaReapertura(isoFecha);
     setModalReabrir(true);
   };
 
@@ -172,7 +172,7 @@ setFechaReapertura(isoFecha);
       if (cedula_ruc) url += `&cedula_vendedora=${cedula_ruc}`;
       if (estado !== "todas") url += `&estado_prospeccion=${estado}`;
       if (seguimientoFiltro && seguimientoFiltro !== "todos") url += `&seguimiento=${seguimientoFiltro}`;
-      if (nombre.trim()) url += `&nombre=${encodeURIComponent(nombre.trim())}`; // 👈 SOLO ESTA
+      if (nombre.trim()) url += `&nombre=${encodeURIComponent(nombre.trim())}`; // SOLO ESTA
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -527,14 +527,17 @@ setFechaReapertura(isoFecha);
                 <React.Fragment key={p.id_venta}>
 
                   <tr key={p.id_venta}>
-                    <td>{p.prospecto?.nombre.toUpperCase() || "SIN PROSPECTO"}</td>
+                    <td>{p.prospecto?.nombre ? p.prospecto.nombre.toUpperCase() : "SIN PROSPECTO"}</td>
                     <td>
                       {p.prospecto?.vendedora_prospecto
-                        ? `${p.prospecto.vendedora_prospecto.nombre.toUpperCase()}${p.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
+                        ? `${p.prospecto?.vendedora_prospecto?.nombre
+                          ? p.prospecto.vendedora_prospecto.nombre.toUpperCase()
+                          : "Sin asignar"
+                        }${p.prospecto.vendedora_prospecto.estado === 0 ? " (INACTIVA)" : ""}`
                         : "Sin asignar"}
                     </td>
 
-                    <td>{capitalizar(p.objetivo.toUpperCase()) || "SIN OBJETIVO"}</td>
+                    <td>{p.objetivo ? capitalizar(p.objetivo.toUpperCase()) : "SIN OBJETIVO"}</td>
                     <td>
                       {p.estado_venta?.nombre === "Cierre"
                         ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
@@ -542,7 +545,9 @@ setFechaReapertura(isoFecha);
                     </td>
 
                     <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion.toUpperCase()|| "No registrado"}</td>
+                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion
+                      ? ultimoSeguimiento.tipo_seguimiento.descripcion.toUpperCase()
+                      : "NO REGISTRADO"}</td>
                     <td>{ultimoSeguimiento?.resultado || "PENDIENTE"}</td>
                     <td>{ultimoSeguimiento?.nota || "SIN NOTA"}</td>
                     <td>
@@ -646,10 +651,10 @@ setFechaReapertura(isoFecha);
                   ✏️
                 </button>
 
-               
- {!esSoloLectura && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
-                        <button className="btn-mini red" onClick={() => abrirModalReabrir(p.id_venta)}>Reabrir</button>
-                      )}
+
+                {!esSoloLectura && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
+                  <button className="btn-mini red" onClick={() => abrirModalReabrir(p.id_venta)}>Reabrir</button>
+                )}
 
                 <p style={{ fontStyle: "italic", marginTop: "10px" }}>
                   <strong>Siguiente fecha programada:</strong>{" "}
@@ -695,7 +700,7 @@ setFechaReapertura(isoFecha);
       )}
 
       {/* 🟥 Modal para confirmar eliminación */}
-      
+
       {modalReabrir && (
         <div className="modal-backdrop">
           <div className="modal-content">

@@ -211,9 +211,9 @@ const abrirModalReabrir = (id_venta) => {
                   </td>
 
                   <td>{ultimoSeguimiento.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                  <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion.toUpperCase() || "No registrado"}</td>
-                  <td>{ultimoSeguimiento.resultado.toUpperCase() || "Pendiente"}</td>
-                  <td>{ultimoSeguimiento.nota.toUpperCase() || "Sin nota"}</td>
+                  <td>{ultimoSeguimiento.tipo_seguimiento?.descripcion ? ultimoSeguimiento.tipo_seguimiento.descripcion.toUpperCase() : "No registrado"}</td>
+                  <td>{ultimoSeguimiento.resultado ? ultimoSeguimiento.resultado.toUpperCase() : "Pendiente"}</td>
+                  <td>{ultimoSeguimiento.nota ? ultimoSeguimiento.nota.toUpperCase() : "Sin nota"}</td>
                   <td>
                     <button
                       className="btn-ver-seguimientos"

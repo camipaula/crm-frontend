@@ -37,7 +37,7 @@ const SeguimientosVendedora = () => {
           setBusquedaNombre(filtros.busquedaNombre);
           setBusquedaInput(filtros.busquedaNombre); // 👈 aquí
         }
-                if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
+        if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
 
       } catch (e) {
         console.error("Error al leer filtros guardados:", e);
@@ -225,13 +225,13 @@ const SeguimientosVendedora = () => {
       setBusquedaNombre(valor); // esto activa el useEffect y hace fetch
     }, 500)
   ).current;
-  
 
-   useEffect(() => {
-      return () => {
-        debouncedBuscar.cancel(); 
-      };
-    }, []);
+
+  useEffect(() => {
+    return () => {
+      debouncedBuscar.cancel();
+    };
+  }, []);
 
 
   return (
@@ -245,19 +245,19 @@ const SeguimientosVendedora = () => {
       </button>
 
       <div className="filtros-container">
-      <label>Filtrar nombre de Prospecto:</label>
+        <label>Filtrar nombre de Prospecto:</label>
 
-      <input
-  type="text"
-  placeholder="Buscar por nombre de prospecto..."
-  value={busquedaInput}
-  onChange={(e) => {
-    const valor = e.target.value;
-    setBusquedaInput(valor);           // 🔹 actualiza lo que ves al escribir
-    debouncedBuscar(valor);            // 🔸 filtra con retraso
-  }}
-  className="input-busqueda-nombre"
-/>
+        <input
+          type="text"
+          placeholder="Buscar por nombre de prospecto..."
+          value={busquedaInput}
+          onChange={(e) => {
+            const valor = e.target.value;
+            setBusquedaInput(valor);           // 🔹 actualiza lo que ves al escribir
+            debouncedBuscar(valor);            // 🔸 filtra con retraso
+          }}
+          className="input-busqueda-nombre"
+        />
 
 
 
@@ -283,7 +283,7 @@ const SeguimientosVendedora = () => {
           <option value="realizado">Realizados</option>
         </select>
 
-        
+
 
       </div>
 
@@ -344,19 +344,22 @@ const SeguimientosVendedora = () => {
 
 
                   <tr key={p.id_venta}>
-                    <td>{p.prospecto?.nombre.toUpperCase() || "SIN PROSPECTO"}</td>
-                    <td>{capitalizar(p.objetivo.toUpperCase()) || "SIN OBJETIVO"}</td>
+                    <td>{p.prospecto?.nombre ? p.prospecto.nombre.toUpperCase() : "SIN PROSPECTO"}</td>
+<td>{p.objetivo ? capitalizar(p.objetivo.toUpperCase()) : "SIN OBJETIVO"}</td>
                     <td>
-  {p.estado_venta?.nombre === "Cierre"
-    ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
-    : capitalizar(p.estado_venta?.nombre) || "NO DEFINIDO"}
-</td>
-                    
+                      {p.estado_venta?.nombre === "Cierre"
+                        ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+                        : capitalizar(p.estado_venta?.nombre) || "NO DEFINIDO"}
+                    </td>
+
                     <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-                    <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion.toUpperCase() || "NO REGISTRADO"}</td>
+<td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion
+  ? ultimoSeguimiento.tipo_seguimiento.descripcion.toUpperCase()
+  : "NO REGISTRADO"}</td>
                     <td>{ultimoSeguimiento?.resultado || "PENDIENTE"}</td>
-                    <td>{ultimoSeguimiento?.nota.toUpperCase() || "SIN NOTA"}</td>
-                    <td>{etiquetaSeguimiento(p)}</td>
+<td>{ultimoSeguimiento?.nota
+  ? ultimoSeguimiento.nota.toUpperCase()
+  : "SIN NOTA"}</td>                    <td>{etiquetaSeguimiento(p)}</td>
 
                     <td>
                       {!tieneSeguimientos ? (
@@ -416,10 +419,10 @@ const SeguimientosVendedora = () => {
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
               <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
               <p><strong>Estado del Prospecto:</strong> {p.estado_venta?.nombre === "Cierre"
-  ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
-  : capitalizar(p.estado_venta?.nombre) || "No definido"}
-</p>
-              
+                ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+                : capitalizar(p.estado_venta?.nombre) || "No definido"}
+              </p>
+
               <p><strong>Última Fecha:</strong> {ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</p>
               <p><strong>Último Tipo:</strong> {ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</p>
               <p><strong>Último Resultado:</strong> {ultimoSeguimiento?.resultado || "Pendiente"}</p>
