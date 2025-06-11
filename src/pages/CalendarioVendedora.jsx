@@ -98,11 +98,15 @@ const CalendarioVendedora = () => {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
           start: new Date(seguimiento.fecha_programada.replace("Z", "")),
+          end: new Date(new Date(seguimiento.fecha_programada).getTime() + (seguimiento.duracion_minutos || 30) * 60000),
+
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
             prospecto: prospectoNombre,
             fecha: seguimiento.fecha_programada,
+            duracion_minutos: seguimiento.duracion_minutos || 30, // ✅ aquí se agrega
+
           },
           color: nuevosColores[prospectoNombre],
           textColor: "#fff",
@@ -216,9 +220,9 @@ const CalendarioVendedora = () => {
           objetivo: nuevoObjetivo,
         }),
       });
-  
-      const { prospecto, venta } = await res.json(); 
-  
+
+      const { prospecto, venta } = await res.json();
+
       await cargarProspectos();
       setProspectoSeleccionado({ value: prospecto.id_prospecto, label: prospecto.nombre });
       setVentaSeleccionada({ value: venta.id_venta, label: venta.objetivo });
@@ -229,7 +233,7 @@ const CalendarioVendedora = () => {
       console.error("Error al crear prospecto y venta:", err);
     }
   };
-  
+
   const agendarSeguimiento = async () => {
     if (!ventaSeleccionada || !tipoSeleccionado) {
       setError("Selecciona venta y tipo de seguimiento");
@@ -271,63 +275,67 @@ const CalendarioVendedora = () => {
       <button className="btn-agendar" onClick={() => setMostrarModal(true)}>➕ Agendar Cita</button>
 
       <FullCalendar
-  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-  initialView="timeGridWeek"
-  headerToolbar={{
-    left: "prev,next today",
-    center: "title",
-    right: "dayGridMonth,timeGridWeek,timeGridDay",
-  }}
-  locale="es"
-  slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
-  slotMinTime="06:00:00"
-  slotMaxTime="23:00:00"
-  events={eventos}
-  height="auto"
-  eventClick={({ event }) => {
-    setModoEdicion(false);
-    setModalDetalle({
-      id: event.id,
-      motivo: event.title,
-      tipo: event.extendedProps.tipo,
-      objetivo: event.extendedProps.objetivo,
-      prospecto: event.extendedProps.prospecto,
-      fecha: event.extendedProps.fecha,
-    });
-  }}
-  dateClick={({ date, view }) => {
-    const isSoloFecha = view.type === "dayGridMonth";
-    const fecha = isSoloFecha
-      ? `${date.toISOString().slice(0, 10)}T09:00`
-      : formatearParaDatetimeLocal(date);
-    setFechaSeguimiento(fecha);
-    setMostrarModal(true);
-  }}
-  eventContent={({ event, view }) => {
-    const prospecto = event.extendedProps.prospecto || "";
-    const tipo = event.extendedProps.tipo || "";
-    /*const motivo = event.title;
-    const hora = new Date(event.start).toLocaleTimeString("es-EC", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });*/
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView="timeGridWeek"
+        headerToolbar={{
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay",
+        }}
+        locale="es"
+        slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
+        slotMinTime="06:00:00"
+        slotMaxTime="23:00:00"
+        events={eventos}
+        height="auto"
+        eventClick={({ event }) => {
+          setModoEdicion(false);
+          setModalDetalle({
+            id: event.id,
+            motivo: event.title,
+            tipo: event.extendedProps.tipo,
+            objetivo: event.extendedProps.objetivo,
+            prospecto: event.extendedProps.prospecto,
+            fecha: event.extendedProps.fecha,
+            duracion_minutos: event.extendedProps.duracion_minutos || 30, // ✅ aquí
 
-    if (view.type === "dayGridMonth") {
-      return (
-       <div className="evento-mes" title={`${prospecto} - ${tipo}`}>
-      <b>{prospecto}</b> - {tipo}
-    </div>
-      );
-    } else {
-      return (
-        <div>
-    <b>{prospecto}</b> - {tipo}
-        </div>
-      );
-    }
-  }}
-/>
+          });
+        }}
+        dateClick={({ date, view }) => {
+          const isSoloFecha = view.type === "dayGridMonth";
+          const fecha = isSoloFecha
+            ? `${date.toISOString().slice(0, 10)}T09:00`
+            : formatearParaDatetimeLocal(date);
+          setFechaSeguimiento(fecha);
+          setMostrarModal(true);
+        }}
+        eventContent={({ event, view }) => {
+          const prospecto = event.extendedProps.prospecto || "";
+          const tipo = event.extendedProps.tipo || "";
+          const duracion = event.extendedProps.duracion_minutos || 30;
+
+          /*const motivo = event.title;
+          const hora = new Date(event.start).toLocaleTimeString("es-EC", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });*/
+
+          if (view.type === "dayGridMonth") {
+            return (
+              <div className="evento-mes" title={`${prospecto} - ${tipo} (${duracion} min)`}>
+                <b>{prospecto}</b> - {tipo}
+              </div>
+            );
+          } else {
+            return (
+              <div>
+                <b>{prospecto}</b> - {tipo} ({duracion} min)
+              </div>
+            );
+          }
+        }}
+      />
 
       {mostrarModal && (
         <div className="modal">
@@ -370,28 +378,28 @@ const CalendarioVendedora = () => {
         </div>
       )}
 
-{mostrarModalNuevoProspecto && (
-  <div className="modal modal-small">
-    <div className="modal-content">
-      <h3>➕ Nuevo Prospecto</h3>
-      <input
-        type="text"
-        placeholder="Nombre del Prospecto"
-        value={nuevoNombre}
-        onChange={(e) => setNuevoNombre(e.target.value)}
-      />
-      <p><b>Estado:</b> Nuevo</p>
-      <input
-        type="text"
-        placeholder="Objetivo de la Prospección"
-        value={nuevoObjetivo}
-        onChange={(e) => setNuevoObjetivo(e.target.value)}
-      />
-      <button onClick={crearProspectoYVenta}>Crear y Usar</button>
-      <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
-    </div>
-  </div>
-)}
+      {mostrarModalNuevoProspecto && (
+        <div className="modal modal-small">
+          <div className="modal-content">
+            <h3>➕ Nuevo Prospecto</h3>
+            <input
+              type="text"
+              placeholder="Nombre del Prospecto"
+              value={nuevoNombre}
+              onChange={(e) => setNuevoNombre(e.target.value)}
+            />
+            <p><b>Estado:</b> Nuevo</p>
+            <input
+              type="text"
+              placeholder="Objetivo de la Prospección"
+              value={nuevoObjetivo}
+              onChange={(e) => setNuevoObjetivo(e.target.value)}
+            />
+            <button onClick={crearProspectoYVenta}>Crear y Usar</button>
+            <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
 
       {mostrarModalNuevaVenta && (
         <div className="modal modal-small">
@@ -416,6 +424,7 @@ const CalendarioVendedora = () => {
             <h3>📌 Detalles de la Cita</h3>
             <p><b>Prospecto:</b> {modalDetalle.prospecto}</p>
             <p><b>Objetivo:</b> {modalDetalle.objetivo}</p>
+            <p><b>Duración:</b> {modalDetalle.duracion_minutos || 30} minutos</p>
 
             {modoEdicion ? (
               <>
@@ -457,19 +466,19 @@ const CalendarioVendedora = () => {
             )}
 
             <div className="modal-actions">
-            <button
-  onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
-  className="btn-registrar"
->
-  ✍️ Registrar Resultado
-</button>
+              <button
+                onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
+                className="btn-registrar"
+              >
+                ✍️ Registrar Resultado
+              </button>
 
-<button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
+              <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
 
-<p className="info-admin">⚠️ Solo la administradora puede editar o eliminar una cita. Solicítalo directamente.</p>
-  
-  <button disabled className="btn-disabled">✏️ Editar </button>
-  <button disabled className="btn-disabled">🗑️ Eliminar</button>
+              <p className="info-admin">⚠️ Solo la administradora puede editar o eliminar una cita. Solicítalo directamente.</p>
+
+              <button disabled className="btn-disabled">✏️ Editar </button>
+              <button disabled className="btn-disabled">🗑️ Eliminar</button>
 
             </div>
           </div>

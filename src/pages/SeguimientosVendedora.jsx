@@ -35,7 +35,7 @@ const SeguimientosVendedora = () => {
         if (filtros.filtroEstado) setFiltroEstado(filtros.filtroEstado);
         if (filtros.busquedaNombre) {
           setBusquedaNombre(filtros.busquedaNombre);
-          setBusquedaInput(filtros.busquedaNombre); // 👈 aquí
+          setBusquedaInput(filtros.busquedaNombre); // aquí
         }
         if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
 
@@ -58,7 +58,7 @@ const SeguimientosVendedora = () => {
     };
 
     localStorage.setItem("filtros_seguimientos_vendedora", JSON.stringify(filtros));
-    buscarSeguimientos(1, busquedaNombre); // 👈 Reinicia página al cambiar filtros
+    buscarSeguimientos(1, busquedaNombre); // Reinicia página al cambiar filtros
 
 
   }, [filtroEstado, busquedaNombre, filtroSeguimiento, filtrosInicializados]);

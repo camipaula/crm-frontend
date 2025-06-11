@@ -24,6 +24,7 @@ const RegistrarResultado = () => {
   const [prospecto, setProspecto] = useState({});
   const [formDataExtra, setFormDataExtra] = useState({});
   const [tipoSiguienteTexto, setTipoSiguienteTexto] = useState("");
+const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
 
   useEffect(() => {
     obtenerSeguimiento();
@@ -189,7 +190,7 @@ const RegistrarResultado = () => {
       }
 
       // Agendar el nuevo seguimiento primero
-      const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/auto`, {
+      const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -202,6 +203,8 @@ const RegistrarResultado = () => {
           id_tipo: tipoSiguiente,
           motivo: motivoSiguiente,
           nota: notaSiguiente,
+          duracion_minutos: duracionMinutos
+
         }),
       });
       const seguimientoData = await resSeguimiento.json();
@@ -288,12 +291,11 @@ const RegistrarResultado = () => {
 
 
             <input
-              type="date"
+              type="datetime-local"
               value={fechaSiguiente}
               onChange={(e) => setFechaSiguiente(e.target.value)}
               required
             />
-
 
 
             <select
@@ -311,6 +313,15 @@ const RegistrarResultado = () => {
                 <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
               ))}
             </select>
+
+              <label>Duración estimada (minutos):</label>
+<select value={duracionMinutos} onChange={(e) => setDuracionMinutos(Number(e.target.value))}>
+  {[5, 10, 15, 30, 45, 60, 90, 120].map((min) => (
+    <option key={min} value={min}>{min} minutos</option>
+  ))}
+</select>
+
+
             <input
               type="text"
               placeholder="MOTIVO"
@@ -318,6 +329,9 @@ const RegistrarResultado = () => {
               onChange={(e) => setMotivoSiguiente(e.target.value)}
               required
             />
+           
+          
+
             <textarea
               placeholder="NOTA (opcional)"
               value={notaSiguiente}
@@ -360,6 +374,8 @@ const RegistrarResultado = () => {
                 onClick={() => {
                   setMostrarModal(false);
                   setError(""); // limpiar error cuando cierra
+                  setDuracionMinutos(30);
+
                 }}
               >
                 CANCELAR

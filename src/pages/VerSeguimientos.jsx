@@ -134,10 +134,10 @@ const VerSeguimientos = () => {
               {seguimientos.map((s) => (
                 <tr key={s.id_seguimiento}>
                   <td>{new Date(s.fecha_programada).toLocaleDateString()}</td>
-                  <td>{s.tipo_seguimiento?.descripcion.toUpperCase() || "SIN TIPO"}</td>
-                  <td>{s.estado.toUpperCase()}</td>
-                  <td>{s.motivo.toUpperCase() || "SIN MOTIVO"}</td>
-                  <td>{s.nota.toUpperCase() || "SIN NOTA"}</td>
+                  <td>{s.tipo_seguimiento?.descripcion || "SIN TIPO"}</td>
+                  <td>{s.estado}</td>
+                  <td>{s.motivo|| "SIN MOTIVO"}</td>
+                  <td>{s.nota|| "SIN NOTA"}</td>
                   <td>{s.resultado || "PENDIENTE"}</td>
                   <td>
                     {!s.resultado && !esSoloLectura && (

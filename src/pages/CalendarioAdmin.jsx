@@ -192,12 +192,16 @@ const CalendarioAdmin = () => {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
           start: new Date(seguimiento.fecha_programada.replace("Z", "")),
+          end: new Date(new Date(seguimiento.fecha_programada).getTime() + (seguimiento.duracion_minutos || 30) * 60000),
+
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
             prospecto: seguimiento.venta.prospecto.nombre,
             vendedora: vendedoraNombre,
             fecha: seguimiento.fecha_programada,
+            duracion_minutos: seguimiento.duracion_minutos || 30,
+
           },
           color: nuevosColores[vendedoraNombre],
           textColor: "#fff",
@@ -412,6 +416,7 @@ const CalendarioAdmin = () => {
       <button className="btn-volver" onClick={() => navigate(-1)}>← Volver</button>
 
       <FullCalendar
+
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
         headerToolbar={{
@@ -421,7 +426,7 @@ const CalendarioAdmin = () => {
         }}
         locale="es"
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
-        slotMinTime="06:00:00"
+
         slotMaxTime="23:00:00"
         height="auto"
         events={eventos}
@@ -435,6 +440,8 @@ const CalendarioAdmin = () => {
             prospecto: event.extendedProps.prospecto,
             vendedora: event.extendedProps.vendedora,
             fecha: event.extendedProps.fecha,
+            duracion_minutos: event.extendedProps.duracion_minutos || 30,
+
           });
         }}
         dateClick={({ date, view }) => {
@@ -452,6 +459,8 @@ const CalendarioAdmin = () => {
         eventContent={({ event, view }) => {
           const prospecto = event.extendedProps.prospecto || "";
           const tipo = event.extendedProps.tipo || "";
+          const duracion = event.extendedProps.duracion_minutos || 30;
+
           //const motivo = event.title;
           /* const hora = new Date(event.start).toLocaleTimeString("es-EC", {
              hour: "2-digit",
@@ -461,7 +470,7 @@ const CalendarioAdmin = () => {
 
           if (view.type === "dayGridMonth") {
             return (
-              <div className="evento-mes" title={`${prospecto} - ${tipo}`}>
+              <div className="evento-mes" title={`${prospecto} - ${tipo} (${duracion} min)`}>
                 <b>{prospecto}</b> - {tipo}
               </div>
             );
@@ -470,7 +479,7 @@ const CalendarioAdmin = () => {
             // En semana/día mostramos hora y motivo
             return (
               <div>
-                <b>{prospecto}</b> - {tipo}
+                <b>{prospecto}</b> - {tipo} ({duracion} min)
               </div>
             );
           }
@@ -485,6 +494,8 @@ const CalendarioAdmin = () => {
             <p><b>Prospecto:</b> {modalDetalle.prospecto}</p>
             <p><b>Vendedora:</b> {modalDetalle.vendedora}</p>
             <p><b>Objetivo:</b> {modalDetalle.objetivo}</p>
+            <p><b>Duración:</b> {modalDetalle.duracion_minutos} minutos</p>
+
 
             {modoEdicion ? (
               <>
@@ -524,6 +535,7 @@ const CalendarioAdmin = () => {
                 <p><b>Fecha y Hora:</b> {formatearFechaVisual(modalDetalle.fecha)}</p>
 
                 <p><b>Motivo:</b> {modalDetalle.motivo}</p>
+
               </>
             )}
 
@@ -677,7 +689,7 @@ const CalendarioAdmin = () => {
               value={nuevoNombre}
               onChange={(e) => setNuevoNombre(e.target.value)}
             />
-            <p><b>Estado:</b> Nuevo</p> {/* <-- aquí */}
+            <p><b>Estado:</b> Nuevo</p>
             <input
               type="text"
               placeholder="Objetivo de la Prospección"

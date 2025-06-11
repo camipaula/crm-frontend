@@ -17,6 +17,7 @@ const AgendarSeguimiento = () => {
   const [error, setError] = useState("");
   const [prospecto, setProspecto] = useState({});
   const [formDataExtra, setFormDataExtra] = useState({});
+const [duracionMinutos, setDuracionMinutos] = useState(30);
 
   const cedula_vendedora = obtenerCedulaDesdeToken();
 
@@ -107,7 +108,7 @@ const AgendarSeguimiento = () => {
       }
 
       // Agendar el seguimiento
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/auto`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,6 +118,7 @@ const AgendarSeguimiento = () => {
           id_venta,
           cedula_vendedora: cedulaVendedoraAsignada,
           fecha_programada,
+          duracion_minutos: duracionMinutos,
           id_tipo: id_tipo?.value,
           motivo,
           nota,
@@ -145,7 +147,7 @@ const AgendarSeguimiento = () => {
       )}
 
       <form onSubmit={agendar}>
-        {/* 
+        
        <input
           type="datetime-local"
           value={fecha_programada}
@@ -153,14 +155,21 @@ const AgendarSeguimiento = () => {
           required
           max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16)}
         />
-       */}
-        <input
+       
+       {/* AUTOMATICO
+       <input
   type="date"
   value={fecha_programada}
   onChange={(e) => setFechaProgramada(e.target.value)}
   required
 />
-
+ */} 
+<label>Duración estimada (minutos):</label>
+<select value={duracionMinutos} onChange={(e) => setDuracionMinutos(Number(e.target.value))}>
+  {[5,10,15,20,30,45,60,90,120].map(min => (
+    <option key={min} value={min}>{min} minutos</option>
+  ))}
+</select>
 
 
 

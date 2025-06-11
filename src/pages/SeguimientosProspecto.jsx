@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRol } from "../utils/auth"; // 👈 IMPORTANTE
+import { getRol } from "../utils/auth"; // IMPORTANTE
 
 import "../styles/seguimientosVendedora.css";
 import React from "react";
@@ -22,6 +22,12 @@ const SeguimientosProspecto = () => {
   const [notaReapertura, setNotaReapertura] = useState("");
   const [fechaReapertura, setFechaReapertura] = useState("");
 
+  //modal nueva prospeccion
+  const [mostrarModalAbrirVenta, setMostrarModalAbrirVenta] = useState(false);
+const [nuevoMonto, setNuevoMonto] = useState("");
+const [errorCrearVenta, setErrorCrearVenta] = useState("");
+
+
   const rol = getRol();
   const esSoloLectura = rol === "lectura";
 
@@ -38,18 +44,18 @@ const SeguimientosProspecto = () => {
       : "No definido";
   };
 
-const abrirModalReabrir = (id_venta) => {
-  setIdVentaSeleccionada(id_venta);
-  setNotaReapertura("");
+  const abrirModalReabrir = (id_venta) => {
+    setIdVentaSeleccionada(id_venta);
+    setNotaReapertura("");
 
-  // Setear la fecha actual a las 08:00
-  const hoy = new Date();
-  hoy.setHours(8, 0, 0, 0);
-  const isoFecha = hoy.toISOString().slice(0, 16); // formato para datetime-local
+    // Setear la fecha actual a las 08:00
+    const hoy = new Date();
+    hoy.setHours(8, 0, 0, 0);
+    const isoFecha = hoy.toISOString().slice(0, 16); // formato para datetime-local
 
-  setFechaReapertura(isoFecha);
-  setModalReabrir(true);
-};
+    setFechaReapertura(isoFecha);
+    setModalReabrir(true);
+  };
 
 
 
@@ -149,12 +155,43 @@ const abrirModalReabrir = (id_venta) => {
   };
 
 
+const handleCrearVenta = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        id_prospecto,
+        objetivo: nuevoObjetivo,
+        monto_proyectado: parseFloat(nuevoMonto),
+      }),
+    });
+
+    if (!res.ok) throw new Error("Error creando nueva prospección");
+    alert("Venta creada correctamente");
+    setMostrarModalAbrirVenta(false);
+    setNuevoObjetivo("");
+    setNuevoMonto("");
+    buscarSeguimientos();
+  } catch (err) {
+    setErrorCrearVenta(err.message);
+  }
+};
 
   return (
     <div className="seguimientos-container">
 
       <h1 className="title">Seguimientos del Prospecto</h1>
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+{!esSoloLectura && (
+  <button className="btn-agregar" onClick={() => setMostrarModalAbrirVenta(true)}>
+    ➕ Nueva Prospección
+  </button>
+)}
 
       <div className="filtros-container">
         <label>Filtrar por estado de prospección:</label>
@@ -352,7 +389,7 @@ const abrirModalReabrir = (id_venta) => {
               type="datetime-local"
               value={fechaReapertura}
               onChange={(e) => setFechaReapertura(e.target.value)}
-              readOnly 
+              readOnly
             />
             <label>Nota o motivo:</label>
             <textarea
@@ -367,6 +404,34 @@ const abrirModalReabrir = (id_venta) => {
         </div>
       )}
 
+{mostrarModalAbrirVenta && (
+  <div className="modal-backdrop">
+    <div className="modal-content">
+      <h3>Nueva Prospección</h3>
+      <label>Objetivo de la Prospección *</label>
+      <textarea
+        value={nuevoObjetivo}
+        onChange={(e) => setNuevoObjetivo(e.target.value)}
+        placeholder="Describe el objetivo..."
+      />
+
+      <label>Monto Proyectado *</label>
+      <input
+        type="number"
+        value={nuevoMonto}
+        onChange={(e) => setNuevoMonto(e.target.value)}
+        placeholder="Ej: 5000"
+      />
+
+      {errorCrearVenta && <p className="error">{errorCrearVenta}</p>}
+
+      <div className="modal-buttons">
+        <button className="btn-confirmar" onClick={handleCrearVenta}>Crear</button>
+        <button className="btn-cancelar" onClick={() => setMostrarModalAbrirVenta(false)}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+)}
 
 
 
