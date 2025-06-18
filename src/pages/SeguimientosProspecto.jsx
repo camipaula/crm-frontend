@@ -24,8 +24,8 @@ const SeguimientosProspecto = () => {
 
   //modal nueva prospeccion
   const [mostrarModalAbrirVenta, setMostrarModalAbrirVenta] = useState(false);
-const [nuevoMonto, setNuevoMonto] = useState("");
-const [errorCrearVenta, setErrorCrearVenta] = useState("");
+  const [nuevoMonto, setNuevoMonto] = useState("");
+  const [errorCrearVenta, setErrorCrearVenta] = useState("");
 
 
   const rol = getRol();
@@ -58,34 +58,35 @@ const [errorCrearVenta, setErrorCrearVenta] = useState("");
   };
 
 
+const buscarSeguimientos = async () => {
+  try {
+    setLoading(true);
+    setError("");
+    const token = localStorage.getItem("token");
 
-  const buscarSeguimientos = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const token = localStorage.getItem("token");
+    let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecto/${id_prospecto}`;
+    if (filtroEstado !== "todas") url += `?estado_prospeccion=${filtroEstado}`;
 
-      let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecto/${id_prospecto}`;
-      if (filtroEstado !== "todas") url += `?estado_prospeccion=${filtroEstado}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
 
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-
-      if (!res.ok) throw new Error("Error obteniendo seguimientos del prospecto");
-      const data = await res.json();
-
-      if (data.length === 0) {
-        //Si el prospecto no tiene ventas, redirigir a "AbrirVenta"
-        navigate(`/abrir-venta/${id_prospecto}`);
-        return;
-      }
-
-      setProspecciones(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (res.status === 404) {
+      navigate(-1);
+      return;
     }
-  };
+
+    if (!res.ok) throw new Error("Error obteniendo seguimientos del prospecto");
+
+    const data = await res.json();
+    setProspecciones(data);
+  } catch (err) {
+    // Mostrar error solo si no fue redirección por 404
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   const abrirModalEditar = (id_venta, objetivoActual, montoProyectadoActual) => {
     setIdVentaSeleccionada(id_venta);
     setNuevoObjetivo(objetivoActual);
@@ -154,44 +155,65 @@ const [errorCrearVenta, setErrorCrearVenta] = useState("");
     }
   };
 
+  const eliminarProspeccion = async (id_venta) => {
+    const confirmacion = window.confirm("¿Estás segura de que deseas eliminar esta prospección? Esta acción no se puede deshacer.");
+    if (!confirmacion) return;
 
-const handleCrearVenta = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        id_prospecto,
-        objetivo: nuevoObjetivo,
-        monto_proyectado: parseFloat(nuevoMonto),
-      }),
-    });
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas/${id_venta}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!res.ok) throw new Error("Error creando nueva prospección");
-    alert("Venta creada correctamente");
-    setMostrarModalAbrirVenta(false);
-    setNuevoObjetivo("");
-    setNuevoMonto("");
-    buscarSeguimientos();
-  } catch (err) {
-    setErrorCrearVenta(err.message);
-  }
-};
+      if (!res.ok) throw new Error("No se pudo eliminar la prospección");
+      alert("Prospección eliminada correctamente");
+      buscarSeguimientos();
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
+
+  const handleCrearVenta = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id_prospecto,
+          objetivo: nuevoObjetivo,
+          monto_proyectado: parseFloat(nuevoMonto),
+        }),
+      });
+
+      if (!res.ok) throw new Error("Error creando nueva prospección");
+      alert("Venta creada correctamente");
+      setMostrarModalAbrirVenta(false);
+      setNuevoObjetivo("");
+      setNuevoMonto("");
+      buscarSeguimientos();
+    } catch (err) {
+      setErrorCrearVenta(err.message);
+    }
+  };
 
   return (
     <div className="seguimientos-container">
 
       <h1 className="title">Seguimientos del Prospecto</h1>
       <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-{!esSoloLectura && (
-  <button className="btn-agregar" onClick={() => setMostrarModalAbrirVenta(true)}>
-    ➕ Nueva Prospección
-  </button>
-)}
+      {!esSoloLectura && (
+        <button className="btn-agregar" onClick={() => setMostrarModalAbrirVenta(true)}>
+          ➕ Nueva Prospección
+        </button>
+      )}
 
       <div className="filtros-container">
         <label>Filtrar por estado de prospección:</label>
@@ -265,6 +287,10 @@ const handleCrearVenta = async () => {
                       <button className="btn-mini" onClick={() => abrirModalReabrir(p.id_venta)}>REABIR</button>
                     )}
 
+                    {!esSoloLectura && rol === "admin" && (
+                      <button className="btn-mini rojo" onClick={() => eliminarProspeccion(p.id_venta)}>🗑️</button>
+                    )}
+
                   </td>
                 </tr>
 
@@ -333,6 +359,9 @@ const handleCrearVenta = async () => {
                 )}
                 {!esSoloLectura && rol === "admin" && !p.abierta && p.estado_venta?.nombre === "Competencia" && (
                   <button className="btn-mini azul" onClick={() => abrirModalReabrir(p.id_venta)}>🔁</button>
+                )}
+                {!esSoloLectura && rol === "admin" && (
+                  <button className="btn-mini rojo" onClick={() => eliminarProspeccion(p.id_venta)}>🗑️</button>
                 )}
 
 
@@ -404,34 +433,34 @@ const handleCrearVenta = async () => {
         </div>
       )}
 
-{mostrarModalAbrirVenta && (
-  <div className="modal-backdrop">
-    <div className="modal-content">
-      <h3>Nueva Prospección</h3>
-      <label>Objetivo de la Prospección *</label>
-      <textarea
-        value={nuevoObjetivo}
-        onChange={(e) => setNuevoObjetivo(e.target.value)}
-        placeholder="Describe el objetivo..."
-      />
+      {mostrarModalAbrirVenta && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>Nueva Prospección</h3>
+            <label>Objetivo de la Prospección *</label>
+            <textarea
+              value={nuevoObjetivo}
+              onChange={(e) => setNuevoObjetivo(e.target.value)}
+              placeholder="Describe el objetivo..."
+            />
 
-      <label>Monto Proyectado *</label>
-      <input
-        type="number"
-        value={nuevoMonto}
-        onChange={(e) => setNuevoMonto(e.target.value)}
-        placeholder="Ej: 5000"
-      />
+            <label>Monto Proyectado *</label>
+            <input
+              type="number"
+              value={nuevoMonto}
+              onChange={(e) => setNuevoMonto(e.target.value)}
+              placeholder="Ej: 5000"
+            />
 
-      {errorCrearVenta && <p className="error">{errorCrearVenta}</p>}
+            {errorCrearVenta && <p className="error">{errorCrearVenta}</p>}
 
-      <div className="modal-buttons">
-        <button className="btn-confirmar" onClick={handleCrearVenta}>Crear</button>
-        <button className="btn-cancelar" onClick={() => setMostrarModalAbrirVenta(false)}>Cancelar</button>
-      </div>
-    </div>
-  </div>
-)}
+            <div className="modal-buttons">
+              <button className="btn-confirmar" onClick={handleCrearVenta}>Crear</button>
+              <button className="btn-cancelar" onClick={() => setMostrarModalAbrirVenta(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
 

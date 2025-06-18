@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   FunnelChart,
   Funnel,
-  LabelList, 
+  LabelList,
 } from "recharts";
 import "../styles/home.css";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
@@ -46,7 +46,7 @@ const Home = () => {
   const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
   const filasPorPagina = 5;
-   const filasPorPagina1 = 20;
+  const filasPorPagina1 = 20;
 
   const competenciaPaginada = dashboardData?.tablaCompetencia?.slice(
     (paginaCompetencia - 1) * filasPorPagina,
@@ -423,135 +423,177 @@ const Home = () => {
             </ResponsiveContainer>
 
           </div>
-         <div className="dashboard-resumen-container">
-  <div className="dashboard-card resumen">
-    <h3>📊 RESUMEN DE PROSPECCIONES</h3>
-    <p>📂 TOTALES: <strong>{dashboardData.totalVentas}</strong></p>
-    <p>🔓 ABIERTAS: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-    <p>✅ CERRADAS: <strong>{dashboardData.totalVentasGanadas} ({(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%)</strong></p>
-    <p>❌ COMPETENCIA: <strong>{dashboardData.totalVentasPerdidas} ({(dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%)</strong></p>
-  </div>
+          <div className="dashboard-resumen-container">
+            <div className="dashboard-card resumen">
+              <h3>📊 RESUMEN DE PROSPECCIONES</h3>
+              <p>📂 TOTALES: <strong>{dashboardData.totalVentas}</strong></p>
+              <p>🔓 ABIERTAS: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
+              <p>✅ CERRADAS: <strong>{dashboardData.totalVentasGanadas} ({(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%)</strong></p>
+              <p>❌ COMPETENCIA: <strong>{dashboardData.totalVentasPerdidas} ({(dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%)</strong></p>
+            </div>
 
-  <div className="dashboard-card resumen-secundario">
-    <h4>✅ PORCENTAJE DE PROSPECCINES CERRADAS</h4>
-    <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
+            <div className="dashboard-card resumen-secundario">
+              <h4>✅ PORCENTAJE DE PROSPECCINES CERRADAS</h4>
+              <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
 
-    <h4>📅 PROMEDIO DE DÍAS HASTA EL CIERRE</h4>
-    <p>{dashboardData.promedioDiasCierre} días</p>
+              <h4>📅 PROMEDIO DE DÍAS HASTA EL CIERRE</h4>
+              <p>{dashboardData.promedioDiasCierre} días</p>
 
-    <h4>💵 PROMEDIO DEL MONTO DE CIERRE</h4>
-    <p>${dashboardData.promedioMontoCierre}</p>
-  </div>
-</div>
+              <h4>💵 PROMEDIO DEL MONTO DE CIERRE</h4>
+              <p>${dashboardData.promedioMontoCierre}</p>
+            </div>
+          </div>
 
           {/* Fases de Prospección */}
-        <div className="dashboard-card">
-  <h3>📌 FASES DE PROSPECCIÓN</h3>
-  <ResponsiveContainer width="100%" height={300}>
-    <FunnelChart>
-      <Tooltip formatter={(value) => [`${value} prospectos`]} />
-      <Funnel
-        dataKey="cantidad"
-        nameKey="estado"
-        data={[...dashboardData.graficoEstadosProspecto].sort((a, b) => b.cantidad - a.cantidad)}
-        isAnimationActive
-      >
-        {dashboardData.graficoEstadosProspecto.map((_, idx) => (
-          <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
-        ))}
-        <LabelList
-          dataKey="cantidad"
-          position="inside"
-          style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
-        />
-      </Funnel>
-    </FunnelChart>
-  </ResponsiveContainer>
+          <div className="dashboard-card">
+            <h3>📌 FASES DE PROSPECCIÓN</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <FunnelChart>
+                <Tooltip formatter={(value) => [`${value} prospectos`]} />
+                <Funnel
+                  dataKey="cantidad"
+                  nameKey="estado"
+                  data={[...dashboardData.graficoEstadosProspecto].sort((a, b) => b.cantidad - a.cantidad)}
+                  isAnimationActive
+                >
+                  {dashboardData.graficoEstadosProspecto.map((_, idx) => (
+                    <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                  <LabelList
+                    dataKey="cantidad"
+                    position="inside"
+                    style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
+                  />
+                </Funnel>
+              </FunnelChart>
+            </ResponsiveContainer>
 
-  {/* Leyenda manual */}
-  <div style={{ marginTop: "10px" }}>
-    {[...dashboardData.graficoEstadosProspecto]
-      .sort((a, b) => b.cantidad - a.cantidad)
-      .map((fase, idx) => (
-        <div
-          key={idx}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "4px",
-          }}
-        >
-          <div
-            style={{
-              width: "12px",
-              height: "12px",
-              backgroundColor: COLORS[idx % COLORS.length],
-              marginRight: "8px",
-              borderRadius: "2px",
-            }}
-          ></div>
-          <span style={{ fontSize: "13px", color: "#333" }}>
-            {fase.estado.toUpperCase()}: {fase.cantidad} ({fase.porcentaje}%)
-          </span>
-        </div>
-      ))}
-  </div>
-</div>
+            {/* Leyenda manual */}
+            <div style={{ marginTop: "10px" }}>
+              {[...dashboardData.graficoEstadosProspecto]
+                .sort((a, b) => b.cantidad - a.cantidad)
+                .map((fase, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        backgroundColor: COLORS[idx % COLORS.length],
+                        marginRight: "8px",
+                        borderRadius: "2px",
+                      }}
+                    ></div>
+                    <span style={{ fontSize: "13px", color: "#333" }}>
+                      {fase.estado.toUpperCase()}: {fase.cantidad} ({fase.porcentaje}%)
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </div>
 
 
+
+          {/*<div className="dashboard-card">
+            <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <FunnelChart>
+                <Tooltip formatter={(value) => [`${value} prospectos`]} />
+                <Funnel
+                  dataKey="cantidad"
+                  nameKey="categoria"
+                  data={[...dashboardData.graficoCategorias].sort((a, b) => b.cantidad - a.cantidad)}
+                  isAnimationActive
+                >
+                  {dashboardData.graficoCategorias.map((_, idx) => (
+                    <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                  <LabelList
+                    dataKey="cantidad"
+                    position="inside"
+                    style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
+                  />
+                </Funnel>
+              </FunnelChart>
+            </ResponsiveContainer>
+
+            {/* Leyenda manual 
+            <div style={{ marginTop: "10px" }}>
+              {[...dashboardData.graficoCategorias]
+                .sort((a, b) => b.cantidad - a.cantidad)
+                .map((cat, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        backgroundColor: COLORS[idx % COLORS.length],
+                        marginRight: "8px",
+                        borderRadius: "2px",
+                      }}
+                    ></div>
+                    <span style={{ fontSize: "13px", color: "#333" }}>
+                      {cat.categoria.toUpperCase()}: {cat.cantidad}
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </div> */}
 
           <div className="dashboard-card">
-  <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
-  <ResponsiveContainer width="100%" height={300}>
-    <FunnelChart>
-      <Tooltip formatter={(value) => [`${value} prospectos`]} />
-      <Funnel
-        dataKey="cantidad"
-        nameKey="categoria"
-        data={[...dashboardData.graficoCategorias].sort((a, b) => b.cantidad - a.cantidad)}
-        isAnimationActive
-      >
-        {dashboardData.graficoCategorias.map((_, idx) => (
-          <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
-        ))}
-        <LabelList
-          dataKey="cantidad"
-          position="inside"
-          style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
-        />
-      </Funnel>
-    </FunnelChart>
-  </ResponsiveContainer>
+            <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={dashboardData.graficoCategorias}
+                  dataKey="cantidad"
+                  nameKey="categoria"
+                  outerRadius={90}
+                  labelLine={false}
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+                    const RADIAN = Math.PI / 180;
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    const value = dashboardData.graficoCategorias[index].cantidad;
 
-  {/* Leyenda manual */}
-  <div style={{ marginTop: "10px" }}>
-    {[...dashboardData.graficoCategorias]
-      .sort((a, b) => b.cantidad - a.cantidad)
-      .map((cat, idx) => (
-        <div
-          key={idx}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "4px",
-          }}
-        >
-          <div
-            style={{
-              width: "12px",
-              height: "12px",
-              backgroundColor: COLORS[idx % COLORS.length],
-              marginRight: "8px",
-              borderRadius: "2px",
-            }}
-          ></div>
-          <span style={{ fontSize: "13px", color: "#333" }}>
-            {cat.categoria.toUpperCase()}: {cat.cantidad}
-          </span>
-        </div>
-      ))}
-  </div>
-</div>
+                    return (
+                      <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+                        {`${value}`}
+                      </text>
+                    );
+                  }}
+                >
+                  {dashboardData.graficoCategorias.map((_, idx) => (
+                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
+                <Legend
+                  formatter={(value) => {
+                    const item = dashboardData.graficoCategorias.find((d) => d.categoria === value);
+                    const total = dashboardData.graficoCategorias.reduce((sum, d) => sum + d.cantidad, 0);
+                    const porcentaje = item ? ((item.cantidad / total) * 100).toFixed(1) : 0;
+                    return `${value}: ${item?.cantidad || 0} (${porcentaje}%)`;
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
 
 
 
@@ -666,8 +708,9 @@ const Home = () => {
                     <th>Empleados</th>
                     <th>Apertura</th>
                     <th>Estado</th>
-                    <th>Último Resultado</th>
-
+                    <th>Motivo</th>
+                    <th>Próximo Paso</th>
+                    <th>Vendedora</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -675,14 +718,15 @@ const Home = () => {
                     <tr key={i}>
                       <td>{fila.prospecto}</td>
                       <td>{fila.numero_empleados}</td>
-
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{fila.estado}</td>
-                      <td>{fila.ultimo_resultado}</td>
-
+                      <td>{fila.motivo}</td>
+                      <td>{fila.proximo_paso}</td>
+                      <td>{fila.vendedora}</td>
                     </tr>
                   ))}
                 </tbody>
+
               </table>
               <div className="paginador-abiertas">
                 {paginaAbiertas > 1 && (

@@ -307,6 +307,7 @@ const hayFiltrosActivos = () => {
 
 
         setProspectos((prev) => prev.filter((p) => p.id_prospecto !== id));
+        alert("✅ Prospecto eliminado correctamente.");
       } catch (error) {
         setError(error.message);
       }
