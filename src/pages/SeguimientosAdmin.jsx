@@ -36,38 +36,44 @@ const SeguimientosAdmin = () => {
   const esSoloLectura = rol === "lectura";
 
 
-  useEffect(() => {
-    const filtrosGuardados = localStorage.getItem("filtros_seguimientos_admin");
-    let filtros = { filtroEstado: "todas", vendedoraSeleccionada: null };
+useEffect(() => {
+  const filtrosGuardados = localStorage.getItem("filtros_seguimientos_admin");
+  let filtros = { filtroEstado: "todas", vendedoraSeleccionada: null };
 
-    if (filtrosGuardados) {
-      try {
-        filtros = JSON.parse(filtrosGuardados);
-        setFiltroEstado(filtros.filtroEstado || "todas");
-        if (filtros.busquedaNombre) setBusquedaNombre(filtros.busquedaNombre);
-        setFiltrosInicializados(true);
+  if (filtrosGuardados) {
+    try {
+      filtros = JSON.parse(filtrosGuardados);
+      setFiltroEstado(filtros.filtroEstado || "todas");
+      setBusquedaNombre(filtros.busquedaNombre || "");
+      setFiltroSeguimiento(filtros.filtroSeguimiento || "todos");
+      setFiltrosInicializados(true);
+    } catch (e) {
+      console.error("Error al leer filtros guardados", e);
+    }
+  }
 
+  obtenerVendedoras().then((opciones) => {
+    setVendedoras(opciones);
+    const nombre = filtros.busquedaNombre || "";
+    const seguimiento = filtros.filtroSeguimiento || "todos";
+    const estado = filtros.filtroEstado || "todas";
 
-      } catch (e) {
-        console.error("Error al leer filtros guardados", e);
+    if (filtros.vendedoraSeleccionada) {
+      const seleccion = opciones.find(
+        (v) => v.value === filtros.vendedoraSeleccionada.value
+      );
+      if (seleccion) {
+        setVendedoraSeleccionada(seleccion);
+        buscarSeguimientos(seleccion.value, estado, 1, seguimiento, nombre);
+        return;
       }
     }
-    obtenerVendedoras().then((opciones) => {
-      setVendedoras(opciones);
-      if (filtros.vendedoraSeleccionada) {
-        const seleccion = opciones.find(
-          (v) => v.value === filtros.vendedoraSeleccionada.value
-        );
-        if (seleccion) {
-          setVendedoraSeleccionada(seleccion);
-          buscarSeguimientos(seleccion.value, filtros.filtroEstado || "todas", 1, filtros.filtroSeguimiento || "todos");
-          return;
-        }
-      }
-      buscarSeguimientos("", filtros.filtroEstado || "todas", 1, filtros.filtroSeguimiento || "todos");
-    });
-    if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
-  }, []);
+
+    // Si no hay vendedora seleccionada
+    buscarSeguimientos("", estado, 1, seguimiento, nombre);
+  });
+}, []);
+
 
   useEffect(() => {
     if (!filtrosInicializados) return;
@@ -79,7 +85,7 @@ const SeguimientosAdmin = () => {
       filtroSeguimiento,
     };
     localStorage.setItem("filtros_seguimientos_admin", JSON.stringify(filtrosActualizados));
-  }, [vendedoraSeleccionada, filtroEstado, busquedaNombre, filtrosInicializados]);
+}, [vendedoraSeleccionada, filtroEstado, busquedaNombre, filtroSeguimiento, filtrosInicializados]);
 
   const abrirModalReabrir = (id_venta) => {
     setIdVentaSeleccionada(id_venta);

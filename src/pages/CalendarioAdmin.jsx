@@ -426,8 +426,8 @@ const CalendarioAdmin = () => {
         }}
         locale="es"
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
-        slotMinTime="06:00:00"
-        slotMaxTime="23:00:00"
+        slotMinTime="08:00:00"
+        slotMaxTime="19:00:00"
         height="auto"
         events={eventos}
         eventClick={({ event }) => {

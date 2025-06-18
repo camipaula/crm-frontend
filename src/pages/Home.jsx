@@ -705,10 +705,13 @@ const Home = () => {
                 <thead>
                   <tr>
                     <th>Prospecto</th>
+                    <th>Objetivo</th>
                     <th>Empleados</th>
                     <th>Apertura</th>
                     <th>Estado</th>
                     <th>Motivo</th>
+                        <th>Nota</th>
+
                     <th>Próximo Paso</th>
                     <th>Vendedora</th>
                   </tr>
@@ -717,10 +720,13 @@ const Home = () => {
                   {abiertasPaginada.map((fila, i) => (
                     <tr key={i}>
                       <td>{fila.prospecto}</td>
+                      <td>{fila.objetivo}</td> 
+
                       <td>{fila.numero_empleados}</td>
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{fila.estado}</td>
                       <td>{fila.motivo}</td>
+                            <td>{fila.nota}</td>
                       <td>{fila.proximo_paso}</td>
                       <td>{fila.vendedora}</td>
                     </tr>
