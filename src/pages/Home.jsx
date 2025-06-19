@@ -44,7 +44,7 @@ const Home = () => {
   const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
   const [filtroEstadoAbiertas, setFiltroEstadoAbiertas] = useState("");
-const ordenEstadosAbiertas = ["nuevo", "En Atracción", "En Planeación", "reabierto"];
+  const ordenEstadosAbiertas = ["nuevo", "En Atracción", "En Planeación", "reabierto"];
 
   const filasPorPagina = 5;
   const filasPorPagina1 = 20;
@@ -54,13 +54,13 @@ const ordenEstadosAbiertas = ["nuevo", "En Atracción", "En Planeación", "reabi
     paginaCompetencia * filasPorPagina
   );
   const abiertasFiltradas = dashboardData?.tablaAbiertas?.filter(f =>
-  !filtroEstadoAbiertas || f.estado === filtroEstadoAbiertas
-);
+    !filtroEstadoAbiertas || f.estado === filtroEstadoAbiertas
+  );
 
-const abiertasPaginada = abiertasFiltradas?.slice(
-  (paginaAbiertas - 1) * filasPorPagina1,
-  paginaAbiertas * filasPorPagina1
-);
+  const abiertasPaginada = abiertasFiltradas?.slice(
+    (paginaAbiertas - 1) * filasPorPagina1,
+    paginaAbiertas * filasPorPagina1
+  );
 
 
 
@@ -383,7 +383,7 @@ const abiertasPaginada = abiertasFiltradas?.slice(
         <div className="dashboard-grid">
 
           <div className="dashboard-card-c">
-            
+
             <h3>🥧 PROSPECCIONES ABIERTAS, CERRADAS Y COMPETENCIA</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -452,11 +452,11 @@ const abiertasPaginada = abiertasFiltradas?.slice(
           </div>
 
           {/* Fases de Prospección */}
-<div className="dashboard-card1">
-  {dashboardData?.graficoEstadosProspecto?.length > 0 && (
-    <FunnelD3 data={dashboardData.graficoEstadosProspecto} />
-  )}
-</div>
+          <div className="dashboard-card1">
+            {dashboardData?.graficoEstadosProspecto?.length > 0 && (
+              <FunnelD3 data={dashboardData.graficoEstadosProspecto} />
+            )}
+          </div>
 
 
           {/*<div className="dashboard-card">
@@ -512,45 +512,62 @@ const abiertasPaginada = abiertasFiltradas?.slice(
             </div>
           </div> */}
 
-          <div className="dashboard-card-c">
+          <div className="dashboard-card">
             <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={dashboardData.graficoCategorias}
-                  dataKey="cantidad"
-                  nameKey="categoria"
-                  outerRadius={90}
-                  labelLine={false}
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                    const value = dashboardData.graficoCategorias[index].cantidad;
 
-                    return (
-                      <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
-                        {`${value}`}
-                      </text>
-                    );
-                  }}
-                >
-                  {dashboardData.graficoCategorias.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
-                <Legend
-                  formatter={(value) => {
-                    const item = dashboardData.graficoCategorias.find((d) => d.categoria === value);
-                    const total = dashboardData.graficoCategorias.reduce((sum, d) => sum + d.cantidad, 0);
-                    const porcentaje = item ? ((item.cantidad / total) * 100).toFixed(1) : 0;
-                    return `${value}: ${item?.cantidad || 0} (${porcentaje}%)`;
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={dashboardData.graficoCategorias}
+                    dataKey="cantidad"
+                    nameKey="categoria"
+                    outerRadius={90}
+                    labelLine={false}
+                    label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+                      const RADIAN = Math.PI / 180;
+                      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                      const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                      const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                      const value = dashboardData.graficoCategorias[index].cantidad;
+
+                      return (
+                        <text x={x} y={y} fill="#333" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+                          {`${value}`}
+                        </text>
+                      );
+                    }}
+                  >
+                    {dashboardData.graficoCategorias.map((_, idx) => (
+                      <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value, name) => [`${value} prospectos`, name]} />
+                </PieChart>
+              </ResponsiveContainer>
+
+              {/* 💡 Leyenda personalizada separada abajo */}
+              <div style={{ marginTop: "20px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "12px" }}>
+                {dashboardData.graficoCategorias.map((cat, idx) => {
+                  const total = dashboardData.graficoCategorias.reduce((sum, d) => sum + d.cantidad, 0);
+                  const porcentaje = ((cat.cantidad / total) * 100).toFixed(1);
+                  return (
+                    <div key={idx} style={{ display: "flex", alignItems: "center", fontSize: "13px" }}>
+                      <div
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                          backgroundColor: COLORS[idx % COLORS.length],
+                          marginRight: "6px",
+                          borderRadius: "2px"
+                        }}
+                      />
+                      <span>{cat.categoria}: {cat.cantidad} ({porcentaje}%)</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
 
@@ -657,20 +674,20 @@ const abiertasPaginada = abiertasFiltradas?.slice(
 
           <div className="dashboard-card tabla-cierres">
             <div style={{ marginBottom: "10px" }}>
-  <label style={{ marginRight: "10px" }}>Filtrar por estado:</label>
-  <select
-    value={filtroEstadoAbiertas}
-    onChange={(e) => {
-      setFiltroEstadoAbiertas(e.target.value);
-      setPaginaAbiertas(1); // Reinicia paginación al cambiar filtro
-    }}
-  >
-    <option value="">Todos</option>
-    {ordenEstadosAbiertas.map((estado, i) => (
-      <option key={i} value={estado}>{estado}</option>
-    ))}
-  </select>
-</div>
+              <label style={{ marginRight: "10px" }}>Filtrar por estado:</label>
+              <select
+                value={filtroEstadoAbiertas}
+                onChange={(e) => {
+                  setFiltroEstadoAbiertas(e.target.value);
+                  setPaginaAbiertas(1); // Reinicia paginación al cambiar filtro
+                }}
+              >
+                <option value="">Todos</option>
+                {ordenEstadosAbiertas.map((estado, i) => (
+                  <option key={i} value={estado}>{estado}</option>
+                ))}
+              </select>
+            </div>
 
             <h3>🔓 PROSPECCIONES ABIERTAS</h3>
             <div className="tabla-detalle-cierres">
