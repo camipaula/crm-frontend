@@ -229,14 +229,26 @@ const hayFiltrosActivos = () => {
     };
 
     const obtenerCategorias = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`);
-        if (!res.ok) throw new Error("Error cargando categorías");
-        setCategorias((await res.json()).map((c) => ({ value: c.id_categoria, label: c.nombre })));
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`);
+    if (!res.ok) throw new Error("Error cargando categorías");
+
+    const categoriasDesdeAPI = await res.json();
+
+    const opciones = categoriasDesdeAPI.map((c) => ({
+      value: c.id_categoria,
+      label: c.nombre,
+    }));
+
+    // ✅ Agregar opción adicional manualmente
+    opciones.unshift({ value: "sin_categoria", label: "Sin Categoría" });
+
+    setCategorias(opciones);
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
 
     const buscarProspectos = async () => {
       try {
@@ -254,7 +266,13 @@ const hayFiltrosActivos = () => {
         if (fechaInicio) params.append("fechaInicio", fechaInicio);
         if (fechaFin) params.append("fechaFin", fechaFin);
         if (sectorFiltro) params.append("sector", sectorFiltro.value);
-        if (categoriaFiltro) params.append("id_categoria", categoriaFiltro.value);
+if (categoriaFiltro) {
+  if (categoriaFiltro.value === "sin_categoria") {
+    params.append("sin_categoria", "true"); // o usa otro nombre si prefieres
+  } else {
+    params.append("id_categoria", categoriaFiltro.value);
+  }
+}
         if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
         if (provinciaFiltro) params.append("provincia", provinciaFiltro);
         if (busquedaNombre.trim() !== "") params.append("nombre", busquedaNombre);

@@ -8,13 +8,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  FunnelChart,
-  Funnel,
-  LabelList,
+
 } from "recharts";
 import "../styles/home.css";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
-
+import FunnelD3 from "../components/FunnelD3";
 
 
 
@@ -45,6 +43,9 @@ const Home = () => {
   const [paginaCompetencia, setPaginaCompetencia] = useState(1);
   const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
+  const [filtroEstadoAbiertas, setFiltroEstadoAbiertas] = useState("");
+const ordenEstadosAbiertas = ["nuevo", "En Atracción", "En Planeación", "reabierto"];
+
   const filasPorPagina = 5;
   const filasPorPagina1 = 20;
 
@@ -52,10 +53,15 @@ const Home = () => {
     (paginaCompetencia - 1) * filasPorPagina,
     paginaCompetencia * filasPorPagina
   );
-  const abiertasPaginada = dashboardData?.tablaAbiertas?.slice(
-    (paginaAbiertas - 1) * filasPorPagina1,
-    paginaAbiertas * filasPorPagina1
-  );
+  const abiertasFiltradas = dashboardData?.tablaAbiertas?.filter(f =>
+  !filtroEstadoAbiertas || f.estado === filtroEstadoAbiertas
+);
+
+const abiertasPaginada = abiertasFiltradas?.slice(
+  (paginaAbiertas - 1) * filasPorPagina1,
+  paginaAbiertas * filasPorPagina1
+);
+
 
 
   const COLORS = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad"];
@@ -377,6 +383,7 @@ const Home = () => {
         <div className="dashboard-grid">
 
           <div className="dashboard-card-c">
+            
             <h3>🥧 PROSPECCIONES ABIERTAS, CERRADAS Y COMPETENCIA</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -445,59 +452,11 @@ const Home = () => {
           </div>
 
           {/* Fases de Prospección */}
-          <div className="dashboard-card">
-            <h3>📌 FASES DE PROSPECCIÓN</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <FunnelChart>
-                <Tooltip formatter={(value) => [`${value} prospectos`]} />
-                <Funnel
-                  dataKey="cantidad"
-                  nameKey="estado"
-                  data={[...dashboardData.graficoEstadosProspecto].sort((a, b) => b.cantidad - a.cantidad)}
-                  isAnimationActive
-                >
-                  {dashboardData.graficoEstadosProspecto.map((_, idx) => (
-                    <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                  <LabelList
-                    dataKey="cantidad"
-                    position="inside"
-                    style={{ fill: "#fff", fontSize: 12, fontWeight: "bold" }}
-                  />
-                </Funnel>
-              </FunnelChart>
-            </ResponsiveContainer>
-
-            {/* Leyenda manual */}
-            <div style={{ marginTop: "10px" }}>
-              {[...dashboardData.graficoEstadosProspecto]
-                .sort((a, b) => b.cantidad - a.cantidad)
-                .map((fase, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "12px",
-                        height: "12px",
-                        backgroundColor: COLORS[idx % COLORS.length],
-                        marginRight: "8px",
-                        borderRadius: "2px",
-                      }}
-                    ></div>
-                    <span style={{ fontSize: "13px", color: "#333" }}>
-                      {fase.estado.toUpperCase()}: {fase.cantidad} ({fase.porcentaje}%)
-                    </span>
-                  </div>
-                ))}
-            </div>
-          </div>
-
+<div className="dashboard-card1">
+  {dashboardData?.graficoEstadosProspecto?.length > 0 && (
+    <FunnelD3 data={dashboardData.graficoEstadosProspecto} />
+  )}
+</div>
 
 
           {/*<div className="dashboard-card">
@@ -553,7 +512,7 @@ const Home = () => {
             </div>
           </div> */}
 
-          <div className="dashboard-card">
+          <div className="dashboard-card-c">
             <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -612,7 +571,6 @@ const Home = () => {
                     <th>Días</th>
                     <th>Monto Proyectado</th>
                     <th>Monto</th>
-
                   </tr>
                 </thead>
                 <tbody>
@@ -698,6 +656,22 @@ const Home = () => {
           </div>
 
           <div className="dashboard-card tabla-cierres">
+            <div style={{ marginBottom: "10px" }}>
+  <label style={{ marginRight: "10px" }}>Filtrar por estado:</label>
+  <select
+    value={filtroEstadoAbiertas}
+    onChange={(e) => {
+      setFiltroEstadoAbiertas(e.target.value);
+      setPaginaAbiertas(1); // Reinicia paginación al cambiar filtro
+    }}
+  >
+    <option value="">Todos</option>
+    {ordenEstadosAbiertas.map((estado, i) => (
+      <option key={i} value={estado}>{estado}</option>
+    ))}
+  </select>
+</div>
+
             <h3>🔓 PROSPECCIONES ABIERTAS</h3>
             <div className="tabla-detalle-cierres">
 
@@ -710,7 +684,7 @@ const Home = () => {
                     <th>Apertura</th>
                     <th>Estado</th>
                     <th>Motivo</th>
-                        <th>Nota</th>
+                    <th>Nota</th>
 
                     <th>Próximo Paso</th>
                     <th>Vendedora</th>
@@ -720,13 +694,13 @@ const Home = () => {
                   {abiertasPaginada.map((fila, i) => (
                     <tr key={i}>
                       <td>{fila.prospecto}</td>
-                      <td>{fila.objetivo}</td> 
+                      <td>{fila.objetivo}</td>
 
                       <td>{fila.numero_empleados}</td>
                       <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
                       <td>{fila.estado}</td>
                       <td>{fila.motivo}</td>
-                            <td>{fila.nota}</td>
+                      <td>{fila.nota}</td>
                       <td>{fila.proximo_paso}</td>
                       <td>{fila.vendedora}</td>
                     </tr>
