@@ -363,7 +363,7 @@ const ProspectosVendedora = () => {
     };
   }, []);
 
-  const estadoCierre = estados.find(e => e.label.toLowerCase() === "cierre");
+  const estadoCierre = estados.find(e => e.label.toLowerCase() === "cierre de venta");
 
   const mostrarEstado = (venta) => {
     if (!venta) return "Sin estado";
@@ -616,6 +616,9 @@ const ProspectosVendedora = () => {
                           <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
                             🔍 Ver Seguimientos
                           </button>
+                          <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
+                            📜 Historial
+                          </button>
                           <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                             Ver Información
                           </button>
@@ -634,6 +637,9 @@ const ProspectosVendedora = () => {
                       <td>
                         <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
                           ➕ Abrir Prospección
+                        </button>
+                        <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
+                          📜 Historial
                         </button>
                         <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                           Ver Información
@@ -683,6 +689,9 @@ const ProspectosVendedora = () => {
                       <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
                         Ver Seguimientos
                       </button>
+                      <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
+                        📜 Historial
+                      </button>
                       <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                         Ver Información
                       </button>
@@ -700,6 +709,9 @@ const ProspectosVendedora = () => {
                   <div className="acciones">
                     <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
                       Abrir Prospección
+                    </button>
+                    <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
+                      📜 Historial
                     </button>
                     <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                       Ver Información

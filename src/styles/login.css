@@ -1,54 +1,142 @@
-/* Contenedor principal - ocupa toda la pantalla y centra el contenido */
+/* 🎨 Contenedor principal moderno */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #6085ff, #f9f4ff);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Caja del login */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: float 20s linear infinite;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-50px, -50px); }
+}
+
+/* 🎯 Caja del login */
 .login-box {
-  background: white;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 50px 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5);
   text-align: center;
-  width: 350px;
+  width: 400px;
+  max-width: 90vw;
+  position: relative;
+  z-index: 1;
+  animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Título */
-h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
-  font-weight: bold;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* Inputs */
-input {
+/* 📝 Título */
+.login-box h2 {
+  margin-bottom: 30px;
+  font-size: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+/* 📥 Inputs */
+.login-box input {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
   font-size: 16px;
+  background: #f8fafc;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
 }
 
-/* Botón */
+.login-box input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+/* 🎯 Botón */
 .login-button {
-  background: #152142 !important; 
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+  margin-top: 10px;
 }
 
 .login-button:hover {
-  background: #14183f !important; 
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
 }
 
+.login-button:active {
+  transform: translateY(0) !important;
+}
 
-/* Mensaje de error */
-.error {
-  color: red;
+/* ❌ Mensaje de error */
+.login-box .error {
+  color: #ef4444;
   font-size: 14px;
+  font-weight: 600;
   margin-bottom: 10px;
+  padding: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #ef4444;
+}
+
+/* 📱 Responsive */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 40px 30px;
+    width: 95vw;
+  }
+  
+  .login-box h2 {
+    font-size: 26px;
+  }
 }

@@ -677,7 +677,7 @@ if (categoriaFiltro) {
                 <td>{p.empleados ?? "NO REGISTRADO"}</td>
 
                 <td>
-                  {venta.estado_venta?.nombre?.toLowerCase() === "cierre" && venta.monto_cierre
+                  {venta.estado_venta?.nombre?.toLowerCase() === "cierre de venta" && venta.monto_cierre
                     ? `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`
                     : venta.estado_venta?.nombre.toUpperCase()|| "Sin estado"}
                 </td>
@@ -688,14 +688,23 @@ if (categoriaFiltro) {
                     <button
                       className="admin-btn-seguimientos"
                       onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}
+                      title="Ver Seguimientos"
                     >
-                      🔍 VER SEGUIMIENTOS
+                      🔍 Seguimientos
+                    </button>
+                    <button
+                      className="admin-btn-historial"
+                      onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}
+                      title="Ver Historial"
+                    >
+                      📜 Historial
                     </button>
                     <button
                       className="admin-btn-editar"
                       onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}
+                      title="Información del Prospecto"
                     >
-                      INFORMACIÓN DEL PROSPECTO
+                      ℹ️ Info
                     </button>
                      
                             {!esSoloLectura && (
@@ -703,8 +712,9 @@ if (categoriaFiltro) {
                     <button
                       className="admin-btn-eliminar"
                       onClick={() => eliminarProspecto(p.id_prospecto)}
+                      title="Eliminar Prospecto"
                     >
-                      Eliminar
+                      🗑️
                     </button>
                     )}
 
@@ -730,20 +740,24 @@ if (categoriaFiltro) {
                   <button
                     className="admin-btn-abrir-prospeccion"
                     onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}
+                    title="Abrir Prospección"
                   >
-                    ➕ Abrir Prospección
+                    ➕ Abrir
                   </button>
+                  
                   <button
                     className="admin-btn-editar"
                     onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}
+                    title="Información del Prospecto"
                   >
-                    Información del Prospecto
+                    ℹ️ Info
                   </button>
                   <button
                     className="admin-btn-eliminar"
                     onClick={() => eliminarProspecto(p.id_prospecto)}
+                    title="Eliminar Prospecto"
                   >
-                    Eliminar
+                    🗑️
                   </button>
                 </div>
               </td>
@@ -793,7 +807,7 @@ if (categoriaFiltro) {
                 <p><strong>Empleados:</strong> {p.empleados ?? "NO REGISTRADO"}</p>
 
                 <p><strong>Estado:</strong> 
-                  {venta.estado_venta?.nombre?.toLowerCase() === "cierre" && venta.monto_cierre
+                  {venta.estado_venta?.nombre?.toLowerCase() === "cierre de venta" && venta.monto_cierre
                     ? `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`
                     : venta.estado_venta?.nombre || "Sin estado"}
                 </p>
@@ -802,6 +816,9 @@ if (categoriaFiltro) {
                 <div className="acciones">
                   <button className="btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
                     🔍 Ver Seguimientos
+                  </button>
+                  <button className="btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
+                    📜 Historial
                   </button>
                   <button className="btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                     Editar
@@ -825,6 +842,7 @@ if (categoriaFiltro) {
                 <button className="btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
                   ➕ Abrir Prospección
                 </button>
+               
                 <button className="btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
                   Editar
                 </button>

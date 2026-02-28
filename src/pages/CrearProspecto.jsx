@@ -14,6 +14,7 @@ const CrearProspecto = () => {
 
 
   const [categorias, setCategorias] = useState([]);
+  const [categoriasVenta, setCategoriasVenta] = useState([]);
   const [origenes, setOrigenes] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ const CrearProspecto = () => {
     nombre_contacto: "",
     descripcion: "",
     id_categoria: null,
+    id_categoria_venta: null,
     id_origen: null,
     nota: "",
     correo: "",
@@ -40,6 +42,7 @@ const CrearProspecto = () => {
   useEffect(() => {
 
     obtenerCategorias();
+    cargarCategoriasVenta();
     cargarOrigenes();
     const rol = getRol();
     const cedula = obtenerCedulaDesdeToken();
@@ -97,11 +100,43 @@ const CrearProspecto = () => {
     }
   };
 
+  const cargarCategoriasVenta = async () => {
+    try {
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${baseUrl}/api/categorias-venta`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Error al cargar categorías de venta");
+      const raw = await res.json();
+      const list = Array.isArray(raw)
+        ? raw
+        : Array.isArray(raw?.data)
+          ? raw.data
+          : Array.isArray(raw?.categorias)
+            ? raw.categorias
+            : [];
+      const normalizadas = list.map((c) => ({
+        id_categoria_venta: c.id_categoria_venta ?? c.id,
+        nombre: c.nombre ?? c.name ?? String(c.id_categoria_venta ?? c.id ?? ""),
+      }));
+      setCategoriasVenta(normalizadas);
+    } catch (err) {
+      console.error("Error al cargar categorías de venta:", err);
+      setCategoriasVenta([]);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "id_categoria" ? (value ? Number(value) : null) : value,
+      [name]:
+        name === "id_categoria"
+          ? (value ? Number(value) : null)
+          : name === "id_categoria_venta"
+            ? (value ? Number(value) : null)
+            : value,
     }));
   };
 
@@ -147,7 +182,11 @@ const CrearProspecto = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          id_categoria_venta: formData.id_categoria_venta ?? null,
+          estado: "Captación/ensayo",
+        }),
       });
 
       const data = await res.json();
@@ -190,6 +229,8 @@ const CrearProspecto = () => {
             </option>
           ))}
         </select>
+
+       
 
         <label>Origen <span className="required">*</span>:</label>
         <select name="id_origen" value={formData.id_origen || ""} onChange={handleChange} required>
@@ -265,6 +306,19 @@ const CrearProspecto = () => {
             </select>
           </>
         )}
+        <label>Categoría de venta:</label>
+        <select
+          name="id_categoria_venta"
+          value={formData.id_categoria_venta ?? ""}
+          onChange={handleChange}
+        >
+          <option value="">Seleccione categoría de venta...</option>
+          {categoriasVenta.map((c) => (
+            <option key={c.id_categoria_venta} value={c.id_categoria_venta}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
 
         <label>Objetivo de la Prospección <span className="required">*</span>:</label>
         <textarea

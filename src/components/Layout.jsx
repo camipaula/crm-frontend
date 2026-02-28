@@ -14,14 +14,45 @@ const Layout = ({ children, extraClass }) => {
     const userRol = getRol();
     setRol(userRol);
 
-    // ✅ Por defecto:
-    // - Sidebar abierto en escritorio
-    // - Sidebar cerrado en móvil
+    // ✅ Restaurar estado del sidebar desde localStorage o establecer por defecto
+    const savedSidebarState = localStorage.getItem('sidebarOpen');
     const isMobile = window.innerWidth <= 768;
-    setIsSidebarOpen(!isMobile);
+    
+    if (savedSidebarState !== null) {
+      // Si hay un estado guardado, usarlo (pero en móvil siempre cerrado)
+      setIsSidebarOpen(isMobile ? false : savedSidebarState === 'true');
+    } else {
+      // Por defecto: abierto en escritorio, cerrado en móvil
+      setIsSidebarOpen(!isMobile);
+    }
 
     setLoading(false);
+
+    // ✅ Manejar cambios de tamaño de ventana
+    const handleResize = () => {
+      const isMobileNow = window.innerWidth <= 768;
+      const savedState = localStorage.getItem('sidebarOpen');
+      
+      // En móvil siempre cerrado, en escritorio restaurar estado guardado o abierto por defecto
+      if (isMobileNow) {
+        setIsSidebarOpen(false);
+      } else if (savedState !== null) {
+        setIsSidebarOpen(savedState === 'true');
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Guardar estado del sidebar cuando cambie
+  useEffect(() => {
+    if (!loading) {
+      localStorage.setItem('sidebarOpen', isSidebarOpen.toString());
+    }
+  }, [isSidebarOpen, loading]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);

@@ -39,20 +39,20 @@ const Home = () => {
   const [origenes, setOrigenes] = useState([]);
   const [categorias, setCategorias] = useState([]);
 
-  const [mostrarFiltros, setMostrarFiltros] = useState(false)
-  const [paginaCompetencia, setPaginaCompetencia] = useState(1);
   const [paginaAbiertas, setPaginaAbiertas] = useState(1);
 
   const [filtroEstadoAbiertas, setFiltroEstadoAbiertas] = useState("");
-  const ordenEstadosAbiertas = ["nuevo", "En Atracción", "En Planeación", "reabierto"];
+  // Estados posibles para prospecciones abiertas (excluyendo "Cierre de venta" que son ganadas)
+  const ordenEstadosAbiertas = [
+    "Captación/ensayo",
+    "Citas",
+    "Cotizaciones",
+    "Seguimiento",
+    "Cierre de venta",
+  ];
 
-  const filasPorPagina = 5;
   const filasPorPagina1 = 20;
 
-  const competenciaPaginada = dashboardData?.tablaCompetencia?.slice(
-    (paginaCompetencia - 1) * filasPorPagina,
-    paginaCompetencia * filasPorPagina
-  );
   const abiertasFiltradas = dashboardData?.tablaAbiertas?.filter(f =>
     !filtroEstadoAbiertas || f.estado === filtroEstadoAbiertas
   );
@@ -113,7 +113,6 @@ const Home = () => {
     setIdCategoria("");
     setIdOrigen("");
     setPaginaAbiertas(1);
-    setPaginaCompetencia(1);
 
   };
 
@@ -287,108 +286,167 @@ const Home = () => {
     fetchDashboardData();
   };
 
-  if (loading) return <p>Cargando dashboard...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (loading) return (
+    <Layout extraClass="dashboard-home">
+      <div className="home-container">
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          alignItems: "center", 
+          minHeight: "60vh",
+          fontSize: "18px",
+          color: "#667eea",
+          fontWeight: "600"
+        }}>
+          Cargando dashboard...
+        </div>
+      </div>
+    </Layout>
+  );
+  
+  if (error) return (
+    <Layout extraClass="dashboard-home">
+      <div className="home-container">
+        <div className="error" style={{ 
+          padding: "20px",
+          background: "rgba(239, 68, 68, 0.1)",
+          borderRadius: "12px",
+          borderLeft: "4px solid #ef4444"
+        }}>
+          {error}
+        </div>
+      </div>
+    </Layout>
+  );
 
   return (
     <Layout extraClass="dashboard-home">
       <div className="home-container">
-        <h1>Bienvenida, {rol === "vendedora" ? "Vendedora" : "Administradora"}</h1>
-        <button
-          type="button"
-          className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
-          onClick={() => setMostrarFiltros(!mostrarFiltros)}
-          style={{ marginBottom: "10px" }}
-        >
-          {mostrarFiltros ? "🔼 OCULTAR FILTROS" : "🔽 MOSTRAR FILTROS"}
-          {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
-        </button>
+        <header className="dashboard-header">
+          <h1>Dashboard</h1>
+          <p className="dashboard-subtitle">
+            {rol === "vendedora" ? "Resumen de tus prospecciones" : "Vista general de prospecciones"}
+          </p>
+        </header>
 
-        {mostrarFiltros && (
-
-          <form className="filtros-dashboard" onSubmit={handleSubmit}>
-            <select onChange={(e) => handleMesChange(e.target.value)} defaultValue="">
-              <option value="">Filtrar por mes...</option>
-              <option value="01">Enero</option>
-              <option value="02">Febrero</option>
-              <option value="03">Marzo</option>
-              <option value="04">Abril</option>
-              <option value="05">Mayo</option>
-              <option value="06">Junio</option>
-              <option value="07">Julio</option>
-              <option value="08">Agosto</option>
-              <option value="09">Septiembre</option>
-              <option value="10">Octubre</option>
-              <option value="11">Noviembre</option>
-              <option value="12">Diciembre</option>
-            </select>
-
-            <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
-            <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
-
-            {rol === "admin" && (
-              <select value={cedulaVendedora} onChange={(e) => setCedulaVendedora(e.target.value)}>
-                <option value="">Todas las vendedoras</option>
-                {vendedoras.map((v) => (
-                  <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre}</option>
-                ))}
-              </select>
-            )}
-
-            <select value={ciudad} onChange={(e) => setCiudad(e.target.value)}>
-              <option value="">Todas las ciudades</option>
-              {ciudades.map((c, i) => (
-                <option key={i} value={c}>{c}</option>
-              ))}
-            </select>
-
-
-            <select value={sector} onChange={(e) => setSector(e.target.value)}>
-              <option value="">Todos los sectores</option>
-              {sectores.map((s, i) => (
-                <option key={i} value={s}>{s}</option>
-              ))}
-            </select>
-
-
-            <select value={idOrigen} onChange={(e) => setIdOrigen(e.target.value)}>
-              <option value="">Todos los orígenes</option>
-              {origenes.map((o) => (
-                <option key={o.id_origen} value={o.id_origen}>{o.descripcion}</option>
-              ))}
-            </select>
-
-            <select value={idCategoria} onChange={(e) => setIdCategoria(e.target.value)}>
-              <option value="">Todas las categorías</option>
-              {categorias.map((c) => (
-                <option key={c.id_categoria} value={c.id_categoria}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
-
-
-            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-              <button type="submit">Filtrar</button>
-              <button type="button" onClick={limpiarFiltros} className="btn-limpiar">
-                Limpiar filtros
+        <form className="filtros-dashboard" onSubmit={handleSubmit}>
+            <div className="filtros-dashboard-header">
+              <span className="filtros-dashboard-icon">🔍</span>
+              <span className="filtros-dashboard-titulo">Filtros del dashboard</span>
+            </div>
+            <div className="filtros-dashboard-grid">
+              <div className="filtro-grupo-home">
+                <label>Mes</label>
+                <select onChange={(e) => handleMesChange(e.target.value)} defaultValue="">
+                  <option value="">Todos</option>
+                  <option value="01">Enero</option>
+                  <option value="02">Febrero</option>
+                  <option value="03">Marzo</option>
+                  <option value="04">Abril</option>
+                  <option value="05">Mayo</option>
+                  <option value="06">Junio</option>
+                  <option value="07">Julio</option>
+                  <option value="08">Agosto</option>
+                  <option value="09">Septiembre</option>
+                  <option value="10">Octubre</option>
+                  <option value="11">Noviembre</option>
+                  <option value="12">Diciembre</option>
+                </select>
+              </div>
+              <div className="filtro-grupo-home">
+                <label>Desde</label>
+                <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+              </div>
+              <div className="filtro-grupo-home">
+                <label>Hasta</label>
+                <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
+              </div>
+              {rol === "admin" && (
+                <div className="filtro-grupo-home">
+                  <label>Vendedora</label>
+                  <select value={cedulaVendedora} onChange={(e) => setCedulaVendedora(e.target.value)}>
+                    <option value="">Todas</option>
+                    {vendedoras.map((v) => (
+                      <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <div className="filtro-grupo-home">
+                <label>Ciudad</label>
+                <select value={ciudad} onChange={(e) => setCiudad(e.target.value)}>
+                  <option value="">Todas</option>
+                  {ciudades.map((c, i) => (
+                    <option key={i} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filtro-grupo-home">
+                <label>Sector</label>
+                <select value={sector} onChange={(e) => setSector(e.target.value)}>
+                  <option value="">Todos</option>
+                  {sectores.map((s, i) => (
+                    <option key={i} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filtro-grupo-home">
+                <label>Origen</label>
+                <select value={idOrigen} onChange={(e) => setIdOrigen(e.target.value)}>
+                  <option value="">Todos</option>
+                  {origenes.map((o) => (
+                    <option key={o.id_origen} value={o.id_origen}>{o.descripcion}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="filtro-grupo-home">
+                <label>Categoría</label>
+                <select value={idCategoria} onChange={(e) => setIdCategoria(e.target.value)}>
+                  <option value="">Todas</option>
+                  {categorias.map((c) => (
+                    <option key={c.id_categoria} value={c.id_categoria}>{c.nombre}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="filtros-dashboard-actions">
+              <button type="submit" className="filtros-btn-aplicar">Aplicar filtros</button>
+              <button type="button" onClick={limpiarFiltros} className="filtros-btn-limpiar">
+                Limpiar
               </button>
             </div>
-
           </form>
-        )}
 
-        <hr style={{ margin: "20px 0" }} />  {/* 👈 separador visual */}
+        {/* Tarjetas de métricas principales */}
+        <div className="dashboard-metrics-section">
+          <div className="metric-card primary">
+            <h4>Total Prospecciones</h4>
+            <div className="metric-value">{dashboardData.totalVentas}</div>
+            <div className="metric-label">Prospecciones totales</div>
+          </div>
+          <div className="metric-card success">
+            <h4>Prospecciones Cerradas</h4>
+            <div className="metric-value">{dashboardData.totalVentasGanadas}</div>
+            <div className="metric-label">{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}% del total</div>
+          </div>
+          <div className="metric-card warning">
+            <h4>Prospecciones Abiertas</h4>
+            <div className="metric-value">{dashboardData.totalVentasAbiertas}</div>
+            <div className="metric-label">En proceso</div>
+          </div>
+        </div>
+
+        <hr />
 
         <div className="dashboard-grid">
 
-          <div className="dashboard-card-c">
+          <div className="dashboard-card-c chart-card">
 
-            <h3>🥧 PROSPECCIONES ABIERTAS, CERRADAS Y COMPETENCIA</h3>
+            <h3>🥧 Prospecciones: Abiertas y Ganadas</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
-                  data={dashboardData.graficoVentas}
+                  data={(dashboardData.graficoVentas || []).filter(d => d.estado !== "Perdidas")}
                   dataKey="cantidad"
                   nameKey="estado"
                   outerRadius={80}
@@ -399,7 +457,8 @@ const Home = () => {
                     const x = cx + radius * Math.cos(-midAngle * RADIAN);
                     const y = cy + radius * Math.sin(-midAngle * RADIAN);
                     //const total = dashboardData.graficoVentas.reduce((sum, d) => sum + d.cantidad, 0);
-                    const value = dashboardData.graficoVentas[index].cantidad;
+                    const datosChart = (dashboardData.graficoVentas || []).filter(d => d.estado !== "Perdidas");
+                    const value = datosChart[index]?.cantidad ?? 0;
                     //const porcentaje = ((value / total) * 100).toFixed(1);
 
                     return (
@@ -410,7 +469,7 @@ const Home = () => {
                   }}
 
                 >
-                  {dashboardData.graficoVentas.map((_, idx) => (
+                  {(dashboardData.graficoVentas || []).filter(d => d.estado !== "Perdidas").map((_, idx) => (
                     <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                   ))}
                 </Pie>
@@ -419,9 +478,10 @@ const Home = () => {
                 />
                 <Legend
                   formatter={(value) => {
-                    const item = dashboardData.graficoVentas.find((d) => d.estado === value);
-                    const total = dashboardData.graficoVentas.reduce((sum, d) => sum + d.cantidad, 0);
-                    const porcentaje = item ? ((item.cantidad / total) * 100).toFixed(1) : 0;
+                    const datosChart = (dashboardData.graficoVentas || []).filter(d => d.estado !== "Perdidas");
+                    const item = datosChart.find((d) => d.estado === value);
+                    const total = datosChart.reduce((sum, d) => sum + d.cantidad, 0);
+                    const porcentaje = item && total > 0 ? ((item.cantidad / total) * 100).toFixed(1) : 0;
                     return `${value}: ${item?.cantidad || 0} (${porcentaje}%)`;
                   }}
                 />
@@ -432,27 +492,47 @@ const Home = () => {
           </div>
           <div className="dashboard-resumen-container">
             <div className="dashboard-card resumen">
-              <h3>📊 RESUMEN DE PROSPECCIONES</h3>
-              <p>📂 TOTALES: <strong>{dashboardData.totalVentas}</strong></p>
-              <p>🔓 ABIERTAS: <strong>{dashboardData.totalVentasAbiertas}</strong></p>
-              <p>✅ CERRADAS: <strong>{dashboardData.totalVentasGanadas} ({(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%)</strong></p>
-              <p>❌ COMPETENCIA: <strong>{dashboardData.totalVentasPerdidas} ({(dashboardData.porcentajePerdidas ?? 0).toFixed(1)}%)</strong></p>
+              <h3>📊 Métricas de Rendimiento</h3>
+              <div style={{ marginTop: "20px" }}>
+                <h4>✅ Tasa de Cierre</h4>
+                <p style={{ fontSize: "28px", fontWeight: "700", color: "#10b981", marginBottom: "20px" }}>
+                  {(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%
+                </p>
+                
+                <h4>📅 Tiempo Promedio</h4>
+                <p style={{ fontSize: "20px", fontWeight: "600", color: "#667eea", marginBottom: "20px" }}>
+                  {dashboardData.promedioDiasCierre} días
+                </p>
+                
+                <h4>💵 Monto Promedio</h4>
+                <p style={{ fontSize: "20px", fontWeight: "600", color: "#764ba2" }}>
+                  ${dashboardData.promedioMontoCierre}
+                </p>
+              </div>
             </div>
 
             <div className="dashboard-card resumen-secundario">
-              <h4>✅ PORCENTAJE DE PROSPECCINES CERRADAS</h4>
-              <strong>{(dashboardData.porcentajeGanadas ?? 0).toFixed(1)}%</strong>
-
-              <h4>📅 PROMEDIO DE DÍAS HASTA EL CIERRE</h4>
-              <p>{dashboardData.promedioDiasCierre} días</p>
-
-              <h4>💵 PROMEDIO DEL MONTO DE CIERRE</h4>
-              <p>${dashboardData.promedioMontoCierre}</p>
+              <h3>📈 Resumen Detallado</h3>
+              <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "15px" }}>
+                <div>
+                  <p style={{ fontSize: "13px", color: "#64748b", marginBottom: "5px" }}>TOTALES</p>
+                  <p style={{ fontSize: "24px", fontWeight: "700", color: "#1e293b" }}>{dashboardData.totalVentas}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: "13px", color: "#64748b", marginBottom: "5px" }}>ABIERTAS</p>
+                  <p style={{ fontSize: "24px", fontWeight: "700", color: "#f59e0b" }}>{dashboardData.totalVentasAbiertas}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: "13px", color: "#64748b", marginBottom: "5px" }}>CERRADAS (GANADAS)</p>
+                  <p style={{ fontSize: "24px", fontWeight: "700", color: "#10b981" }}>{dashboardData.totalVentasGanadas}</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Fases de Prospección */}
           <div className="dashboard-card1">
+            <h3>📊 Fases de Prospección</h3>
             {dashboardData?.graficoEstadosProspecto?.length > 0 && (
               <FunnelD3 data={dashboardData.graficoEstadosProspecto} />
             )}
@@ -512,8 +592,8 @@ const Home = () => {
             </div>
           </div> */}
 
-          <div className="dashboard-card">
-            <h3>🏷️ PROSPECTOS POR CATEGORÍA</h3>
+          <div className="dashboard-card chart-card">
+            <h3>🏷️ Prospectos por Categoría</h3>
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <ResponsiveContainer width="100%" height={300}>
@@ -575,7 +655,7 @@ const Home = () => {
 
 
           <div className="dashboard-card tabla-cierres">
-            <h3>📋 DETALLE DE PROSPECCIONES GANADAS</h3>
+            <h3>📋 Detalle de Prospecciones Ganadas</h3>
             <div className="tabla-detalle-cierres">
 
               <table>
@@ -633,46 +713,6 @@ const Home = () => {
           </div>
 
           <div className="dashboard-card tabla-cierres">
-            <h3>❌ PROSPECCIONES EN COMPETENCIA</h3>
-            <div className="tabla-detalle-cierres">
-
-              <table>
-                <thead>
-                  <tr>
-                    <th>Prospecto</th>
-                    <th>Empleados</th>
-                    <th>Apertura</th>
-                    <th>Estado</th>
-                    <th>Último Resultado</th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                  {competenciaPaginada.map((fila, i) => (
-                    <tr key={i}>
-                      <td>{fila.prospecto}</td>
-                      <td>{fila.numero_empleados}</td>
-                      <td>{new Date(fila.fecha_apertura).toLocaleDateString()}</td>
-                      <td>{fila.estado}</td>
-                      <td>{fila.ultimo_resultado}</td>
-
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="paginador-competencia">
-                {paginaCompetencia > 1 && (
-                  <button onClick={() => setPaginaCompetencia(paginaCompetencia - 1)}>Anterior</button>
-                )}
-                <span>Página {paginaCompetencia}</span>
-                {paginaCompetencia * filasPorPagina < dashboardData.tablaCompetencia.length && (
-                  <button onClick={() => setPaginaCompetencia(paginaCompetencia + 1)}>Siguiente</button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="dashboard-card tabla-cierres">
             <div style={{ marginBottom: "10px" }}>
               <label style={{ marginRight: "10px" }}>Filtrar por estado:</label>
               <select
@@ -683,13 +723,27 @@ const Home = () => {
                 }}
               >
                 <option value="">Todos</option>
-                {ordenEstadosAbiertas.map((estado, i) => (
-                  <option key={i} value={estado}>{estado}</option>
-                ))}
+                {(() => {
+                  // Obtener estados únicos de tablaAbiertas si están disponibles, sino usar ordenEstadosAbiertas
+                  const estadosUnicos = dashboardData?.tablaAbiertas
+                    ? [...new Set(dashboardData.tablaAbiertas.map(f => f.estado).filter(Boolean))]
+                        .sort((a, b) => {
+                          const idxA = ordenEstadosAbiertas.indexOf(a);
+                          const idxB = ordenEstadosAbiertas.indexOf(b);
+                          if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+                          if (idxA === -1) return 1;
+                          if (idxB === -1) return -1;
+                          return idxA - idxB;
+                        })
+                    : ordenEstadosAbiertas;
+                  return estadosUnicos.map((estado, i) => (
+                    <option key={i} value={estado}>{estado}</option>
+                  ));
+                })()}
               </select>
             </div>
 
-            <h3>🔓 PROSPECCIONES ABIERTAS</h3>
+            <h3>🔓 Prospecciones Abiertas</h3>
             <div className="tabla-detalle-cierres">
 
               <table>
@@ -729,8 +783,8 @@ const Home = () => {
                 {paginaAbiertas > 1 && (
                   <button onClick={() => setPaginaAbiertas(paginaAbiertas - 1)}>Anterior</button>
                 )}
-                <span>Página {paginaAbiertas}</span>
-                {paginaAbiertas * filasPorPagina1 < dashboardData.tablaAbiertas.length && (
+                <span>Página {paginaAbiertas} de {Math.ceil((abiertasFiltradas?.length || 0) / filasPorPagina1)}</span>
+                {paginaAbiertas * filasPorPagina1 < (abiertasFiltradas?.length || 0) && (
                   <button onClick={() => setPaginaAbiertas(paginaAbiertas + 1)}>Siguiente</button>
                 )}
               </div>

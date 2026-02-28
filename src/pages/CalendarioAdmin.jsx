@@ -32,7 +32,7 @@ const CalendarioAdmin = () => {
   const [mostrarModalNuevaVenta, setMostrarModalNuevaVenta] = useState(false);
   const [objetivoNuevaVenta, setObjetivoNuevaVenta] = useState("");
   const [nuevoNombre, setNuevoNombre] = useState("");
-  const [nuevoEstado] = useState("nuevo");
+  const [nuevoEstado] = useState("Captación/ensayo");
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
   const [modoEdicion, setModoEdicion] = useState(false);
 
@@ -369,6 +369,7 @@ const CalendarioAdmin = () => {
         body: JSON.stringify({
           id_prospecto: prospectoSeleccionado.value,
           objetivo: objetivoNuevaVenta,
+          estado: "Captación/ensayo",
         }),
       });
       const { venta } = await res.json();
@@ -689,7 +690,7 @@ const CalendarioAdmin = () => {
               value={nuevoNombre}
               onChange={(e) => setNuevoNombre(e.target.value)}
             />
-            <p><b>Estado:</b> Nuevo</p>
+            <p><b>Estado:</b> Captación/ensayo</p>
             <input
               type="text"
               placeholder="Objetivo de la Prospección"

@@ -1,15 +1,12 @@
 /* 📌 Contenedor principal */
 .editar-vendedora-container {
-  
-  width: 100%; /* ✅ Ocupa toda la pantalla */
-  height: calc(90vh - 60px); /* Ocupa toda la altura menos el navbar */
-  padding: 30px;
-  overflow-y: auto; /* ✅ Permite hacer scroll si hay muchas vendedoras */
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
   text-align: center;
-
+  box-sizing: border-box;
 }
 
 /* 📌 Título */

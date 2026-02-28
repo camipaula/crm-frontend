@@ -1,14 +1,15 @@
 /* 📌 Contenedor Principal */
 .abrir-venta-container {
   width: 100%;
-  max-width: 600px; /* 🔥 Ajuste del ancho máximo */
-  min-width: 50vw;  /* 🔥 Se adapta en pantallas grandes */
-  margin: 50px auto;
+  max-width: 100%;
+  margin: 0;
   padding: 30px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
   text-align: center;
+  box-sizing: border-box;
 }
 
 /* 📌 Título */

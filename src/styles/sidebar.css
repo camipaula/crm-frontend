@@ -1,18 +1,38 @@
-/* 📌 Sidebar Principal */
+/* 📌 Sidebar Principal Moderno */
 .sidebar {
-  width: 250px;
+  width: 260px;
   height: 100vh;
-  background: #111827;
-  color: white;
+  background: #ffffff;
+  color: #1a202c;
   position: fixed;
   top: 60px;
-  left: -250px;
-  transition: left 0.3s ease;
+  left: -260px;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px 0;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
   z-index: 1000;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .sidebar.open {
@@ -21,18 +41,25 @@
 
 /* ☰ Botón de abrir/cerrar Sidebar */
 .toggle-btn {
-  background: none;
+  background: #f8fafc;
   border: none;
-  color: white;
-  font-size: 24px;
+  color: #475569;
+  font-size: 20px;
   cursor: pointer;
-  margin-bottom: 20px;
-  width: 100%;
+  margin-bottom: 16px;
+  width: calc(100% - 24px);
+  margin-left: 12px;
   padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: background 0.3s;
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+
+.toggle-btn:hover {
+  background: #f1f5f9;
+  color: #667eea;
 }
 
 /* SOLO mostrar ☰ en escritorio */
@@ -59,41 +86,76 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 12px 15px;
-  color: white;
-  font-size: 16px;
+  padding: 12px 24px;
+  color: #475569;
+  font-size: 15px;
   text-decoration: none;
-  gap: 10px;
-  transition: background 0.3s, transform 0.2s;
+  gap: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 3px solid transparent;
+  margin: 2px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  position: relative;
 }
 
 .sidebar .nav-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  background: #f1f5f9;
+  border-left-color: #667eea;
+  color: #667eea;
+}
+
+.sidebar .nav-link.active {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+  border-left-color: #667eea;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.sidebar .nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #667eea;
+  border-radius: 0 2px 2px 0;
 }
 
 /* 🔚 Botón cerrar sesión */
 .logout-btn {
-  background: none;
+  background: #fef2f2;
   border: none;
-  color: white;
+  color: #dc2626;
   font-size: 14px;
-  padding: 15px;
-  width: 100%;
+  font-weight: 600;
+  padding: 12px 24px;
+  width: calc(100% - 24px);
+  margin: 12px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: auto;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  border-left-color: #ef4444;
+  color: #b91c1c;
 }
 
 /* 📱 Móvil */
 @media (max-width: 768px) {
   .sidebar {
-    width: 50%;
-    left: -40%;
+    width: 280px;
+    left: -280px;
   }
 
   .sidebar.open {
@@ -101,26 +163,45 @@
   }
 
   .main-container {
-    margin-left: 0;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 
   .sidebar-menu {
-    margin-top: 30%;
+    margin-top: 20px;
   }
 }
 
 /* 📺 Escritorio cerrado */
 @media (min-width: 769px) {
   .sidebar.closed {
-    width: 60px;
+    width: 70px;
     left: 0;
+  }
+
+  .sidebar.closed .nav-link {
+    justify-content: center;
+    padding: 12px;
+    margin: 2px 8px;
   }
 
   .sidebar.closed .nav-link span {
     display: none;
   }
 
+  .sidebar.closed .logout-btn {
+    justify-content: center;
+    padding: 12px;
+    width: calc(100% - 16px);
+    margin: 12px 8px;
+  }
+
   .sidebar.closed .logout-btn span {
     display: none;
+  }
+
+  .sidebar.closed .toggle-btn {
+    width: calc(100% - 16px);
+    margin-left: 8px;
   }
 }

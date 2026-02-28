@@ -31,7 +31,7 @@ const CalendarioVendedora = () => {
   // Modal nuevo prospecto
   const [mostrarModalNuevoProspecto, setMostrarModalNuevoProspecto] = useState(false);
   const [nuevoNombre, setNuevoNombre] = useState("");
-  const [nuevoEstado] = useState("nuevo");
+  const [nuevoEstado] = useState("Captación/ensayo");
   const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
   //Modal nueva propseccion
@@ -166,6 +166,7 @@ const CalendarioVendedora = () => {
         body: JSON.stringify({
           id_prospecto: prospectoSeleccionado.value,
           objetivo: objetivoNuevaVenta,
+          estado: "Captación/ensayo",
         }),
       });
 
@@ -388,7 +389,7 @@ const CalendarioVendedora = () => {
               value={nuevoNombre}
               onChange={(e) => setNuevoNombre(e.target.value)}
             />
-            <p><b>Estado:</b> Nuevo</p>
+            <p><b>Estado:</b> Captación/ensayo</p>
             <input
               type="text"
               placeholder="Objetivo de la Prospección"

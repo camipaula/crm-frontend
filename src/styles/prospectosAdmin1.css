@@ -1,34 +1,74 @@
-/* 📌 Contenedor principal */
+/* 📌 Contenedor principal moderno */
 .admin-prospectos-page {
   width: 100% !important;
-  height: calc(100vh - 60px) !important;
-  padding: 24px !important;
-  overflow-y: auto !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  box-sizing: border-box !important;
+}
+
+.admin-prospectos-filtros {
   background: #ffffff !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.admin-prospectos-table {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.admin-prospectos-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-prospectos-page::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.admin-prospectos-page::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.5);
+  border-radius: 10px;
+}
+
+.admin-prospectos-page::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.7);
 }
 
 /* 📌 Título */
 .admin-prospectos-title {
-  font-size: 28px !important;
-  color: #1f3b5c !important;
+  font-size: 32px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
   font-weight: 700 !important;
   text-align: center !important;
-  margin-bottom: 24px !important;
+  margin-bottom: 30px !important;
+  letter-spacing: -0.5px !important;
 }
 
 /* 📌 Filtros */
 .admin-prospectos-filtros {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
-  gap: 3% !important;
-  padding: 16px 20px !important;
-  background: #f8f9fa !important;
-  border-radius: 12px !important;
-  margin-bottom: 24px !important;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04) !important;
+  gap: 15px !important;
+  padding: 25px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 16px !important;
+  margin-bottom: 30px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.admin-prospectos-filtros:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
 }
 
 .filtro-grupo {
@@ -46,29 +86,41 @@
 
 .admin-prospectos-filtros select,
 .admin-prospectos-filtros input {
-  font-size: 13px !important;
-  padding: 6px 8px !important;
-  min-height: 34px !important;
-  border: 1px solid #ccc !important;
-  border-radius: 6px !important;
+  font-size: 14px !important;
+  padding: 12px 16px !important;
+  min-height: 44px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 10px !important;
   outline: none !important;
   flex: 1 !important;
   min-width: 200px !important;
+  background: #f8fafc !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.admin-prospectos-filtros select:focus,
+.admin-prospectos-filtros input:focus {
+  border-color: #667eea !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
 }
 
 .admin-prospectos-filtros button {
-  padding: 10px 18px !important;
-  background: #0d2a49 !important;
+  padding: 12px 20px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
   border: none !important;
-  border-radius: 6px !important;
+  border-radius: 10px !important;
   cursor: pointer !important;
   font-size: 14px !important;
-  transition: background 0.3s ease !important;
+  font-weight: 600 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
 }
 
 .admin-prospectos-filtros button:hover {
-  background: #1a3966 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
 }
 
 /* 📋 Tabla */
@@ -85,60 +137,121 @@
   border-collapse: collapse !important;
   font-size: 16px;
   margin-top: 20px !important;
-  border-radius: 10px !important;
-  background: white !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  overflow: hidden !important;
 }
 
 .admin-prospectos-table th,
 .admin-prospectos-table td {
-  padding: 6px 8px;
-  border: 1px solid #e0e0e0 !important;
+  padding: 12px 16px;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
   text-align: left !important;
-  font-size: 16px;
+  font-size: 15px;
+}
+
+/* Columna de acciones más compacta */
+.admin-prospectos-table th:last-child,
+.admin-prospectos-table td:last-child {
+  width: auto !important;
+  min-width: 180px !important;
+  max-width: 220px !important;
+  padding: 8px 12px !important;
 }
 
 .admin-prospectos-table th {
-  background: #1f3b5c !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
   text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
 }
 
 .admin-prospectos-table tr:nth-child(even) {
   background: #f9f9f9 !important;
 }
 
+/* 🛠️ Contenedor de botones de acción en tabla */
+.admin-botones-acciones {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-width: 200px !important;
+}
+
 /* 🛠️ Botones acción */
 .admin-btn-editar,
 .admin-btn-eliminar,
 .admin-btn-seguimientos,
+.admin-btn-historial,
 .admin-btn-abrir-prospeccion {
-  padding: 8px 12px !important;
+  padding: 6px 10px !important;
   border: none !important;
   border-radius: 6px !important;
-  font-size: 13px !important;
-  margin: 4px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
   cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
 }
 
 .admin-btn-editar {
-  background: #6e94e6 !important;
-  color: black !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+.admin-btn-editar:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
 }
 
 .admin-btn-eliminar {
-  background: #dc3545 !important;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
   color: white !important;
+  padding: 6px 8px !important;
+  font-size: 14px !important;
+}
+
+.admin-btn-eliminar:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3) !important;
 }
 
 .admin-btn-seguimientos {
-  background: #1f3b5c !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
 }
 
-.admin-btn-abrir-prospeccion {
-  background: #2b3b70 !important;
+.admin-btn-seguimientos:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
+}
+
+.admin-btn-historial {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
   color: white !important;
+}
+
+.admin-btn-historial:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3) !important;
+}
+
+.admin-btn-abrir-prospeccion {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+}
+
+.admin-btn-abrir-prospeccion:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3) !important;
 }
 
 /* ➕ Crear nuevo */

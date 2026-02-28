@@ -89,7 +89,7 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
       return;
     }
 
-    const estadosFinales = ["Cierre", "Competencia"];
+    const estadosFinales = ["Cierre de venta", "Competencia"];
     if (!estadosFinales.includes(nombreEstado)) {
       setMostrarModal(true);
       return;
@@ -99,7 +99,7 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
       const token = localStorage.getItem("token");
 
       let monto_cierre = null;
-      if (nombreEstado === "Cierre") {
+      if (nombreEstado === "Cierre de venta") {
         const monto = prompt("Por favor, ingresa el monto de cierre de la venta:");
         const montoNumerico = parseFloat(monto);
         if (!monto || isNaN(montoNumerico) || montoNumerico <= 0) {

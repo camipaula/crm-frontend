@@ -17,7 +17,7 @@ const AgendarSeguimiento = () => {
   const [error, setError] = useState("");
   const [prospecto, setProspecto] = useState({});
   const [formDataExtra, setFormDataExtra] = useState({});
-const [duracionMinutos, setDuracionMinutos] = useState(30);
+  const [duracionMinutos, setDuracionMinutos] = useState(30);
 
   const cedula_vendedora = obtenerCedulaDesdeToken();
 

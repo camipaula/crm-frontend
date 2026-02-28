@@ -1,13 +1,12 @@
 /* 📌 Contenedor principal del calendario */
 .calendario-container {
   width: 100%;
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
   text-align: center;
+  box-sizing: border-box;
 }
 
 /* 📌 Título */

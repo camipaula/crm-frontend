@@ -1,12 +1,11 @@
 /* 📌 Contenedor principal */
 .seguimientos-container {
   width: 100%;
-  height: calc(100vh - 60px);
-  padding: 20px;
-  overflow-y: auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-sizing: border-box;
 }
 
 /* 📌 Título */
@@ -170,4 +169,147 @@
   .tarjetas-seguimientos-prospecto {
     display: none;
   }
+}
+
+/* 📜 Historial (timeline + chat) */
+.historial-section {
+  margin-top: 32px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8e8e8;
+}
+
+.historial-title {
+  font-size: 20px;
+  color: #0d2a49;
+  margin: 0 0 6px 0;
+}
+
+.historial-desc {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 16px 0;
+}
+
+.historial-error {
+  color: #c0392b;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.historial-loading,
+.historial-empty {
+  color: #666;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+.historial-timeline {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-bottom: 16px;
+}
+
+.historial-item {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border-left: 4px solid transparent;
+}
+
+/* Eventos del sistema: fondo gris/azul claro */
+.historial-item--evento {
+  background: #e8f0f8;
+  border-left-color: #0d2a49;
+}
+
+/* Notas: burbuja tipo chat */
+.historial-item--nota {
+  background: #f0f4f8;
+  border-left-color: #007bff;
+  margin-left: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.historial-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.historial-item-icon {
+  font-size: 1em;
+}
+
+.historial-item-fecha {
+  font-size: 12px;
+  color: #555;
+  font-weight: 500;
+}
+
+.historial-item-usuario {
+  font-size: 13px;
+  color: #0d2a49;
+  font-weight: 600;
+}
+
+.historial-item-mensaje {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.historial-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.historial-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.historial-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.historial-btn-enviar {
+  align-self: flex-start;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.historial-btn-enviar:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.historial-btn-enviar:disabled {
+  background: #aaa;
+  cursor: not-allowed;
 }

@@ -1,12 +1,11 @@
 /* 📌 Contenedor principal */
 .seguimientos-container {
   width: 100%;
-  height: calc(100vh - 60px);
-  padding: 20px;
-  overflow-y: auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-sizing: border-box;
 }
 
 /* 📌 Título */
@@ -84,7 +83,8 @@
 
 /* 📌 Botones de acción */
 .btn-agendar,
-.btn-ver-seguimientos {
+.btn-ver-seguimientos,
+.btn-historial-seguimientos {
   padding: 8px 12px;
   font-size: 14px;
   border: none;
@@ -114,6 +114,16 @@
 .btn-ver-seguimientos:hover {
   background: #0056b3;
 }
+
+.btn-historial-seguimientos {
+  background: #0d9488;
+  color: white;
+}
+
+.btn-historial-seguimientos:hover {
+  background: #0f766e;
+}
+
 .input-busqueda-nombre {
   padding: 8px;
   border-radius: 6px;
@@ -212,6 +222,11 @@
 
   .card-seguimiento .btn-agendar {
     background: #28a745;
+    color: white;
+  }
+
+  .card-seguimiento .btn-historial-seguimientos {
+    background: #0d9488;
     color: white;
   }
 }

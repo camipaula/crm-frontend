@@ -347,8 +347,8 @@ const SeguimientosVendedora = () => {
                     <td>{p.prospecto?.nombre ? p.prospecto.nombre.toUpperCase() : "SIN PROSPECTO"}</td>
 <td>{p.objetivo ? capitalizar(p.objetivo.toUpperCase()) : "SIN OBJETIVO"}</td>
                     <td>
-                      {p.estado_venta?.nombre === "Cierre"
-                        ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+                      {p.estado_venta?.nombre === "Cierre de venta"
+                        ? `Cierre de venta ($${p.monto_cierre?.toFixed(2) || "0.00"})`
                         : capitalizar(p.estado_venta?.nombre) || "NO DEFINIDO"}
                     </td>
 
@@ -375,6 +375,15 @@ const SeguimientosVendedora = () => {
                           onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
                         >
                           📜 Ver Seguimientos
+                        </button>
+                      )}
+                      {p.prospecto?.id_prospecto && (
+                        <button
+                          className="btn-historial-seguimientos"
+                          onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}
+                          title="Ver historial del prospecto"
+                        >
+                          📜 Historial
                         </button>
                       )}
 
@@ -418,8 +427,8 @@ const SeguimientosVendedora = () => {
             <div key={p.id_venta} className="card-seguimiento">
               <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
               <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
-              <p><strong>Estado del Prospecto:</strong> {p.estado_venta?.nombre === "Cierre"
-                ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+              <p><strong>Estado del Prospecto:</strong> {p.estado_venta?.nombre === "Cierre de venta"
+                ? `Cierre de venta ($${p.monto_cierre?.toFixed(2) || "0.00"})`
                 : capitalizar(p.estado_venta?.nombre) || "No definido"}
               </p>
 
@@ -434,6 +443,15 @@ const SeguimientosVendedora = () => {
                   <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>📅 Agendar Primer Seguimiento</button>
                 ) : (
                   <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>📜 Ver Seguimientos</button>
+                )}
+                {p.prospecto?.id_prospecto && (
+                  <button
+                    className="btn-historial-seguimientos"
+                    onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}
+                    title="Ver historial del prospecto"
+                  >
+                    📜 Historial
+                  </button>
                 )}
 
                 <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>

@@ -4,6 +4,13 @@ import { logout } from "../utils/auth";
 import "../styles/sidebar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
+  // Función estándar para manejar clicks en enlaces
+  const handleLinkClick = () => {
+    // Solo cerrar automáticamente en móviles
+    if (window.innerWidth <= 768) {
+      toggleSidebar();
+    }
+  };
   
   return (
     <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
@@ -15,73 +22,62 @@ const Sidebar = ({ isOpen, toggleSidebar, rol }) => {
       <ul className="sidebar-menu">
         {rol === "vendedora" ? (
           <>
-            <li><NavLink to="/vendedora" className="nav-link" onClick={ toggleSidebar }
+            <li><NavLink to="/vendedora" className="nav-link" onClick={handleLinkClick}
             >👩 <span className={isOpen ? "show" : "hide"}>HOME</span></NavLink></li>
 
 
 
 
-            <li><NavLink to="/prospectos-vendedora" className="nav-link" onClick={() => {
-              if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-            }}>📋 <span className={isOpen ? "show" : "hide"}>PROSPECTOS</span></NavLink></li>
+            <li><NavLink to="/prospectos-vendedora" className="nav-link" onClick={handleLinkClick}>📋 <span className={isOpen ? "show" : "hide"}>PROSPECTOS</span></NavLink></li>
 
-            <li><NavLink to="/seguimientos-vendedora" className="nav-link" onClick={() => {
-              if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-            }}
+            <li><NavLink to="/seguimientos-vendedora" className="nav-link" onClick={handleLinkClick}
             >🛠 <span className={isOpen ? "show" : "hide"}>SEGUIMIENTOS</span></NavLink></li>
             {/* <li><NavLink to="/vendedora" className="nav-link">📦 <span className={isOpen ? "show" : "hide"}>Pedidos</span></NavLink></li>
             <li><NavLink to="/vendedora" className="nav-link">👥 <span className={isOpen ? "show" : "hide"}>Clientes</span></NavLink></li>*/}
-            <li><NavLink to="/calendario-vendedora" className="nav-link" onClick={() => {
-              if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-            }}
+            <li><NavLink to="/calendario-vendedora" className="nav-link" onClick={handleLinkClick}
             >📅 <span className={isOpen ? "show" : "hide"}>CALENDARIO</span></NavLink></li>
+            <li><NavLink to="/documentos" className="nav-link" onClick={handleLinkClick}
+            >📁 <span className={isOpen ? "show" : "hide"}>DOCUMENTOS</span></NavLink></li>
           </>
           //Para venedora 
         ) : rol === "admin"  || rol === "lectura" ? (
           <>
             <li>
               <NavLink to="/admin" className="nav-link"
-                onClick={toggleSidebar}
+                onClick={handleLinkClick}
               >👩 <span className={isOpen ? "show" : "hide"}> HOME</span></NavLink>
             </li>
 
             <li>
               <NavLink to="/vendedoras-admin" className="nav-link"
-                onClick={() => {
-                  if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-                }}
+                onClick={handleLinkClick}
               >👩‍💼 <span className={isOpen ? "show" : "hide"}> VENDEDORAS</span></NavLink>
             </li>
 
             <li>
               <NavLink to="/prospectos-admin" className="nav-link" 
-              onClick={() => {
-                if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-              }}
+              onClick={handleLinkClick}
               >📋 <span className={isOpen ? "show" : "hide"}>PROSPECTOS</span></NavLink>
             </li>
 
             <li>
               <NavLink to="/seguimientos-admin" className="nav-link"
-                onClick={() => {
-                  if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-                }}
+                onClick={handleLinkClick}
               > 🛠 <span className={isOpen ? "show" : "hide"} >SEGUIMIENTOS</span></NavLink>
             </li>
             <li>
               <NavLink to="/calendario-admin" className="nav-link" 
-              onClick={() => {
-
-                if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-              }}
+              onClick={handleLinkClick}
               >📅 <span className={isOpen ? "show" : "hide"}>CALENDARIO VENDEDORAS</span></NavLink>
               </li>
+            <li>
+              <NavLink to="/documentos" className="nav-link" onClick={handleLinkClick}
+              >📁 <span className={isOpen ? "show" : "hide"}>DOCUMENTOS</span></NavLink>
+            </li>
             {rol === "admin" && (
   <li>
     <NavLink to="/mi-informacion" className="nav-link"
-      onClick={() => {
-        if (window.innerWidth <= 768) toggleSidebar(); // solo en móviles
-      }}
+      onClick={handleLinkClick}
     >
       🧍 <span className={isOpen ? "show" : "hide"}>MI INFORMACION</span>
     </NavLink>

@@ -1,10 +1,13 @@
 .crear-vendedora-container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    background-color: #f9fafb;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    box-sizing: border-box;
   }
   
   .crear-vendedora-container h1 {

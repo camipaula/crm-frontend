@@ -3,21 +3,19 @@ import D3Funnel from "d3-funnel";
 import PropTypes from "prop-types";
 
 const ordenFases = [
-  "Nuevo",
-  "En Atracción",
-  "En Planeación",
-  "Cierre",
-  "Competencia",
-  "Reabierto",
+  "Captación/ensayo",
+  "Citas",
+  "Cotizaciones",
+  "Seguimiento",
+  "Cierre de venta",
 ];
 
 const colores = [
-  "#9e9e9e",  // Nuevo
-  "#03a9f4",  // En Atracción
-  "#9c27b0",  // En Planeación
-  "#4caf50",  // Cierre
-  "#f44336",  // Competencia
-  "#fdd835",  // Reabierto
+  "#9e9e9e",  // Captación/ensayo
+  "#03a9f4",  // Citas
+  "#9c27b0",  // Cotizaciones
+  "#4caf50",  // Seguimiento
+  "#2e7d32",  // Cierre de venta
 ];
 
 const FunnelD3 = ({ data }) => {

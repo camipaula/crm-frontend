@@ -21,6 +21,7 @@ import SeguimientosAdmin from "./pages/SeguimientosAdmin";
 import VerSeguimientos from "./pages/VerSeguimientos";
 import CalendarioAdmin from "./pages/CalendarioAdmin";
 import MiInformacionAdmin from "./pages/MiInformacionAdmin";
+import Documentos from "./pages/Documentos";
 const App = () => {
   const [isAuth, setIsAuth] = useState(null);
 
@@ -73,8 +74,9 @@ const App = () => {
           <Route path="/calendario-vendedora" element={<Layout><CalendarioVendedora /></Layout>} />
         </Route>
 
-        {/* Rutas comunes */}
+        {/* Rutas comunes (admin, vendedora, lectura) */}
         <Route element={<ProtectedRoute allowedRoles={["admin", "vendedora","lectura"]} />}>
+          <Route path="/documentos" element={<Layout><Documentos /></Layout>} />
           <Route path="/crear-prospecto" element={<Layout><CrearProspecto /></Layout>} />
           <Route path="/editar-prospecto/:id_prospecto" element={<Layout><EditarProspecto /></Layout>} />
           <Route path="/agendar-seguimiento/:id_venta" element={<Layout><AgendarSeguimiento /></Layout>} />

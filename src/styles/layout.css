@@ -1,61 +1,89 @@
-/* layout.css completo actualizado */
+/* 🎨 Layout Moderno */
 .layout {
   display: flex;
   height: 100vh;
   overflow: hidden;
+  background: transparent;
 }
 
 .main-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  width: 100%;
+  height: calc(100vh - 60px);
   margin-top: 60px;
-  padding: 20px;
+  padding: 30px;
   overflow-y: auto;
-  background-color: #bac7f9;
-  min-height: calc(100vh - 100px);
-  min-width: 60vw;
-  max-width: 1400px;
+  overflow-x: hidden;
+  background: transparent;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.main-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.main-container::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.5);
+  border-radius: 10px;
+}
+
+.main-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.7);
 }
 
 .main-container.sidebar-open {
-  margin-left: 250px;
+  margin-left: 260px;
+  width: calc(100% - 260px);
 }
 
 .main-container.sidebar-closed {
-  margin-left: 60px;
+  margin-left: 70px;
+  width: calc(100% - 70px);
 }
 
 .content {
   width: 100%;
-  padding: 2px;
+  max-width: 100%;
+  padding: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
 }
-
-/* 🏠 Ajustes SOLO para Home */
-.dashboard-home.main-container {
-  margin-top: 1px !important;
-}
-
-.dashboard-home.sidebar-open {
-  margin-left: 1px !important;
-}
-
 
 @media (max-width: 768px) {
+  .main-container {
+    padding: 20px 15px;
+    width: 100% !important;
+    margin-left: 0 !important;
+    height: calc(100vh - 60px) !important;
+  }
+  
   .main-container.sidebar-open,
   .main-container.sidebar-closed {
-    margin-left: 0;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 
   .sidebar {
-    width: 75%;
-    left: -100%;
+    width: 280px;
+    left: -280px;
   }
 
   .sidebar.open {
     left: 0;
+  }
+
+  .sidebar.closed {
+    left: -280px;
   }
 
   .toggle-btn {

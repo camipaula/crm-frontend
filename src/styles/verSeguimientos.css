@@ -1,12 +1,11 @@
 /* 📌 Contenedor principal */
 .ver-seguimientos-container {
   width: 100%;
-  min-height: calc(100vh - 60px);
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  max-width: 100%;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+  box-sizing: border-box;
 }
 
 /* 📌 Título */

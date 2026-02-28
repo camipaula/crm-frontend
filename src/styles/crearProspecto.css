@@ -1,23 +1,40 @@
-/* 📌 Contenedor Principal */
+/* 📌 Contenedor Principal Moderno */
 .crear-prospecto-container {
   width: 100% !important;
-  max-width: 800px !important;
-  margin: 0 auto !important;
-  padding: 24px !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 30px !important;
   background: #ffffff !important;
-  border-radius: 12px !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
-  animation: fadeIn 0.5s ease-in-out !important;
-  overflow-y: auto !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e2e8f0 !important;
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 📌 Título */
-h1 {
-  font-size: 24px !important;
-  color: #1f3b5c !important;
+.crear-prospecto-container h1 {
+  font-size: 28px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
   text-align: center !important;
   font-weight: 700 !important;
-  margin-bottom: 24px !important;
+  margin-bottom: 30px !important;
+  letter-spacing: -0.5px !important;
 }
 
 /* 📌 Formularios */
@@ -36,22 +53,26 @@ label {
 }
 
 /* 📌 Inputs / Selects / Textareas */
-input,
-select,
-textarea {
-  padding: 10px 12px !important;
-  border: 1px solid #d0d0d0 !important;
-  border-radius: 8px !important;
+.crear-prospecto-container input,
+.crear-prospecto-container select,
+.crear-prospecto-container textarea {
+  padding: 14px 18px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
   font-size: 15px !important;
-  background: #fdfdfd !important;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+  background: #f8fafc !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-family: inherit !important;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #007bff !important;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15) !important;
+.crear-prospecto-container input:focus,
+.crear-prospecto-container select:focus,
+.crear-prospecto-container textarea:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
+  transform: translateY(-2px) !important;
 }
 
 textarea {
@@ -70,60 +91,59 @@ textarea {
 }
 
 /* 📌 Botones */
-button[type="submit"],
-.btn-cerrar {
-  padding: 12px !important;
+.crear-prospecto-container button[type="submit"],
+.crear-prospecto-container .btn-cerrar {
+  padding: 14px 24px !important;
   font-size: 15px !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   font-weight: 600 !important;
   border: none !important;
   cursor: pointer !important;
-  transition: background 0.3s ease !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-button[type="submit"] {
-  background: #007bff !important;
+.crear-prospecto-container button[type="submit"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
 }
 
-button[type="submit"]:hover {
-  background: #0056b3 !important;
+.crear-prospecto-container button[type="submit"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
 }
 
-.btn-cerrar {
-  background: #dc3545 !important;
+.crear-prospecto-container .btn-cerrar {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
   color: white !important;
   margin-top: 10px !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
 }
 
-.btn-cerrar:hover {
-  background: #c82333 !important;
+.crear-prospecto-container .btn-cerrar:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
 }
 
 /* 📌 Mensajes */
-.success {
-  color: #28a745 !important;
+.crear-prospecto-container .success {
+  color: #10b981 !important;
   text-align: center !important;
-  font-weight: bold !important;
+  font-weight: 600 !important;
+  padding: 12px !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-radius: 8px !important;
+  border-left: 4px solid #10b981 !important;
 }
 
-.error {
-  color: #dc3545 !important;
+.crear-prospecto-container .error {
+  color: #ef4444 !important;
   text-align: center !important;
-  font-weight: bold !important;
-}
-
-
-/* 📌 Animación */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  font-weight: 600 !important;
+  padding: 12px !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-radius: 8px !important;
+  border-left: 4px solid #ef4444 !important;
 }
 
 

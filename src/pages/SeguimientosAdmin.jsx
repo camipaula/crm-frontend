@@ -545,8 +545,8 @@ useEffect(() => {
 
                     <td>{p.objetivo ? capitalizar(p.objetivo.toUpperCase()) : "SIN OBJETIVO"}</td>
                     <td>
-                      {p.estado_venta?.nombre === "Cierre"
-                        ? `Cierre ($${p.monto_cierre?.toFixed(2) || "0.00"})`
+                      {p.estado_venta?.nombre === "Cierre de venta"
+                        ? `Cierre de venta ($${p.monto_cierre?.toFixed(2) || "0.00"})`
                         : capitalizar(p.estado_venta?.nombre) || "No definido"}
                     </td>
 
@@ -570,6 +570,15 @@ useEffect(() => {
                           onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
                         >
                           📜 VER SEGUIMIENTOS
+                        </button>
+                      )}
+                      {p.prospecto?.id_prospecto && (
+                        <button
+                          className="btn-historial-seguimientos"
+                          onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}
+                          title="Ver historial del prospecto"
+                        >
+                          📜 Historial
                         </button>
                       )}
 
@@ -647,6 +656,15 @@ useEffect(() => {
                 ) : (
                   <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
                     📜 Ver
+                  </button>
+                )}
+                {p.prospecto?.id_prospecto && (
+                  <button
+                    className="btn-historial-seguimientos"
+                    onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}
+                    title="Ver historial del prospecto"
+                  >
+                    📜 Historial
                   </button>
                 )}
                 {/* 👉 Botón pequeño para editar */}

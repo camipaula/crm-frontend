@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getRol } from "../utils/auth"; // IMPORTANTE
 
 import "../styles/seguimientosVendedora.css";
+import "../styles/seguimientosProspecto.css";
 import React from "react";
 
 const SeguimientosProspecto = () => {
-
   const { id_prospecto } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const historialSectionRef = useRef(null);
   const [prospecciones, setProspecciones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,8 +27,16 @@ const SeguimientosProspecto = () => {
   //modal nueva prospeccion
   const [mostrarModalAbrirVenta, setMostrarModalAbrirVenta] = useState(false);
   const [nuevoMonto, setNuevoMonto] = useState("");
+  const [nuevoIdCategoriaVenta, setNuevoIdCategoriaVenta] = useState(null);
+  const [categoriasVenta, setCategoriasVenta] = useState([]);
   const [errorCrearVenta, setErrorCrearVenta] = useState("");
 
+  // Historial (timeline / chat)
+  const [historial, setHistorial] = useState([]);
+  const [loadingHistorial, setLoadingHistorial] = useState(false);
+  const [errorHistorial, setErrorHistorial] = useState("");
+  const [nuevaNota, setNuevaNota] = useState("");
+  const [enviandoNota, setEnviandoNota] = useState(false);
 
   const rol = getRol();
   const esSoloLectura = rol === "lectura";
@@ -34,6 +44,109 @@ const SeguimientosProspecto = () => {
   useEffect(() => {
     buscarSeguimientos();
   }, [filtroEstado]);
+
+  const fetchHistorial = async () => {
+    if (!id_prospecto) return;
+    setLoadingHistorial(true);
+    setErrorHistorial("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}/historial`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) throw new Error("Error al cargar historial");
+      const data = await res.json();
+      setHistorial(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setErrorHistorial(err.message);
+      setHistorial([]);
+    } finally {
+      setLoadingHistorial(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistorial();
+  }, [id_prospecto]);
+
+  useEffect(() => {
+    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
+    const token = localStorage.getItem("token");
+    fetch(`${baseUrl}/api/categorias-venta`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((raw) => {
+        const list = Array.isArray(raw)
+          ? raw
+          : raw && Array.isArray(raw.data)
+            ? raw.data
+            : raw && Array.isArray(raw.categorias)
+              ? raw.categorias
+              : [];
+        const normalizadas = list.map((c) => ({
+          id_categoria_venta: c.id_categoria_venta ?? c.id,
+          nombre: c.nombre ?? c.name ?? String(c.id_categoria_venta ?? c.id ?? ""),
+        }));
+        setCategoriasVenta(normalizadas);
+      })
+      .catch(() => setCategoriasVenta([]));
+  }, []);
+
+  useEffect(() => {
+    if (location.hash === "#historial" && historialSectionRef.current) {
+      const t = setTimeout(() => {
+        historialSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, [id_prospecto, location.hash]);
+
+  const handleAgregarNota = async (e) => {
+    e.preventDefault();
+    const texto = nuevaNota.trim();
+    if (!texto || enviandoNota) return;
+    setEnviandoNota(true);
+    setErrorHistorial("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/prospectos/${id_prospecto}/historial`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ mensaje: texto }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || "Error al agregar nota");
+      setNuevaNota("");
+      fetchHistorial();
+    } catch (err) {
+      setErrorHistorial(err.message);
+    } finally {
+      setEnviandoNota(false);
+    }
+  };
+
+  const formatearFechaHistorial = (fechaStr) => {
+    if (!fechaStr) return "";
+    try {
+      return new Date(fechaStr).toLocaleString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return fechaStr;
+    }
+  };
 
   const formatearMonto = (monto) => {
     return monto != null
@@ -178,26 +291,38 @@ const buscarSeguimientos = async () => {
 
 
   const handleCrearVenta = async () => {
+    setErrorCrearVenta("");
+    if (!nuevoObjetivo?.trim()) {
+      setErrorCrearVenta("Ingresa el objetivo de la prospección.");
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
+      const montoNum = nuevoMonto === "" || nuevoMonto == null ? null : parseFloat(nuevoMonto);
+      const body = {
+        id_prospecto: Number(id_prospecto),
+        objetivo: nuevoObjetivo.trim(),
+        estado: "Captación/ensayo",
+      };
+      if (montoNum != null && !Number.isNaN(montoNum)) body.monto_proyectado = montoNum;
+      if (nuevoIdCategoriaVenta != null) body.id_categoria_venta = nuevoIdCategoriaVenta;
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ventas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          id_prospecto,
-          objetivo: nuevoObjetivo,
-          monto_proyectado: parseFloat(nuevoMonto),
-        }),
+        body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Error creando nueva prospección");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.message || data?.error || "Error creando nueva prospección");
       alert("Venta creada correctamente");
       setMostrarModalAbrirVenta(false);
       setNuevoObjetivo("");
       setNuevoMonto("");
+      setNuevoIdCategoriaVenta(null);
       buscarSeguimientos();
     } catch (err) {
       setErrorCrearVenta(err.message);
@@ -383,6 +508,65 @@ const buscarSeguimientos = async () => {
           );
         })}
       </div>
+
+      {/* 📜 Historial (timeline + chat) */}
+      <section className="historial-section" ref={historialSectionRef} id="historial">
+        <h2 className="historial-title">📜 Historial</h2>
+        <p className="historial-desc">Timeline del prospecto: eventos del sistema y notas del equipo.</p>
+
+        {errorHistorial && <p className="historial-error">{errorHistorial}</p>}
+        {loadingHistorial ? (
+          <p className="historial-loading">Cargando historial…</p>
+        ) : (
+          <>
+            <div className="historial-timeline">
+              {historial.length === 0 ? (
+                <p className="historial-empty">Aún no hay actividad en el historial.</p>
+              ) : (
+                historial.map((item) => (
+                  <div
+                    key={item.id_historial}
+                    className={`historial-item ${item.tipo === "nota" ? "historial-item--nota" : "historial-item--evento"}`}
+                  >
+                    <div className="historial-item-header">
+                      <span className="historial-item-icon">
+                        {item.tipo === "nota" ? "💬" : "🟦"}
+                      </span>
+                      <span className="historial-item-fecha">
+                        {formatearFechaHistorial(item.created_at)}
+                      </span>
+                      {item.usuario?.nombre && (
+                        <span className="historial-item-usuario">{item.usuario.nombre}</span>
+                      )}
+                    </div>
+                    <div className="historial-item-mensaje">{item.mensaje}</div>
+                  </div>
+                ))
+              )}
+            </div>
+            {!esSoloLectura && (
+              <form className="historial-form" onSubmit={handleAgregarNota}>
+                <textarea
+                  className="historial-textarea"
+                  placeholder="Escribe una nota para el equipo…"
+                  value={nuevaNota}
+                  onChange={(e) => setNuevaNota(e.target.value)}
+                  rows={3}
+                  disabled={enviandoNota}
+                />
+                <button
+                  type="submit"
+                  className="historial-btn-enviar"
+                  disabled={enviandoNota || !nuevaNota.trim()}
+                >
+                  {enviandoNota ? "Enviando…" : "Agregar nota"}
+                </button>
+              </form>
+            )}
+          </>
+        )}
+      </section>
+
       {/* 🟩 Modal Editar Objetivo */}
       {modalEditar && (
         <div className="modal-backdrop">
@@ -451,6 +635,19 @@ const buscarSeguimientos = async () => {
               onChange={(e) => setNuevoMonto(e.target.value)}
               placeholder="Ej: 5000"
             />
+
+            <label>Categoría de venta</label>
+            <select
+              value={nuevoIdCategoriaVenta ?? ""}
+              onChange={(e) => setNuevoIdCategoriaVenta(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">Seleccione categoría de venta...</option>
+              {categoriasVenta.map((c) => (
+                <option key={c.id_categoria_venta} value={c.id_categoria_venta}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
 
             {errorCrearVenta && <p className="error">{errorCrearVenta}</p>}
 

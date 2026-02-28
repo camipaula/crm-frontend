@@ -1,45 +1,73 @@
-/* 📌 Contenedor Principal */
+/* 📌 Contenedor Principal Moderno */
 .agendar-container {
   width: 100%;
-  max-width: 600px; /* 🔥 Ajusta el ancho máximo */
-  min-width: 50vw;  /* 🔥 Se adapta en pantallas grandes */
-  margin: 50px auto;
+  max-width: 100%;
+  margin: 0;
   padding: 30px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
   text-align: center;
+  animation: fadeInUp 0.5s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 📌 Título */
-h1 {
-  font-size: 24px;
-  color: #333;
-  font-weight: bold;
-  margin-bottom: 20px;
+.agendar-container h1 {
+  font-size: 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
 }
 
 /* 📌 Estilos del Formulario */
-form {
+.agendar-container form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 /* 📌 Campos de entrada */
-input, textarea {
+.agendar-container input,
+.agendar-container textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 14px 18px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
   font-size: 16px;
   outline: none;
-  transition: 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #f8fafc;
+  font-family: inherit;
 }
 
-input:focus, textarea:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+.agendar-container input:focus,
+.agendar-container textarea:focus {
+  border-color: #667eea;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.agendar-container textarea {
+  resize: vertical;
+  min-height: 120px;
 }
 
 /* 📌 Selector de Seguimiento */
@@ -48,41 +76,61 @@ input:focus, textarea:focus {
 }
 
 /* 📌 Botón */
-button {
-  padding: 12px;
-  background: #28a745;
+.agendar-container button {
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  margin-top: 10px;
 }
 
-button:hover {
-  background: #218838;
+.agendar-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.agendar-container button:active {
+  transform: translateY(0);
 }
 
 /* 📌 Mensajes de error */
-.error {
-  color: red;
+.agendar-container .error {
+  color: #ef4444;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   margin-top: 10px;
+  padding: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #ef4444;
 }
 
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .agendar-container {
-    min-width: 71vw; /* 🔥 Se expande en móviles */
-    padding: 10%;
+    min-width: 85vw;
+    padding: 30px 20px;
+    margin: 30px auto;
   }
 
-  input, textarea {
-    font-size: 14px;
+  .agendar-container h1 {
+    font-size: 24px;
   }
 
-  button {
+  .agendar-container input,
+  .agendar-container textarea {
     font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .agendar-container button {
+    font-size: 15px;
+    padding: 12px 20px;
   }
 }
