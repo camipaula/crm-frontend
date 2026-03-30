@@ -14,51 +14,48 @@ const Layout = ({ children, extraClass }) => {
     const userRol = getRol();
     setRol(userRol);
 
-    // ✅ Restaurar estado del sidebar desde localStorage o establecer por defecto
-    const savedSidebarState = localStorage.getItem('sidebarOpen');
+    const savedSidebarState = localStorage.getItem("sidebarOpen");
     const isMobile = window.innerWidth <= 768;
-    
+
     if (savedSidebarState !== null) {
-      // Si hay un estado guardado, usarlo (pero en móvil siempre cerrado)
-      setIsSidebarOpen(isMobile ? false : savedSidebarState === 'true');
+      setIsSidebarOpen(isMobile ? false : savedSidebarState === "true");
     } else {
-      // Por defecto: abierto en escritorio, cerrado en móvil
       setIsSidebarOpen(!isMobile);
     }
 
     setLoading(false);
 
-    // ✅ Manejar cambios de tamaño de ventana
     const handleResize = () => {
       const isMobileNow = window.innerWidth <= 768;
-      const savedState = localStorage.getItem('sidebarOpen');
-      
-      // En móvil siempre cerrado, en escritorio restaurar estado guardado o abierto por defecto
+      const savedState = localStorage.getItem("sidebarOpen");
       if (isMobileNow) {
         setIsSidebarOpen(false);
       } else if (savedState !== null) {
-        setIsSidebarOpen(savedState === 'true');
+        setIsSidebarOpen(savedState === "true");
       } else {
         setIsSidebarOpen(true);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Guardar estado del sidebar cuando cambie
   useEffect(() => {
     if (!loading) {
-      localStorage.setItem('sidebarOpen', isSidebarOpen.toString());
+      localStorage.setItem("sidebarOpen", isSidebarOpen.toString());
     }
   }, [isSidebarOpen, loading]);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
-  if (loading) return <div className="loading">Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="layout-loading">
+        <div className="layout-loading-spinner" />
+      </div>
+    );
+  }
 
   return (
     <div className="layout">
@@ -70,9 +67,13 @@ const Layout = ({ children, extraClass }) => {
         rol={rol}
       />
 
-<div className={`main-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"} ${extraClass || ""}`}>
+      <main
+        className={`main-container ${
+          isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+        } ${extraClass || ""}`}
+      >
         <div className="content">{children}</div>
-      </div>
+      </main>
     </div>
   );
 };
@@ -81,6 +82,5 @@ Layout.propTypes = {
   children: PropTypes.node.isRequired,
   extraClass: PropTypes.string,
 };
-
 
 export default Layout;

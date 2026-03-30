@@ -1,0 +1,315 @@
+/* 📌 Contenedor principal */
+.seguimientos-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* 📌 Título */
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #0d2a49;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 🎯 Filtros */
+.filtros-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filtros-container select {
+  padding: 8px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* 📋 Tabla (solo escritorio) */
+.tabla-seguimientos-prospecto-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-seguimientos-prospecto {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 15px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tabla-seguimientos-prospecto th,
+.tabla-seguimientos-prospecto td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabla-seguimientos-prospecto th {
+  background: #0d2a49;
+  color: white;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.tabla-seguimientos-prospecto tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* 📌 Botones de acción */
+.btn-agendar,
+.btn-ver-seguimientos {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 2px;
+  white-space: nowrap;
+}
+
+.btn-agendar {
+  background: #28a745;
+  color: white;
+}
+
+.btn-agendar:hover {
+  background: #218838;
+}
+
+.btn-ver-seguimientos {
+  background: #007bff;
+  color: white;
+}
+
+.btn-ver-seguimientos:hover {
+  background: #0056b3;
+}
+
+/* ❗ Mensaje de error */
+.error {
+  color: red;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* 📱 Móviles: Tarjetas */
+@media (max-width: 768px) {
+  .tabla-seguimientos-prospecto {
+    display: none;
+  }
+
+  .tarjetas-seguimientos-prospecto {
+    display: block;
+    margin-top: 20px;
+  }
+
+  .card-seguimiento {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-seguimiento h3 {
+    margin-bottom: 10px;
+    color: #0d2a49;
+  }
+
+  .card-seguimiento p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+
+  .card-seguimiento .acciones {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .card-seguimiento .acciones button {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .card-seguimiento .btn-ver-seguimientos {
+    background: #007bff;
+    color: white;
+  }
+
+  .card-seguimiento .btn-agendar {
+    background: #28a745;
+    color: white;
+  }
+}
+
+/* 🖥️ Escritorio: Ocultar tarjetas */
+@media (min-width: 769px) {
+  .tarjetas-seguimientos-prospecto {
+    display: none;
+  }
+}
+
+/* 📜 Historial (timeline + chat) */
+.historial-section {
+  margin-top: 32px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8e8e8;
+}
+
+.historial-title {
+  font-size: 20px;
+  color: #0d2a49;
+  margin: 0 0 6px 0;
+}
+
+.historial-desc {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 16px 0;
+}
+
+.historial-error {
+  color: #c0392b;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.historial-loading,
+.historial-empty {
+  color: #666;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+.historial-timeline {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-bottom: 16px;
+}
+
+.historial-item {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border-left: 4px solid transparent;
+}
+
+/* Eventos del sistema: fondo gris/azul claro */
+.historial-item--evento {
+  background: #e8f0f8;
+  border-left-color: #0d2a49;
+}
+
+/* Notas: burbuja tipo chat */
+.historial-item--nota {
+  background: #f0f4f8;
+  border-left-color: #007bff;
+  margin-left: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.historial-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.historial-item-icon {
+  font-size: 1em;
+}
+
+.historial-item-fecha {
+  font-size: 12px;
+  color: #555;
+  font-weight: 500;
+}
+
+.historial-item-usuario {
+  font-size: 13px;
+  color: #0d2a49;
+  font-weight: 600;
+}
+
+.historial-item-mensaje {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.historial-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.historial-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.historial-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.historial-btn-enviar {
+  align-self: flex-start;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.historial-btn-enviar:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.historial-btn-enviar:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}

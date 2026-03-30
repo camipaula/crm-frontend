@@ -1,287 +1,655 @@
-/* 📌 Contenedor principal */
-.vendedora-prospectos-page {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0 !important;
-  overflow: visible !important;
-  background: transparent !important;
-  box-sizing: border-box !important;
-}
+/* =============================================
+   PROSPECTOS VENDEDORA — estilo similar a admin
+   ============================================= */
 
-/* 📌 Título */
-.vendedora-prospectos-title {
-  font-size: 26px !important;
-  font-weight: bold !important;
-  color: #333 !important;
-  margin-bottom: 20px !important;
-}
-
-
-
-/* 📌 Botón nuevo prospecto */
-.vendedora-btn-nuevo-prospecto {
-  width: 100% !important;
-  margin-bottom: 20px !important;
-  padding: 12px !important;
-  font-size: 18px !important;
-  background: #2dab21db !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-}
-
-.filtro-grupo-nombre{
-  display: flex !important;
-  flex-wrap: wrap !important;
-  padding: 20px !important;
-  background: #f5f5f5 !important;
-  margin-bottom: 20px !important;
-  margin-top: 20px !important;
-
-}
-/* 📌 Filtros */
-.vendedora-filtros {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 15px !important;
-  margin-bottom: 20px !important;
-  padding: 20px !important;
-  background: #f5f5f5 !important;
-  border-radius: 10px !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-}
-
-.vendedora-filtros select,
-.vendedora-filtros input {
-  padding: 10px !important;
-  font-size: 15px !important;
-  border: 1px solid #ddd !important;
-  border-radius: 6px !important;
-  outline: none !important;
-}
-
-.vendedora-filtros button {
-  padding: 10px 20px !important;
-  background: #0d2a49 !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-}
-.vendedora-filtros button:hover {
-  background: #1a3966 !important;
-}
-
-/* 📌 Tabla */
-.vendedora-prospectos-table {
-  all: unset; /* 🧼 Limpia cualquier estilo heredado */
-  display: table !important;
-  width: 100% !important;
-  border-collapse: collapse !important;
-  margin-top: 20px !important;
-  font-size: 16px !important;
-  background: white !important;
-  border-radius: 10px !important;
-  overflow: hidden !important;
-}
-
-.vendedora-prospectos-table th,
-.vendedora-prospectos-table td {
-  border: 1px solid #ddd !important;
-  padding: 15px !important;
-  text-align: left !important;
-}
-
-.vendedora-prospectos-table th {
-  background: #0d2a49 !important;
-  color: white !important;
-  text-transform: uppercase !important;
-}
-
-.vendedora-prospectos-table tr:nth-child(even) {
-  background: #f9f9f9 !important;
-}
-
-.botones-acciones button {
-  min-width: 180px; /* 🟩 Opcional para simetría */
-  text-align: center;
-}
-
-
-/* 📌 Botones */
-.vendedora-btn-editar,
-.vendedora-btn-eliminar,
-.vendedora-btn-seguimientos,
-.vendedora-btn-historial,
-.vendedora-btn-abrir-prospeccion {
-  padding: 8px 12px !important;
-  border: none !important;
-  border-radius: 6px !important;
-  margin: 4px !important;
-  cursor: pointer !important;
-  font-size: 14px !important;
-  transition: background 0.3s !important;
-}
-
-.vendedora-btn-editar {
-  background: #0793ff7a !important;
-  color: black !important;
-}
-
-.vendedora-btn-eliminar {
-  background: #dc3545 !important;
-  color: white !important;
-}
-
-.vendedora-btn-seguimientos {
-  background: #1f3b5c !important;
-  color: white !important;
-}
-
-.vendedora-btn-historial {
-  background: #0d9488 !important;
-  color: white !important;
-}
-
-.vendedora-btn-abrir-prospeccion {
-  background: #1f3b5c !important;
-  color: white !important;
-}
-
-/* 📌 Error */
-.error {
-  color: red !important;
-  font-size: 14px !important;
-  margin-top: 10px !important;
-}
-
-.input-busqueda-nombre {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  min-width: 200px;
-  margin: 0 10px;
-}
- 
-/* ❌ Ocultar tarjetas en escritorio */
-.vendedora-cards-mobile {
-  display: none !important;
-}
-
-.btn-toggle-filtros {
-  background-color: #a09bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.paginador-lindo {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.paginador-contenido {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.btn-paginador {
-  background-color: #6c63ff;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.btn-paginador:hover {
-  background-color: #5148d6;
-}
-
-.paginador-info {
-  font-weight: normal;
-}
-
-
-/* 📱 Responsive */
-@media (max-width: 768px) {
-  .vendedora-prospectos-page {
-    padding: 15px !important;
+   .pv2-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    font-family: "DM Sans", system-ui, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
   }
-
-  .vendedora-filtros {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    padding: 15px !important;
+  
+  .pv2-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
   }
-
-  .vendedora-filtros select,
-  .vendedora-filtros input {
-    font-size: 13px !important;
-    padding: 8px !important;
+  
+  .pv2-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
-
-  .vendedora-filtros button {
-    font-size: 14px !important;
-    padding: 8px 12px !important;
+  
+  .pv2-title {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 4px;
+    letter-spacing: -0.03em;
   }
-
-  .vendedora-btn-nuevo-prospecto {
-    font-size: 16px !important;
-    padding: 10px !important;
+  
+  .pv2-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
   }
-
-  .vendedora-prospectos-table {
-    display: none !important;
+  
+  .pv2-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
   }
-
-  .vendedora-cards-mobile {
-    display: block !important;
-    margin-top: 20px !important;
+  
+  .pv2-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
   }
-
-  .vendedora-prospecto-card {
-    background: #fff !important;
-    border: 1px solid #ccc !important;
-    border-radius: 12px !important;
-    padding: 15px !important;
-    margin-bottom: 15px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  
+  .pv2-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(108, 95, 240, 0.4);
   }
-
-  .vendedora-prospecto-card h3 {
-    margin: 0 0 8px 0 !important;
-    font-size: 18px !important;
-    color: #0d2a49 !important;
+  
+  .pv2-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
-
-  .vendedora-prospecto-card p {
-    margin: 4px 0 !important;
-    font-size: 14px !important;
+  
+  .pv2-btn-ghost:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    transform: translateY(-1px);
   }
-
-  .vendedora-prospecto-card .acciones {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    margin-top: 10px !important;
+  
+  .pv2-btn-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #ffffff;
+    color: #475569;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    white-space: nowrap;
   }
-
-  .vendedora-prospecto-card .acciones button {
-    font-size: 13px !important;
-    padding: 6px 10px !important;
-    border: none !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
+  
+  .pv2-btn-filter:hover {
+    background: #f8fafc;
+    border-color: #6c5ff0;
+    color: #6c5ff0;
   }
-}
+  
+  .pv2-btn-filter.active {
+    background: #f5f3ff;
+    border: 1px solid #6c5ff0;
+    color: #6c5ff0;
+  }
+  
+  .pv2-filter-dot {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 10px;
+    height: 10px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    animation: pv2PulseDot 2s infinite;
+  }
+  
+  @keyframes pv2PulseDot {
+    0% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+  }
+  
+  .pv2-search-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  }
+  
+  .pv2-search-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  
+  .pv2-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .pv2-search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  
+  .pv2-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .pv2-search-input {
+    padding-left: 40px !important;
+  }
+  
+  .pv2-input:focus,
+  .pv2-select:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #6c5ff0;
+    box-shadow: 0 0 0 3px rgba(108, 95, 240, 0.15);
+  }
+  
+  .pv2-input::placeholder {
+    color: #94a3b8;
+  }
+  
+  .pv2-select {
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #0f172a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 180px;
+  }
+  
+  .pv2-filters-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    animation: pv2SlideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+  
+  @keyframes pv2SlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .pv2-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px 20px;
+    padding: 24px;
+  }
+  
+  .pv2-filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .pv2-filter-item label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .pv2-filters-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .pv2-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  }
+  
+  .pv2-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+  }
+  
+  .pv2-pagination-info {
+    font-size: 13.5px;
+    color: #64748b;
+  }
+  
+  .pv2-pagination-info strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+  
+  .pv2-pagination-btns {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .pv2-page-btn {
+    height: 36px;
+    min-width: 36px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .pv2-page-btn:hover:not(:disabled) {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+  }
+  
+  .pv2-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+  .pv2-table-wrap {
+    overflow-x: auto;
+    max-height: 600px;
+  }
+  
+  .pv2-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  
+  .pv2-table thead th {
+    position: sticky;
+    top: 0;
+    background: rgba(248, 250, 252, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    padding: 14px 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 0 #e2e8f0;
+  }
+  
+  .pv2-table td {
+    padding: 16px 20px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    background: #ffffff;
+    transition: all 0.2s ease;
+  }
+  
+  .pv2-table tbody tr {
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .pv2-table tbody tr:hover td {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  
+  .pv2-table tbody tr:hover {
+    box-shadow: inset 4px 0 0 0 #6c5ff0;
+  }
+  
+  .pv2-td-num {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    width: 40px;
+  }
+  
+  .pv2-td-name {
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .pv2-td-note {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #64748b;
+    font-size: 13px;
+  }
+  
+  .pv2-muted {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 12.5px;
+  }
+  
+  .pv2-date {
+    font-size: 13px;
+    color: #334155;
+    font-weight: 600;
+  }
+  
+  .pv2-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+  }
+  
+  .pv2-badge-gray {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .pv2-badge-blue {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+  }
+  
+  .pv2-badge-green {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+  }
+  
+  .pv2-td-actions {
+    text-align: right;
+    white-space: nowrap;
+  }
+  
+  .pv2-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 62px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    cursor: pointer;
+    margin-left: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .pv2-icon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .pv2-icon-btn--view:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #2563eb;
+  }
+  
+  .pv2-icon-btn--add:hover {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #16a34a;
+  }
+  
+  .pv2-empty {
+    text-align: center;
+    padding: 40px 16px;
+  }
+  
+  .pv2-empty-inner {
+    color: #64748b;
+    font-weight: 600;
+  }
+  
+  .pv2-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 20px;
+    color: #64748b;
+    font-weight: 600;
+  }
+  
+  .pv2-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd6fe;
+    border-top-color: #6c5ff0;
+    border-radius: 50%;
+    animation: pv2Spin 0.8s linear infinite;
+  }
+  
+  @keyframes pv2Spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .pv2-alert-error {
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+  }
+  
+  .pv2-mobile-view {
+    display: none;
+  }
+  
+  @media (max-width: 800px) {
+    .pv2-table-wrap {
+      display: none;
+    }
+  
+    .pv2-mobile-view {
+      display: block;
+      padding: 16px;
+      background: #f8fafc;
+    }
+  
+    .pv2-mc {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s;
+    }
+  
+    .pv2-mc:active {
+      transform: scale(0.98);
+    }
+  
+    .pv2-mc-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+  
+    .pv2-mc-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+  
+    .pv2-mc-meta {
+      font-size: 13.5px;
+      color: #475569;
+      margin: 0 0 6px;
+    }
+  
+    .pv2-mc-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f1f5f9;
+      flex-wrap: wrap;
+    }
+  
+    .pv2-mc-actions button {
+      flex: 1;
+      min-width: 80px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .pv2-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+    }
+  
+    .pv2-header-actions {
+      width: 100%;
+      justify-content: stretch;
+    }
+  
+    .pv2-header-actions button {
+      flex: 1;
+      justify-content: center;
+    }
+  
+    .pv2-search-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .pv2-search-left {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .pv2-search-wrap {
+      width: 100%;
+    }
+  
+    .pv2-select {
+      width: 100%;
+    }
+  
+    .pv2-filters-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .pv2-pagination {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+  
+    .pv2-pagination-btns {
+      justify-content: flex-end;
+    }
+  }

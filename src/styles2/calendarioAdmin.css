@@ -1,0 +1,183 @@
+/* 📌 Contenedor principal del calendario */
+.calendario-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* 📌 Título */
+.calendario-container h2 {
+  font-size: 24px;
+  color: #0d2a49;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.btn-registrar {
+  background: #ffc107 !important;
+  color: black !important;
+}
+
+/* 📅 Botones */
+.btn-agendar {
+  background: #007bffbb !important;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+  margin: 10px 5px;
+}
+
+.btn-agendar:hover {
+  background: #0056b3;
+}
+
+.evento-mes {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  max-width: 100%;
+  display: block;
+}
+
+/* 📅 Estilos del Calendario */
+.fc {
+  max-width: 100%;
+  margin: 10px auto;
+}
+
+
+/* 📅 Encabezado del calendario */
+.fc-toolbar-title {
+  font-size: 18px !important; /* 🔹 Fecha más pequeña en desktop */
+}
+
+/* 🔹 Reduce el tamaño de los eventos */
+.fc-event {
+  border-radius: 6px;
+  padding: 4px 5px;
+  font-size: 12px !important; 
+  margin: 4px 0;
+  text-align: center;
+}
+
+/* 📅 Ajustes de columnas */
+.fc-daygrid-day-number {
+  font-size: 13px !important;
+}
+
+/* 🔹 Ajustamos el modal para detalles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* 💥 Esta línea es clave */
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: left;
+  z-index: 10000; /* Para estar encima de todo */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+
+.modal-content h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.modal-content button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #dc3545;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.modal-content button:hover {
+  background: #b02a37;
+}
+
+/* 📱 Responsive - Ajustar en pantallas pequeñas */
+@media (max-width: 768px) {
+  .calendario-container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .calendario-container h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .btn-agendar{
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  /* 📅 Ajustar el calendario en móvil */
+  .fc-toolbar-title {
+    font-size: 14px !important; /* 🔹 Fecha más pequeña */
+  }
+
+  .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+    margin-left: 1% !important;
+    margin-top: 10% !important;
+}
+  .fc-daygrid-day-number {
+    font-size: 10px !important;
+  }
+
+  .fc-event {
+    font-size: 10px !important;
+    padding: 3px;
+  }
+
+  /* Ajustar el modal en móviles */
+  .modal-content {
+    width: 90%;
+    max-width: 350px;
+  }
+
+  .modal-content h3 {
+    font-size: 16px;
+  }
+
+  .modal-content p {
+    font-size: 13px;
+  }
+
+  .modal-content button {
+    font-size: 13px;
+  }
+}

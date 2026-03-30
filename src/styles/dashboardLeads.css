@@ -1,0 +1,233 @@
+/* =============================================
+   DASHBOARD LEADS (DEMO) — SaaS Premium
+   ============================================= */
+
+   .dl-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    box-sizing: border-box;
+    animation: fadeInDl 0.4s ease-out;
+  }
+  
+  @keyframes fadeInDl {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* ─── Header ────────────────────────────────── */
+  .dl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .dl-header-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .dl-btn-outline {
+    background: #ffffff; border: 1px solid #cbd5e1; color: #475569;
+    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; width: fit-content;
+  }
+  .dl-btn-outline:hover { background: #f1f5f9; color: #0f172a; }
+  
+  .dl-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+  
+  .dl-subtitle { font-size: 14.5px; color: #64748b; margin: 0; font-weight: 500; }
+  
+  .dl-badge-demo {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px dashed #fca5a5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+  
+  .dl-badge-info {
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  /* ─── KPIs (Tarjetas Superiores) ────────────── */
+  .dl-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  
+  .dl-stat-card {
+    background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 24px; position: relative; overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  
+  .dl-stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+  .dl-stat-card.border-blue::before { background: #3b82f6; }
+  .dl-stat-card.border-purple::before { background: #8b5cf6; }
+  .dl-stat-card.border-orange::before { background: #f97316; }
+  .dl-stat-card.border-green::before { background: #10b981; }
+  
+  .dl-stat-label { font-size: 12.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dl-stat-value { font-size: 34px; font-weight: 800; color: #0f172a; line-height: 1; }
+  .dl-stat-sub { font-size: 13px; font-weight: 600; }
+  .dl-stat-sub.green { color: #10b981; }
+  .dl-stat-sub.gray { color: #94a3b8; }
+  
+  /* ─── Grid y Gráficos ───────────────────────── */
+  .dl-main-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+  }
+  
+  .dl-card {
+    background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column;
+  }
+  
+  .dl-card.col-8 { grid-column: span 8; }
+  .dl-card.col-4 { grid-column: span 4; }
+  .dl-card.col-12 { grid-column: span 12; }
+  
+  .dl-card-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  
+  .dl-card-title { margin: 0 0 20px 0; font-size: 17px; font-weight: 800; color: #0f172a; }
+  .dl-card-header .dl-card-title { margin: 0; }
+  
+  .dl-chart-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 280px; }
+  
+  /* ─── 🔥 NUEVO: Métricas Clave de Marketing ─── */
+  .dl-highlight-card {
+    background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+    border: 1px solid #e2e8f0;
+  }
+  
+  .dl-marketing-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  
+  .dl-mk-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+  
+  .dl-mk-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    border-color: #cbd5e1;
+  }
+  
+  .dl-mk-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  
+  .dl-mk-value {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  
+  .dl-mk-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+    margin: 0;
+  }
+  
+  /* Colores de las métricas */
+  .text-blue { color: #3b82f6; }
+  .text-green { color: #10b981; }
+  .text-purple { color: #8b5cf6; }
+  .text-orange { color: #f97316; }
+  .text-red { color: #ef4444; }
+  
+  
+  /* ─── Tabla de Leads ────────────────────────── */
+  .dl-table-wrapper { overflow-x: auto; }
+  .dl-table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 13.5px; }
+  
+  .dl-table th {
+    background: #f8fafc; color: #64748b; font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .dl-table td { padding: 16px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+  .dl-table tbody tr:hover td { background: #f8fafc; }
+  
+  .dl-font-bold { font-weight: 700; color: #0f172a; }
+  .dl-muted { color: #94a3b8; font-size: 13px; }
+  
+  .dl-social-tag {
+    padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  }
+  
+  .dl-status-badge {
+    display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .dl-status-badge.nuevo { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .dl-status-badge.contactado { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+  .dl-status-badge.calificado { background: #f5f3ff; color: #8b5cf6; border: 1px solid #ddd6fe; }
+  .dl-status-badge.convertido { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  
+  .dl-btn-action {
+    background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a;
+    padding: 6px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: 0.2s;
+  }
+  .dl-btn-action:hover { background: #f1f5f9; border-color: #94a3b8; }
+  
+  .dl-btn-primary {
+    background: #0f172a; color: white; border: none; padding: 8px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
+  }
+  .dl-btn-primary:hover { background: #1e293b; }
+  
+  /* ─── Responsive ────────────────────────────── */
+  @media (max-width: 1024px) {
+    .dl-card.col-8, .dl-card.col-4 { grid-column: span 12; }
+    .dl-marketing-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  }
+  
+  @media (max-width: 768px) {
+    .dl-marketing-grid { grid-template-columns: 1fr; }
+  }

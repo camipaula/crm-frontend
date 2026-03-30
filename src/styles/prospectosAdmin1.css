@@ -1,451 +1,445 @@
-/* 📌 Contenedor principal moderno */
-.admin-prospectos-page {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0 !important;
-  overflow: visible !important;
-  background: transparent !important;
-  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  box-sizing: border-box !important;
-}
+/* =============================================
+   PROSPECTOS ADMIN — SaaS Premium Light Theme
+   ============================================= */
 
-.admin-prospectos-filtros {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-}
-
-.admin-prospectos-table {
-  background: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e2e8f0 !important;
-}
-
-.admin-prospectos-page::-webkit-scrollbar {
-  width: 8px;
-}
-
-.admin-prospectos-page::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-.admin-prospectos-page::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.5);
-  border-radius: 10px;
-}
-
-.admin-prospectos-page::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.7);
-}
-
-/* 📌 Título */
-.admin-prospectos-title {
-  font-size: 32px !important;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  font-weight: 700 !important;
-  text-align: center !important;
-  margin-bottom: 30px !important;
-  letter-spacing: -0.5px !important;
-}
-
-/* 📌 Filtros */
-.admin-prospectos-filtros {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
-  gap: 15px !important;
-  padding: 25px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px) !important;
-  border-radius: 16px !important;
-  margin-bottom: 30px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
-  transition: transform 0.3s ease !important;
-}
-
-.admin-prospectos-filtros:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
-}
-
-.filtro-grupo {
-  display: flex !important;
-  flex-direction: column !important;
-  font-size: 14px !important;
-}
-
-.filtro-grupo label {
-  font-weight: 600 !important;
-  margin-bottom: 4px !important;
-  font-size: 13px !important;
-  color: #1f3b5c !important;
-}
-
-.admin-prospectos-filtros select,
-.admin-prospectos-filtros input {
-  font-size: 14px !important;
-  padding: 12px 16px !important;
-  min-height: 44px !important;
-  border: 2px solid #e2e8f0 !important;
-  border-radius: 10px !important;
-  outline: none !important;
-  flex: 1 !important;
-  min-width: 200px !important;
-  background: #f8fafc !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.admin-prospectos-filtros select:focus,
-.admin-prospectos-filtros input:focus {
-  border-color: #667eea !important;
-  background: #ffffff !important;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
-}
-
-.admin-prospectos-filtros button {
-  padding: 12px 20px !important;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 10px !important;
-  cursor: pointer !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-}
-
-.admin-prospectos-filtros button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
-}
-
-/* 📋 Tabla */
-.admin-prospectos-table-wrapper {
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-.admin-prospectos-table {
-  all: unset !important;
-  display: table !important;
-  width: 100% !important;
-  min-width: 1000px;
-  border-collapse: collapse !important;
-  font-size: 16px;
-  margin-top: 20px !important;
-  border-radius: 12px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
-  overflow: hidden !important;
-}
-
-.admin-prospectos-table th,
-.admin-prospectos-table td {
-  padding: 12px 16px;
-  border: 1px solid rgba(226, 232, 240, 0.5) !important;
-  text-align: left !important;
-  font-size: 15px;
-}
-
-/* Columna de acciones más compacta */
-.admin-prospectos-table th:last-child,
-.admin-prospectos-table td:last-child {
-  width: auto !important;
-  min-width: 180px !important;
-  max-width: 220px !important;
-  padding: 8px 12px !important;
-}
-
-.admin-prospectos-table th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  text-transform: uppercase !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.5px !important;
-}
-
-.admin-prospectos-table tr:nth-child(even) {
-  background: #f9f9f9 !important;
-}
-
-/* 🛠️ Contenedor de botones de acción en tabla */
-.admin-botones-acciones {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 4px !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  min-width: 200px !important;
-}
-
-/* 🛠️ Botones acción */
-.admin-btn-editar,
-.admin-btn-eliminar,
-.admin-btn-seguimientos,
-.admin-btn-historial,
-.admin-btn-abrir-prospeccion {
-  padding: 6px 10px !important;
-  border: none !important;
-  border-radius: 6px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  margin: 0 !important;
-  cursor: pointer !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  white-space: nowrap !important;
-  line-height: 1.2 !important;
-}
-
-.admin-btn-editar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-}
-
-.admin-btn-editar:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
-}
-
-.admin-btn-eliminar {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  color: white !important;
-  padding: 6px 8px !important;
-  font-size: 14px !important;
-}
-
-.admin-btn-eliminar:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3) !important;
-}
-
-.admin-btn-seguimientos {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-}
-
-.admin-btn-seguimientos:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
-}
-
-.admin-btn-historial {
-  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
-  color: white !important;
-}
-
-.admin-btn-historial:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3) !important;
-}
-
-.admin-btn-abrir-prospeccion {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: white !important;
-}
-
-.admin-btn-abrir-prospeccion:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3) !important;
-}
-
-/* ➕ Crear nuevo */
-.admin-btn-nuevo-prospecto {
-  width: 100% !important;
-  margin-top: 20px !important;
-  padding: 14px !important;
-  font-size: 17px !important;
-  background: #007bffbb !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-  transition: background 0.3s ease !important;
-}
-
-.admin-btn-nuevo-prospecto:hover {
-  background: #0056b3 !important;
-}
-
-/* 📌 Error */
-.error {
-  color: red !important;
-  font-size: 14px !important;
-  margin-top: 10px !important;
-}
-
-/* 📌 React-Select */
-.select-estado {
-  width: 200px !important;
-}
-
-.select__control {
-  border: 1px solid #ccc !important;
-  border-radius: 5px !important;
-}
-
-.select__option--is-selected {
-  background-color: #10355c !important;
-  color: white !important;
-}
-
-.input-busqueda-nombre {
-  width: 100% !important;
-  max-width: 220px !important;
-  padding: 6px 8px !important;
-  font-size: 13px !important;
-  border: 1px solid #ccc !important;
-  border-radius: 6px !important;
-  box-sizing: border-box !important;
-}
-
-.btn-toggle-filtros {
-  background-color: #6c63ff;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btn-toggle-filtros:hover {
-  background-color: #574fd6;
-}
-
-/* 🟨 Cards móviles */
-.admin-prospectos-cards-mobile {
-  display: none !important;
-}
-
-
-.skeleton-row {
-  height: 30px;
-  background: linear-gradient(-90deg, #eeeeee 0%, #dddddd 50%, #eeeeee 100%);
-  background-size: 400% 400%;
-  animation: shimmer 1.2s ease-in-out infinite;
-  margin: 10px 0;
-}
-
-.paginador-lindo {
-  margin: 24px auto 10px;
+/* ─── Contenedor raíz ───────────────────────── */
+.pa-container {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background-color: #f8fafc; /* Fondo súper limpio */
+  min-height: 100vh;
 }
 
-.paginador-contenido {
+/* ─── Header ────────────────────────────────── */
+.pa-header {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 13px;
-  background: #f4f4f4;
-  padding: 6px 14px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.btn-paginador {
-  background-color: transparent;
-  color: #1f3b5c;
-  border: none;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 4px 8px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
+.pa-header-left { 
+  display: flex; 
+  align-items: center; 
+  gap: 16px; 
 }
 
-.btn-paginador:hover {
-  background-color: #d9e3f0;
+/* ✨ MEJORA: Gradiente Premium en el título */
+.pa-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 4px;
+  letter-spacing: -0.03em;
 }
 
-.paginador-info {
-  color: #444;
+.pa-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
   font-weight: 500;
 }
 
-
-
-
-@media (max-width: 768px) {
-  .admin-prospectos-page {
-    padding: 15px !important;
-  }
-
-  .admin-prospectos-filtros {
-    flex-direction: column !important;
-    gap: 14px !important;
-    padding: 15px !important;
-  }
-
-  .admin-prospectos-filtros select,
-  .admin-prospectos-filtros input {
-    font-size: 13px !important;
-    padding: 8px !important;
-  }
-
-  .admin-prospectos-filtros button {
-    font-size: 13px !important;
-    padding: 8px 12px !important;
-  }
-
-  .admin-btn-nuevo-prospecto {
-    font-size: 16px !important;
-    padding: 10px !important;
-  }
-
-  .admin-prospectos-table {
-    display: none !important;
-  }
-
-  .admin-prospectos-cards-mobile {
-    display: block !important;
-    margin-top: 20px !important;
-  }
-
-  .admin-prospecto-card {
-    background: #ffffff !important;
-    border: 1px solid #ccc !important;
-    border-radius: 12px !important;
-    padding: 15px !important;
-    margin-bottom: 15px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-  }
-
-  .admin-prospecto-card h3 {
-    margin: 0 0 8px 0 !important;
-    font-size: 18px !important;
-    color: #1f3b5c !important;
-  }
-
-  .admin-prospecto-card p {
-    margin: 4px 0 !important;
-    font-size: 14px !important;
-    color: #444 !important;
-  }
-
-  .admin-prospecto-card .acciones {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-end !important;
-    gap: 6px !important;
-    margin-top: 10px !important;
-  }
-
-  .admin-prospecto-card .acciones button {
-    font-size: 13px !important;
-    padding: 6px 10px !important;
-    border: none !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
-  }
+.pa-header-actions { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  flex-wrap: wrap; 
 }
+
+/* ─── Botones ────────────────────────────────── */
+.pa-btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
+}
+
+.pa-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(108, 95, 240, 0.4);
+}
+
+.pa-btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.pa-btn-ghost:hover { 
+  background: #f8fafc; 
+  border-color: #cbd5e1; 
+  color: #0f172a; 
+  transform: translateY(-1px);
+}
+
+.pa-btn-filter {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  background: #ffffff;
+  color: #475569;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.pa-btn-filter:hover { 
+  background: #f8fafc; 
+  border-color: #6c5ff0; 
+  color: #6c5ff0; 
+}
+
+.pa-btn-filter.active {
+  background: #f5f3ff;
+  border: 1px solid #6c5ff0;
+  color: #6c5ff0;
+}
+
+/* ✨ MEJORA: Latido del punto de filtro */
+.pa-filter-dot {
+  position: absolute; top: -4px; right: -4px;
+  width: 10px; height: 10px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* ─── Barra de búsqueda ─────────────────────── */
+.pa-search-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.pa-search-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.pa-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.pa-search-icon {
+  position: absolute;
+  left: 14px; top: 50%; transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.pa-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: inherit; font-size: 13.5px;
+  color: #0f172a;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.pa-search-input { padding-left: 40px !important; }
+
+.pa-input:focus, .pa-select:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #6c5ff0;
+  box-shadow: 0 0 0 3px rgba(108,95,240,0.15);
+}
+
+.pa-input::placeholder { color: #94a3b8; }
+
+.pa-select {
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: inherit; font-size: 13.5px; font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+}
+
+/* ─── Panel de filtros avanzados ────────────── */
+.pa-filters-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pa-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px 20px;
+  padding: 24px;
+}
+
+.pa-filter-item { display: flex; flex-direction: column; gap: 8px; }
+
+.pa-filter-item label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pa-filters-footer {
+  display: flex; justify-content: flex-end;
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ─── Card principal ────────────────────────── */
+.pa-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
+}
+
+/* ─── Paginación ────────────────────────────── */
+.pa-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.pa-pagination-info { font-size: 13.5px; color: #64748b; }
+.pa-pagination-info strong { color: #0f172a; font-weight: 700; }
+
+.pa-pagination-btns { display: flex; gap: 8px; }
+
+.pa-page-btn {
+  height: 36px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.pa-page-btn:hover:not(:disabled) {
+  background: #f8fafc; border-color: #94a3b8; color: #0f172a;
+}
+.pa-page-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+/* ─── Tabla (La Joya de la Corona) ───────────── */
+.pa-table-wrap {
+  overflow-x: auto;
+  max-height: 600px; /* Para habilitar scroll interno y header pegajoso */
+}
+
+.pa-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+/* ✨ MEJORA: Cabecera pegajosa con cristal */
+.pa-table thead th {
+  position: sticky;
+  top: 0;
+  background: rgba(248, 250, 252, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  padding: 14px 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 0 #e2e8f0; /* Falsa línea para el sticky */
+}
+
+.pa-table td {
+  padding: 16px 20px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+/* ✨ MEJORA: Hover espectacular en filas */
+.pa-table tbody tr {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.pa-table tbody tr:hover td {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.pa-table tbody tr:hover {
+  box-shadow: inset 4px 0 0 0 #6c5ff0; /* Línea indicadora morada a la izquierda */
+}
+
+/* Textos de la tabla */
+.pa-td-num { color: #94a3b8; font-size: 12px; font-weight: 600; width: 40px; }
+.pa-td-name { font-weight: 700; color: #0f172a; }
+.pa-td-note { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #64748b; font-size: 13px; }
+.pa-muted { color: #94a3b8; font-style: italic; font-size: 12.5px; }
+.pa-date { font-size: 13px; color: #334155; font-weight: 600; }
+
+/* ✨ MEJORA: Badges más vibrantes */
+.pa-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.pa-badge-gray  { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.pa-badge-blue  { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.pa-badge-green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15); }
+.pa-badge-amber { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+
+/* ─── Botones de acción en tabla ────────────── */
+.pa-td-actions { text-align: right; white-space: nowrap; }
+
+.pa-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 62px; height: 32px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.pa-icon-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+.pa-icon-btn--view:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+.pa-icon-btn--add:hover  { background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; }
+.pa-icon-btn--del        { color: #ef4444; }
+.pa-icon-btn--del:hover  { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+
+/* ─── Vista móvil (Tarjetas) ────────────────── */
+.pa-mobile-view { display: none; }
+
+@media (max-width: 800px) {
+  .pa-table-wrap { display: none; }
+  .pa-mobile-view { display: block; padding: 16px; background: #f8fafc; }
+  
+  .pa-mc {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    transition: transform 0.2s;
+  }
+  
+  .pa-mc:active { transform: scale(0.98); }
+  .pa-mc-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 12px; }
+  .pa-mc-name { font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1.2; }
+  .pa-mc-meta { font-size: 13.5px; color: #475569; margin: 0 0 6px; }
+  
+  .pa-mc-actions {
+    display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f1f5f9; flex-wrap: wrap;
+  }
+  .pa-mc-actions button { flex: 1; min-width: 80px; }
+}
+
+/* Fixes Responsivos Globales */
+@media (max-width: 768px) {
+  .pa-header { flex-direction: column; align-items: stretch; gap: 20px; }
+  .pa-header-actions { width: 100%; justify-content: stretch; }
+  .pa-header-actions button { flex: 1; justify-content: center; }
+  .pa-search-row { flex-direction: column; align-items: stretch; }
+  .pa-search-left { flex-direction: column; width: 100%; }
+  .pa-search-wrap { width: 100%; }
+  .pa-select { width: 100%; }
+  .pa-filters-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Fix para React Select en modo Light SaaS ── */
+.rs__control {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  border-radius: 10px !important;
+  min-height: 40px !important;
+  font-size: 13.5px !important;
+  box-shadow: none !important;
+}
+.rs__control--is-focused {
+  background-color: #ffffff !important;
+  border-color: #6c5ff0 !important;
+  box-shadow: 0 0 0 3px rgba(108,95,240,0.15) !important;
+}
+.rs__menu { border-radius: 12px !important; border: 1px solid #e2e8f0 !important; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1) !important; overflow: hidden; }
+.rs__option--is-focused { background-color: #f5f3ff !important; color: #6c5ff0 !important; }
+.rs__option--is-selected { background-color: #6c5ff0 !important; color: white !important; }

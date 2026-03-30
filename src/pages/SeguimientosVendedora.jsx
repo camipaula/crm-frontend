@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
-import "../styles/seguimientosProspecto.css";
+import "../styles/seguimientosVendedora.css"; // 🔹 Asegúrate de que el nombre del CSS sea este
 import React from "react";
 
 const SeguimientosVendedora = () => {
@@ -26,7 +26,6 @@ const SeguimientosVendedora = () => {
   const [limitePorPagina] = useState(10);
   const [busquedaInput, setBusquedaInput] = useState("");
 
-
   useEffect(() => {
     const filtrosGuardados = localStorage.getItem("filtros_seguimientos_vendedora");
     if (filtrosGuardados) {
@@ -35,10 +34,9 @@ const SeguimientosVendedora = () => {
         if (filtros.filtroEstado) setFiltroEstado(filtros.filtroEstado);
         if (filtros.busquedaNombre) {
           setBusquedaNombre(filtros.busquedaNombre);
-          setBusquedaInput(filtros.busquedaNombre); // aquí
+          setBusquedaInput(filtros.busquedaNombre);
         }
         if (filtros.filtroSeguimiento) setFiltroSeguimiento(filtros.filtroSeguimiento);
-
       } catch (e) {
         console.error("Error al leer filtros guardados:", e);
       }
@@ -48,19 +46,14 @@ const SeguimientosVendedora = () => {
   }, []);
 
   useEffect(() => {
-
     if (!filtrosInicializados) return;
-
     const filtros = {
       filtroEstado,
       busquedaNombre,
       filtroSeguimiento,
     };
-
     localStorage.setItem("filtros_seguimientos_vendedora", JSON.stringify(filtros));
     buscarSeguimientos(1, busquedaNombre); // Reinicia página al cambiar filtros
-
-
   }, [filtroEstado, busquedaNombre, filtroSeguimiento, filtrosInicializados]);
 
   const capitalizar = (texto) => {
@@ -71,12 +64,7 @@ const SeguimientosVendedora = () => {
   const formatearFechaVisual = (fechaStr) => {
     const fecha = new Date(fechaStr.replace("Z", ""));
     return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
+      day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,
     });
   };
 
@@ -89,7 +77,7 @@ const SeguimientosVendedora = () => {
 
       let url = `${import.meta.env.VITE_API_URL}/api/ventas/prospecciones?cedula_vendedora=${cedulaVendedora}&page=${pagina}&limit=${limitePorPagina}`;
       if (filtroEstado !== "todas") url += `&estado_prospeccion=${filtroEstado}`;
-      if (filtroSeguimiento && filtroSeguimiento !== "todos") url += `&seguimiento=${filtroSeguimiento}`; // 🔥 Agregado 🔥
+      if (filtroSeguimiento && filtroSeguimiento !== "todos") url += `&seguimiento=${filtroSeguimiento}`;
       if (nombre.trim()) url += `&nombre=${encodeURIComponent(nombre.trim())}`;
 
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
@@ -106,8 +94,6 @@ const SeguimientosVendedora = () => {
     }
   };
 
-
-
   const exportarExcel = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -119,7 +105,7 @@ const SeguimientosVendedora = () => {
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const contentType = res.headers.get("content-type");
 
-      if (contentType.includes("application/json")) {
+      if (contentType && contentType.includes("application/json")) {
         const data = await res.json();
         alert(data.message);
         return;
@@ -158,18 +144,17 @@ const SeguimientosVendedora = () => {
       });
 
       if (!res.ok) throw new Error("Error actualizando objetivo");
-      alert("Objetivo actualizado correctamente");
       setModalEditar(false);
       buscarSeguimientos(); // Recargar
     } catch (err) {
       alert("Error: " + err.message);
     }
   };
+
   const clasificarSeguimiento = (venta) => {
     const seguimientos = venta.seguimientos || [];
     if (seguimientos.length === 0) return "sin_seguimiento";
 
-    // Buscar primero el pendiente más próximo
     const pendientes = seguimientos
       .filter(s => s.estado === "pendiente")
       .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada));
@@ -180,7 +165,6 @@ const SeguimientosVendedora = () => {
       const hoy = new Date();
       hoy.setHours(0, 0, 0, 0);
       fechaProgramada.setHours(0, 0, 0, 0);
-
       const diffDias = (fechaProgramada - hoy) / (1000 * 60 * 60 * 24);
 
       if (diffDias < 0) return "vencido";
@@ -189,30 +173,28 @@ const SeguimientosVendedora = () => {
       return "futuro";
     }
 
-    // Si no hay pendientes, buscar el último realizado
     const realizados = seguimientos
       .filter(s => s.estado === "realizado")
       .sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada));
 
-    if (realizados.length > 0) {
-      return "realizado";
-    }
-
-    // Si no hay nada
+    if (realizados.length > 0) return "realizado";
     return "sin_seguimiento";
   };
 
-
   const etiquetaSeguimiento = (venta) => {
     const estado = clasificarSeguimiento(venta);
-    const clases = `estado-tag ${estado}`;
+    if (estado === "vencido") return <span className="sv-status-tag red">🔴 Vencido</span>;
+    if (estado === "hoy") return <span className="sv-status-tag orange">🟠 Hoy</span>;
+    if (estado === "proximo") return <span className="sv-status-tag yellow">🟡 Próximo</span>;
+    if (estado === "futuro") return <span className="sv-status-tag blue">🔵 Futuro</span>;
+    if (estado === "realizado") return <span className="sv-status-tag green">✅ Realizado</span>;
+    return <span className="sv-status-tag gray">⚪ Sin seguimiento</span>;
+  };
 
-    if (estado === "vencido") return <span className={clases}>🔴 Vencido</span>;
-    if (estado === "hoy") return <span className={clases}>🟠 Hoy</span>; // 👈 agregado
-    if (estado === "proximo") return <span className={clases}>🟡 Próximo</span>;
-    if (estado === "futuro") return <span className={clases}>🔵 Futuro</span>;
-    if (estado === "realizado") return <span className={clases}>✅ Realizado</span>;
-    return <span className={clases}>⚪ Sin seguimiento</span>;
+  const formatearMonto = (monto) => {
+    return monto != null
+      ? `$${parseFloat(monto).toLocaleString("es-EC", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : "No definido";
   };
 
   const prospeccionesFiltradas = prospecciones.filter((p) =>
@@ -222,10 +204,9 @@ const SeguimientosVendedora = () => {
   const debouncedBuscar = useRef(
     debounce((valor) => {
       setPaginaActual(1);
-      setBusquedaNombre(valor); // esto activa el useEffect y hace fetch
+      setBusquedaNombre(valor);
     }, 500)
   ).current;
-
 
   useEffect(() => {
     return () => {
@@ -233,258 +214,214 @@ const SeguimientosVendedora = () => {
     };
   }, []);
 
-
   return (
-    <div className="seguimientos-container">
-
-      <h1 className="title">SEGUIMIENTO DE PROSPECTOS</h1>
-      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-
-      <button className="exportar-btn" onClick={exportarExcel}>
-        📥 Exportar a Excel
-      </button>
-
-      <div className="filtros-container">
-        <label>Filtrar nombre de Prospecto:</label>
-
-        <input
-          type="text"
-          placeholder="Buscar por nombre de prospecto..."
-          value={busquedaInput}
-          onChange={(e) => {
-            const valor = e.target.value;
-            setBusquedaInput(valor);           // 🔹 actualiza lo que ves al escribir
-            debouncedBuscar(valor);            // 🔸 filtra con retraso
-          }}
-          className="input-busqueda-nombre"
-        />
-
-
-
-        <label>Filtrar por estado de prospección:</label>
-        <select
-          value={filtroEstado}
-          onChange={(e) => setFiltroEstado(e.target.value)}
-        >
-          <option value="todas">Todas</option>
-          <option value="abiertas">Abiertas</option>
-          <option value="cerradas">Cerradas</option>
-        </select>
-        <label>Filtrar por seguimiento:</label>
-        <select
-          value={filtroSeguimiento}
-          onChange={(e) => setFiltroSeguimiento(e.target.value)}
-        >
-          <option value="todos">Todos</option>
-          <option value="vencido">Vencidos</option>
-          <option value="hoy">Hoy</option>
-          <option value="proximo">Próximos</option>
-          <option value="futuro">Futuros</option>
-          <option value="realizado">Realizados</option>
-        </select>
-
-
-
+    <div className="sv-container">
+      {/* ── HEADER ── */}
+      <div className="sv-header">
+        <div className="sv-header-titles">
+          <button className="sv-btn-outline" onClick={() => navigate(-1)}>⬅️ Volver</button>
+          <h1>Seguimiento de Prospectos</h1>
+        </div>
+        <div className="sv-header-actions">
+          <button className="sv-btn-outline" onClick={exportarExcel}>
+            <span className="sv-emoji">📥</span> Exportar a Excel
+          </button>
+        </div>
       </div>
 
-      {loading && <p>Cargando...</p>}
-      {error && <p className="error">{error}</p>}
-      <div className="seguimientos-table-vendedora-wrapper">
-        <div className="paginador-lindo">
-          <div className="paginador-contenido">
-            {paginaActual > 1 && (
-              <button
-                className="btn-paginador"
-                onClick={() => buscarSeguimientos(paginaActual - 1, busquedaNombre)}
-              >
-                ⬅ Anterior
-              </button>
-            )}
+      {error && <div className="sv-alert-error">{error}</div>}
 
-            <span className="paginador-info">
-              Página {paginaActual} de {totalPaginas}
-            </span>
+      {/* ── BARRA DE BÚSQUEDA Y FILTROS ── */}
+      <div className="sv-search-bar">
+        <div className="sv-search-inputs">
+          <input
+            type="text"
+            className="sv-input sv-search-input"
+            placeholder="Buscar por nombre de prospecto..."
+            value={busquedaInput}
+            onChange={(e) => {
+              setBusquedaInput(e.target.value);
+              debouncedBuscar(e.target.value);
+            }}
+          />
+          <select className="sv-select" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+            <option value="todas">Todos los estados</option>
+            <option value="abiertas">Solo Abiertas</option>
+            <option value="cerradas">Solo Cerradas</option>
+          </select>
+          <select className="sv-select" value={filtroSeguimiento} onChange={(e) => setFiltroSeguimiento(e.target.value)}>
+            <option value="todos">Todos los seguimientos</option>
+            <option value="vencido">Vencidos</option>
+            <option value="hoy">Hoy</option>
+            <option value="proximo">Próximos (7 días)</option>
+            <option value="futuro">Futuros</option>
+            <option value="realizado">Realizados</option>
+          </select>
+        </div>
+      </div>
 
-            {paginaActual < totalPaginas && (
-              <button
-                className="btn-paginador"
-                onClick={() => buscarSeguimientos(paginaActual + 1, busquedaNombre)}
-              >
-                Siguiente ➡
-              </button>
-            )}
-          </div>
+      {/* ── PAGINACIÓN ── */}
+      <div className="sv-card">
+        <div className="sv-pagination">
+          <button className="sv-btn-outline" disabled={paginaActual <= 1} onClick={() => buscarSeguimientos(paginaActual - 1, busquedaNombre)}>
+            ⬅️ Anterior
+          </button>
+          <span>Página <strong>{paginaActual}</strong> de <strong>{totalPaginas}</strong></span>
+          <button className="sv-btn-outline" disabled={paginaActual >= totalPaginas} onClick={() => buscarSeguimientos(paginaActual + 1, busquedaNombre)}>
+            Siguiente ➡️
+          </button>
         </div>
 
-        <table className="seguimientos-table">
-          <thead>
-            <tr>
-              <th>Prospecto</th>
-              <th>Objetivo</th>
-              <th>Estado del Prospecto</th>
-              <th>Última Fecha</th>
-              <th>Último Tipo</th>
-              <th>Último Resultado</th>
-              <th>Última Nota</th>
-              <th>Seguimiento</th>
+        {loading ? (
+          <div className="sv-loading-state">Cargando prospecciones...</div>
+        ) : (
+          <>
+            {/* ── TABLA ESCRITORIO ── */}
+            <div className="sv-table-wrapper">
+              <table className="sv-table">
+                <thead>
+                  <tr>
+                    <th>Prospecto</th>
+                    <th>Objetivo</th>
+                    <th>Estado de la Prospección</th>
+                    <th>Última Fecha</th>
+                    <th>Último Tipo</th>
+                    <th>Último Resultado</th>
+                    <th>Última Nota</th>
+                    <th>Seguimiento</th>
+                    <th className="sv-text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {prospeccionesFiltradas.length === 0 && (
+                    <tr><td colSpan="9" className="sv-empty-state">No se encontraron prospectos con estos filtros.</td></tr>
+                  )}
+                  {prospeccionesFiltradas.map((p) => {
+                    const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
+                    const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
+                    const siguienteSeguimiento = p.seguimientos
+                      ?.filter((s) => s.estado === "pendiente")
+                      .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
 
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prospeccionesFiltradas.map((p) => {
-              const tieneSeguimientos = p.seguimientos && p.seguimientos.length > 0;
-              const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
-              const siguienteSeguimiento = p.seguimientos
-                ?.filter((s) => s.estado === "pendiente")
-                .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+                    const esGanado = p.estado_venta?.nombre === "Cierre de venta" && p.monto_cierre;
+                    const estadoVentaTexto = esGanado ? `Ganado ($${p.monto_cierre.toFixed(2)})` : capitalizar(p.estado_venta?.nombre) || "NO DEFINIDO";
 
-              return (
-                <React.Fragment key={p.id_venta}>
+                    return (
+                      <React.Fragment key={p.id_venta}>
+                        <tr>
+                          <td className="sv-font-bold">{p.prospecto?.nombre ? p.prospecto.nombre.toUpperCase() : "SIN PROSPECTO"}</td>
+                          <td>{p.objetivo ? capitalizar(p.objetivo.toUpperCase()) : "SIN OBJETIVO"}</td>
+                          <td>
+                            <span className={`sv-badge ${esGanado ? "green" : "blue"}`}>
+                              {estadoVentaTexto}
+                            </span>
+                          </td>
+                          <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "—"}</td>
+                          <td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion ? ultimoSeguimiento.tipo_seguimiento.descripcion.toUpperCase() : "—"}</td>
+                          <td className={ultimoSeguimiento?.resultado ? "sv-font-bold" : "sv-text-muted"}>{ultimoSeguimiento?.resultado || "PENDIENTE"}</td>
+                          <td className="sv-note-cell">{ultimoSeguimiento?.nota ? ultimoSeguimiento.nota.toUpperCase() : "—"}</td>
+                          <td>{etiquetaSeguimiento(p)}</td>
+                          <td>
+                            <div className="sv-actions-cell">
+                              {!tieneSeguimientos ? (
+                                <button className="sv-btn-table-action" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>
+                                  <span className="sv-emoji">📅</span> Agendar
+                                </button>
+                              ) : (
+                                <button className="sv-btn-table-action" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>
+                                  <span className="sv-emoji">📜</span> Ver
+                                </button>
+                              )}
+                              {p.prospecto?.id_prospecto && (
+                                <button className="sv-icon-btn" onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)} title="Historial general">
+                                  ⏱️
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                        {/* Fila de info extra */}
+                        <tr className="sv-extra-row">
+                          <td colSpan="9">
+                            <div className="sv-next-contact-box">
+                              <strong>Siguiente programado:</strong>{" "}
+                              {siguienteSeguimiento ? formatearFechaVisual(siguienteSeguimiento.fecha_programada) : "No agendado"}
+                              {siguienteSeguimiento && (
+                                <> <span className="sv-divider">|</span> <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"} </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
+            {/* ── VISTA MÓVIL (Tarjetas) ── */}
+            <div className="sv-mobile-view">
+              {prospeccionesFiltradas.length === 0 && <div className="sv-empty-state">No se encontraron prospectos con estos filtros.</div>}
+              {prospeccionesFiltradas.map((p) => {
+                const tieneSeguimientos = p.seguimientos?.length > 0;
+                const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
+                const siguienteSeguimiento = p.seguimientos?.filter((s) => s.estado === "pendiente").sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
+                const esGanado = p.estado_venta?.nombre === "Cierre de venta" && p.monto_cierre;
+                const estadoVentaTexto = esGanado ? `Ganado ($${p.monto_cierre.toFixed(2)})` : capitalizar(p.estado_venta?.nombre) || "No definido";
 
-                  <tr key={p.id_venta}>
-                    <td>{p.prospecto?.nombre ? p.prospecto.nombre.toUpperCase() : "SIN PROSPECTO"}</td>
-<td>{p.objetivo ? capitalizar(p.objetivo.toUpperCase()) : "SIN OBJETIVO"}</td>
-                    <td>
-                      {p.estado_venta?.nombre === "Cierre de venta"
-                        ? `Cierre de venta ($${p.monto_cierre?.toFixed(2) || "0.00"})`
-                        : capitalizar(p.estado_venta?.nombre) || "NO DEFINIDO"}
-                    </td>
+                return (
+                  <div key={p.id_venta} className="sv-mobile-card">
+                    <div className="sv-mc-header">
+                      <h3 className="sv-mc-title">{p.prospecto?.nombre || "Sin Prospecto"}</h3>
+                      {etiquetaSeguimiento(p)}
+                    </div>
+                    
+                    <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
+                    <p><strong>Estado Prospección:</strong> <span className={`sv-badge ${esGanado ? "green" : "blue"}`}>{estadoVentaTexto}</span></p>
+                    
+                    <div className="sv-divider-line"></div>
 
-                    <td>{ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</td>
-<td>{ultimoSeguimiento?.tipo_seguimiento?.descripcion
-  ? ultimoSeguimiento.tipo_seguimiento.descripcion.toUpperCase()
-  : "NO REGISTRADO"}</td>
-                    <td>{ultimoSeguimiento?.resultado || "PENDIENTE"}</td>
-<td>{ultimoSeguimiento?.nota
-  ? ultimoSeguimiento.nota.toUpperCase()
-  : "SIN NOTA"}</td>                    <td>{etiquetaSeguimiento(p)}</td>
+                    <p><strong>Última Fecha:</strong> {ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</p>
+                    <p><strong>Último Tipo:</strong> {ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</p>
+                    <p><strong>Último Resultado:</strong> {ultimoSeguimiento?.resultado || "Pendiente"}</p>
+                    <p><strong>Última Nota:</strong> <span className="sv-text-muted">{ultimoSeguimiento?.nota || "Sin nota"}</span></p>
 
-                    <td>
+                    <div className="sv-next-contact-box" style={{ marginTop: "12px", width: "100%", boxSizing: "border-box" }}>
+                      <strong>Siguiente programado:</strong><br/>
+                      {siguienteSeguimiento ? formatearFechaVisual(siguienteSeguimiento.fecha_programada) : "No agendado"}
+                      {siguienteSeguimiento && <><br/><strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}</>}
+                    </div>
+
+                    <div className="sv-mc-actions">
                       {!tieneSeguimientos ? (
-                        <button
-                          className="btn-agendar"
-                          onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}
-                        >
-                          📅 Agendar Primer Seguimiento
-                        </button>
+                        <button className="sv-btn-outline" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>📅 Agendar Primer</button>
                       ) : (
-                        <button
-                          className="btn-ver-seguimientos"
-                          onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}
-                        >
-                          📜 Ver Seguimientos
-                        </button>
+                        <button className="sv-btn-outline" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>📜 Ver Seg.</button>
                       )}
                       {p.prospecto?.id_prospecto && (
-                        <button
-                          className="btn-historial-seguimientos"
-                          onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}
-                          title="Ver historial del prospecto"
-                        >
-                          📜 Historial
-                        </button>
+                        <button className="sv-btn-outline" onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}>⏱️ Historial</button>
                       )}
-
-                      <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-
-                    </td>
-                  </tr>
-
-                  {/* Nueva fila con la siguiente fecha y motivo */}
-                  <tr className="fila-info-extra">
-                    <td colSpan="7" style={{ fontStyle: "italic", color: "#555", backgroundColor: "#c9edec" }}>
-                      <strong>Siguiente fecha programada:</strong>{" "}
-                      {siguienteSeguimiento
-                        ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
-
-                        : "No se ha agendado un seguimiento."}
-                      {siguienteSeguimiento && (
-                        <>
-                          {"  —  "}
-                          <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                </React.Fragment>
-
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <div className="tarjetas-seguimientos-vendedora">
-        {prospeccionesFiltradas.map((p) => {
-          const tieneSeguimientos = p.seguimientos?.length > 0;
-          const ultimoSeguimiento = tieneSeguimientos ? p.seguimientos[0] : null;
-          const siguienteSeguimiento = p.seguimientos
-            ?.filter((s) => s.estado === "pendiente")
-            .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0];
-
-          return (
-            <div key={p.id_venta} className="card-seguimiento">
-              <h3>{p.prospecto?.nombre || "Sin Prospecto"}</h3>
-              <p><strong>Objetivo:</strong> {p.objetivo || "Sin objetivo"}</p>
-              <p><strong>Estado del Prospecto:</strong> {p.estado_venta?.nombre === "Cierre de venta"
-                ? `Cierre de venta ($${p.monto_cierre?.toFixed(2) || "0.00"})`
-                : capitalizar(p.estado_venta?.nombre) || "No definido"}
-              </p>
-
-              <p><strong>Última Fecha:</strong> {ultimoSeguimiento?.fecha_programada ? new Date(ultimoSeguimiento.fecha_programada).toLocaleDateString() : "No hay"}</p>
-              <p><strong>Último Tipo:</strong> {ultimoSeguimiento?.tipo_seguimiento?.descripcion || "No registrado"}</p>
-              <p><strong>Último Resultado:</strong> {ultimoSeguimiento?.resultado || "Pendiente"}</p>
-              <p><strong>Última Nota:</strong> {ultimoSeguimiento?.nota || "Sin nota"}</p>
-              <p><strong>Seguimiento:</strong> {etiquetaSeguimiento(p)}</p>
-
-              <div className="acciones">
-                {!tieneSeguimientos ? (
-                  <button className="btn-agendar" onClick={() => navigate(`/agendar-seguimiento/${p.id_venta}`)}>📅 Agendar Primer Seguimiento</button>
-                ) : (
-                  <button className="btn-ver-seguimientos" onClick={() => navigate(`/seguimientos-prospeccion/${p.id_venta}`)}>📜 Ver Seguimientos</button>
-                )}
-                {p.prospecto?.id_prospecto && (
-                  <button
-                    className="btn-historial-seguimientos"
-                    onClick={() => navigate(`/seguimientos-prospecto/${p.prospecto.id_prospecto}#historial`)}
-                    title="Ver historial del prospecto"
-                  >
-                    📜 Historial
-                  </button>
-                )}
-
-                <button className="btn-mini" onClick={() => abrirModalEditar(p.id_venta, p.objetivo)}>✏️</button>
-                <p style={{ fontStyle: "italic", marginTop: "10px" }}>
-                  <strong>Siguiente fecha programada:</strong>{" "}
-                  {siguienteSeguimiento
-                    ? formatearFechaVisual(siguienteSeguimiento.fecha_programada)
-                    : "No se ha agendado un seguimiento."}
-                  {siguienteSeguimiento && (
-                    <>
-                      {"  —  "}
-                      <strong>Motivo:</strong> {siguienteSeguimiento.motivo || "Sin motivo"}
-                    </>
-                  )}
-                </p>
-
-              </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </>
+        )}
       </div>
+
       {/* 🟩 Modal Editar Objetivo */}
       {modalEditar && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
+        <div className="sv-modal-overlay">
+          <div className="sv-modal-content">
             <h3>Editar Objetivo</h3>
-            <textarea
-              value={nuevoObjetivo}
-              onChange={(e) => setNuevoObjetivo(e.target.value)}
-            />
-            <div className="modal-buttons">
-              <button onClick={guardarObjetivo}>Guardar</button>
-              <button onClick={() => setModalEditar(false)}>Cancelar</button>
+            <div className="sv-form-group">
+              <label>Nuevo Objetivo</label>
+              <textarea className="sv-textarea" value={nuevoObjetivo} onChange={(e) => setNuevoObjetivo(e.target.value)} />
+            </div>
+            <div className="sv-modal-actions">
+              <button className="sv-btn-outline" onClick={() => setModalEditar(false)}>Cancelar</button>
+              <button className="sv-btn-primary" onClick={guardarObjetivo}>Guardar</button>
             </div>
           </div>
         </div>

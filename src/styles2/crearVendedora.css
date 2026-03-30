@@ -1,0 +1,48 @@
+.crear-vendedora-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    box-sizing: border-box;
+  }
+  
+  .crear-vendedora-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .crear-vendedora-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .crear-vendedora-container button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 12px;
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .crear-vendedora-container .mensaje {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .crear-vendedora-container .error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+  }
+  

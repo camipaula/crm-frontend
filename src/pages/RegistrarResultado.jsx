@@ -24,7 +24,11 @@ const RegistrarResultado = () => {
   const [prospecto, setProspecto] = useState({});
   const [formDataExtra, setFormDataExtra] = useState({});
   const [tipoSiguienteTexto, setTipoSiguienteTexto] = useState("");
-const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
+  const [duracionMinutos, setDuracionMinutos] = useState(30);
+
+  // NUEVOS ESTADOS PARA DECLINACIÓN
+  const [motivoDeclinacion, setMotivoDeclinacion] = useState("");
+  const [observacionDeclinacion, setObservacionDeclinacion] = useState("");
 
   useEffect(() => {
     obtenerSeguimiento();
@@ -40,9 +44,7 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
       });
       const data = await res.json();
       setEstados(data);
-    } catch (error) {
-      console.error("Error al cargar estados:", error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   const obtenerSeguimiento = async () => {
@@ -60,11 +62,8 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
       }
       setResultado(data.resultado || "");
       setNota(data.nota || "");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
   const obtenerTipos = async () => {
@@ -75,21 +74,17 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
       });
       const data = await res.json();
       setTiposSeguimiento(data.map(t => ({ value: t.id_tipo, label: t.descripcion })));
-    } catch (e) {
-      console.error("Error cargando tipos de seguimiento", e);
-    }
+    } catch (e) { console.error(e); }
   };
 
   const guardarResultado = async () => {
     const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
     const nombreEstado = estadoSeleccionado?.nombre;
 
-    if (!nombreEstado) {
-      alert("Selecciona un estado válido.");
-      return;
-    }
+    if (!nombreEstado) return alert("Selecciona un estado válido.");
 
-    const estadosFinales = ["Cierre de venta", "Competencia"];
+    // AGREGAMOS "Prospección declinada" COMO ESTADO FINAL
+    const estadosFinales = ["Cierre de venta", "Competencia", "Prospección declinada"];
     if (!estadosFinales.includes(nombreEstado)) {
       setMostrarModal(true);
       return;
@@ -97,105 +92,50 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
 
     try {
       const token = localStorage.getItem("token");
+      const body = { resultado, nota, estado: nombreEstado };
 
-      let monto_cierre = null;
       if (nombreEstado === "Cierre de venta") {
-        const monto = prompt("Por favor, ingresa el monto de cierre de la venta:");
+        const monto = prompt("Ingresa el monto final de cierre:");
         const montoNumerico = parseFloat(monto);
-        if (!monto || isNaN(montoNumerico) || montoNumerico <= 0) {
-          alert("Debes ingresar un monto válido para cerrar la venta.");
-          return;
+        if (!monto || isNaN(montoNumerico) || montoNumerico <= 0) return alert("Monto no válido.");
+        body.monto_cierre = montoNumerico;
+      } 
+      // NUEVA VALIDACIÓN PARA DECLINADA
+      else if (nombreEstado === "Prospección declinada") {
+        if (!motivoDeclinacion || !observacionDeclinacion.trim()) {
+          return alert("⚠️ El motivo y la observación son obligatorios para declinar la prospección.");
         }
-        monto_cierre = montoNumerico;
-      }
-
-      const body = {
-        resultado,
-        nota,
-        estado: nombreEstado,
-      };
-
-      if (monto_cierre !== null) {
-        body.monto_cierre = monto_cierre;
+        body.motivo_declinacion = motivoDeclinacion;
+        body.observacion_declinacion = observacionDeclinacion;
       }
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(body)
       });
 
       if (!res.ok) throw new Error("Error guardando resultado");
-      alert("Resultado guardado correctamente");
+      alert("✅ Resultado guardado correctamente");
       navigate(-1);
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
-
   const agendarDesdeModal = async () => {
-
-    const fechaSeleccionada = new Date(fechaSiguiente);
-    const hoy = new Date();
-    const unAnioDespues = new Date();
-    unAnioDespues.setFullYear(hoy.getFullYear() + 1);
-
-    if (fechaSeleccionada > unAnioDespues) {
-      alert("La fecha programada no puede ser mayor a un año desde hoy.");
-      return;
-    }
-
-
-    if (!fechaSiguiente || !tipoSiguiente || !motivoSiguiente.trim()) {
-      alert("Por favor, completa todos los campos obligatorios del seguimiento.");
-      return;
-    }
-
-    if (tipoSiguienteTexto === "email" && !prospecto.correo && !formDataExtra.correo) {
-      alert("El prospecto necesita un correo para agendar un Email.");
-      return;
-    }
-    if (["llamada", "whatsapp"].includes(tipoSiguienteTexto) && !prospecto.telefono && !formDataExtra.telefono) {
-      alert("El prospecto necesita un teléfono para este tipo de seguimiento.");
-      return;
-    }
-    if (tipoSiguienteTexto === "visita" && !prospecto.direccion && !formDataExtra.direccion) {
-      alert("El prospecto necesita una dirección para agendar una visita.");
-      return;
-    }
-
+    if (!fechaSiguiente || !tipoSiguiente || !motivoSiguiente.trim()) return alert("Completa los campos obligatorios.");
     try {
       const token = localStorage.getItem("token");
-
-      // Validar que la vendedora no esté inactiva
-      if (prospecto.vendedora && prospecto.vendedora.estado === 0) {
-        alert("Esta vendedora está inactiva. No puedes guardar el seguimiento.");
-        return;
-      }
-
       if (Object.keys(formDataExtra).length > 0) {
-        const resActualizar = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.id_prospecto}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.id_prospecto}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           body: JSON.stringify(formDataExtra),
         });
-        if (!resActualizar.ok) throw new Error("Error actualizando datos del prospecto");
       }
 
-      // Agendar el nuevo seguimiento primero
-      const resSeguimiento = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
+      const resSeg = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           id_venta: seguimiento.venta.id_venta,
           cedula_vendedora: seguimiento.venta.prospecto.cedula_vendedora,
@@ -204,182 +144,208 @@ const [duracionMinutos, setDuracionMinutos] = useState(30); // valor por defecto
           motivo: motivoSiguiente,
           nota: notaSiguiente,
           duracion_minutos: duracionMinutos
-
         }),
       });
-      const seguimientoData = await resSeguimiento.json();
+      const resData = await resSeg.json();
+      if (!resSeg.ok) throw new Error(resData.message || "Error al agendar");
 
-      if (!resSeguimiento.ok) {
-        throw new Error(seguimientoData.message || "Error agendando siguiente seguimiento");
-      }
-
-      // Guardar el resultado del seguimiento actual
       const estadoSeleccionado = estados.find(e => e.id_estado == estadoProspecto);
-      const nombreEstado = estadoSeleccionado?.nombre;
-
-      const resResultado = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${id_seguimiento}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ resultado, nota, estado: nombreEstado }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ resultado, nota, estado: estadoSeleccionado?.nombre }),
       });
 
-      if (!resResultado.ok) throw new Error("Error guardando resultado");
-
-      alert(`Resultado guardado y seguimiento agendado correctamente a las ${seguimientoData.hora_formateada}`);
-      setMostrarModal(false);
+      alert("✅ Resultado guardado y siguiente seguimiento agendado.");
       navigate(-1);
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
-  if (loading) return <p>CARGANDO SEGUIMIENTO...</p>;
+  if (loading) return <div className="rr-loading">Cargando datos del seguimiento...</div>;
 
   return (
-    <div className="resultado-container">
-      <h1>{seguimiento.estado === "pendiente" ? "Registrar Resultado" : "Editar Resultado"}</h1>
-      <div className="seguimiento-info">
-        <p><strong>Prospecto:</strong> {seguimiento.venta.prospecto.nombre.toUpperCase()}</p>
-        <p><strong>Objetivo de Venta:</strong> {seguimiento.venta.objetivo.toUpperCase()}</p>
-        <p><strong>Tipo de Seguimiento:</strong> {seguimiento.tipo_seguimiento.descripcion.toUpperCase()}</p>
-        <p><strong>Fecha Programada:</strong> {new Date(seguimiento.fecha_programada).toLocaleDateString()}</p>
-        <p><strong>Estado Actual:</strong> {seguimiento.estado.toUpperCase()}</p>
-        <p><strong>Motivo:</strong> {seguimiento.motivo.toUpperCase()}</p>
+    <div className="rr-container">
+      <div className="rr-header">
+        <button className="rr-btn-back" onClick={() => navigate(-1)}>⬅ Volver</button>
+        <h1 className="rr-title">
+          {seguimiento.estado === "pendiente" ? "Registrar Resultado" : "Editar Resultado"}
+        </h1>
       </div>
 
-      <textarea
-        placeholder="RESULTADO DE LA INTERACCIÓN"
-        value={resultado}
-        onChange={(e) => setResultado(e.target.value)}
-      />
+      <div className="rr-grid">
+        {/* Lado Izquierdo: Info de referencia */}
+        <div className="rr-info-card">
+          <div className="rr-info-header">📌 Detalles de la Tarea</div>
+          <div className="rr-info-body">
+            <div className="rr-info-item">
+              <label>Prospecto</label>
+              <span>{seguimiento.venta.prospecto.nombre.toUpperCase()}</span>
+            </div>
+            <div className="rr-info-item">
+              <label>Objetivo de Venta</label>
+              <span>{seguimiento.venta.objetivo.toUpperCase()}</span>
+            </div>
+            <div className="rr-info-item">
+              <label>Tipo de Tarea</label>
+              <span className="rr-tag">{seguimiento.tipo_seguimiento.descripcion.toUpperCase()}</span>
+            </div>
+            <div className="rr-info-item">
+              <label>Fecha Programada</label>
+              <span>{new Date(seguimiento.fecha_programada).toLocaleDateString()}</span>
+            </div>
+            <div className="rr-info-item">
+              <label>Motivo Original</label>
+              <p>{seguimiento.motivo.toUpperCase()}</p>
+            </div>
+          </div>
+        </div>
 
-      <textarea
-        placeholder="NOTAS ADICIONALES (OPCIONAL)"
-        value={nota}
-        onChange={(e) => setNota(e.target.value)}
-      />
-
-      <label>Estado del Prospecto:</label>
-      <select value={estadoProspecto} onChange={(e) => setEstadoProspecto(e.target.value)}>
-        <option value="">-- Seleccionar estado --</option>
-        {estados
-          .filter((estado) => estado.nombre.toLowerCase() !== "reabierto")
-          .map((estado) => (
-            <option key={estado.id_estado} value={estado.id_estado}>
-              {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
-            </option>
-          ))}
-
-      </select>
-
-      <button onClick={guardarResultado}>
-        {seguimiento.estado === "pendiente" ? "Guardar Resultado" : "Actualizar Resultado"}
-      </button>
-
-      <button className="btn-volver" onClick={() => navigate(-1)}>← Volver</button>
-
-      {mostrarModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <h3>AGENDAR SIGUIENTE SEGUIMIENTO</h3>
-            {error && (
-              <p className="error-modal">{error}</p>
-            )}
-
-
-            <input
-              type="datetime-local"
-              value={fechaSiguiente}
-              onChange={(e) => setFechaSiguiente(e.target.value)}
-              required
-            />
-
-
-            <select
-              value={tipoSiguiente || ""}
-              onChange={(e) => {
-                const selectedId = parseInt(e.target.value);
-                setTipoSiguiente(selectedId);
-                const selectedTipo = tiposSeguimiento.find(t => t.value === selectedId);
-                setTipoSiguienteTexto(selectedTipo?.label.toLowerCase());
-              }}
-              required
-            >
-              <option value="">-- SELECCIONAR TIPO --</option>
-              {tiposSeguimiento.map((tipo) => (
-                <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
-              ))}
-            </select>
-
-              <label>Duración estimada (minutos):</label>
-<select value={duracionMinutos} onChange={(e) => setDuracionMinutos(Number(e.target.value))}>
-  {[5, 10, 15, 30, 45, 60, 90, 120].map((min) => (
-    <option key={min} value={min}>{min} minutos</option>
-  ))}
-</select>
-
-
-            <input
-              type="text"
-              placeholder="MOTIVO"
-              value={motivoSiguiente}
-              onChange={(e) => setMotivoSiguiente(e.target.value)}
-              required
-            />
-           
-          
-
+        {/* Lado Derecho: Formulario de Acción */}
+        <div className="rr-form-card">
+          <div className="rr-form-group">
+            <label>¿Cuál fue el resultado de la interacción? <span className="rr-req">*</span></label>
             <textarea
-              placeholder="NOTA (opcional)"
-              value={notaSiguiente}
-              onChange={(e) => setNotaSiguiente(e.target.value)}
+              className="rr-textarea"
+              placeholder="Describe qué sucedió en la llamada, visita o reunión..."
+              value={resultado}
+              onChange={(e) => setResultado(e.target.value)}
+              rows="4"
             />
-            {tipoSiguienteTexto === "email" && !prospecto.correo && (
-              <>
-                <label>Correo del Prospecto *</label>
-                <input
-                  type="email"
-                  value={formDataExtra.correo || ""}
-                  onChange={(e) => setFormDataExtra({ ...formDataExtra, correo: e.target.value })}
-                />
-              </>
-            )}
-            {["llamada", "whatsapp"].includes(tipoSiguienteTexto) && !prospecto.telefono && (
-              <>
-                <label>Teléfono del Prospecto *</label>
-                <input
-                  type="text"
-                  value={formDataExtra.telefono || ""}
-                  onChange={(e) => setFormDataExtra({ ...formDataExtra, telefono: e.target.value })}
-                />
-              </>
-            )}
-            {tipoSiguienteTexto === "visita" && !prospecto.direccion && (
-              <>
-                <label>Dirección del Prospecto *</label>
-                <input
-                  type="text"
-                  value={formDataExtra.direccion || ""}
-                  onChange={(e) => setFormDataExtra({ ...formDataExtra, direccion: e.target.value })}
-                />
-              </>
-            )}
-            <div className="modal-buttons">
-              <button className="btn-mini" onClick={agendarDesdeModal}>AGENDAR</button>
-              <button
-                className="btn-mini red"
-                onClick={() => {
-                  setMostrarModal(false);
-                  setError(""); // limpiar error cuando cierra
-                  setDuracionMinutos(30);
+          </div>
 
-                }}
+          <div className="rr-form-group">
+            <label>Notas adicionales (Internas)</label>
+            <textarea
+              className="rr-textarea"
+              placeholder="Notas extras que no caben en el resultado..."
+              value={nota}
+              onChange={(e) => setNota(e.target.value)}
+              rows="2"
+            />
+          </div>
+
+          <div className="rr-form-group">
+            <label>Nuevo Estado del Prospecto <span className="rr-req">*</span></label>
+            <select className="rr-select" value={estadoProspecto} onChange={(e) => setEstadoProspecto(e.target.value)}>
+              <option value="">-- Seleccionar estado --</option>
+              {estados
+                .filter((estado) => estado.nombre.toLowerCase() !== "reabierto")
+                .map((estado) => (
+                  <option key={estado.id_estado} value={estado.id_estado}>
+                    {estado.nombre.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+                  </option>
+                ))}
+            </select>
+            <p className="rr-hint">Si el estado no es final (Vendido/Perdido), se te pedirá agendar la siguiente acción.</p>
+          </div>
+
+          {/* ----- NUEVO BLOQUE CONDICIONAL PARA DECLINACIÓN ----- */}
+          {estados.find(e => e.id_estado == estadoProspecto)?.nombre === "Prospección declinada" && (
+            <div className="rr-form-group" style={{ backgroundColor: '#fff5f5', padding: '15px', borderRadius: '8px', border: '1px solid #feb2b2', marginBottom: '15px' }}>
+              
+              <label style={{ color: '#c53030', fontWeight: 'bold' }}>Motivo de declinación <span className="rr-req">*</span></label>
+              <select 
+                className="rr-select" 
+                value={motivoDeclinacion} 
+                onChange={(e) => setMotivoDeclinacion(e.target.value)}
+                style={{ marginBottom: '15px', borderColor: '#feb2b2' }}
               >
-                CANCELAR
-              </button>
+                <option value="">-- Seleccionar motivo --</option>
+                <option value="Precio alto">Precio alto</option>
+                <option value="Licitación no ganada">Licitación no ganada</option>
+                <option value="Sin decisión (lead frio)">Sin decisión (lead frío)</option>
+                <option value="Lead no calificado">Lead no calificado</option>
+              </select>
+
+              <label style={{ color: '#c53030', fontWeight: 'bold' }}>Observación obligatoria <span className="rr-req">*</span></label>
+              <textarea
+                className="rr-textarea"
+                placeholder="Detalla un poco más por qué se perdió este lead..."
+                value={observacionDeclinacion}
+                onChange={(e) => setObservacionDeclinacion(e.target.value)}
+                rows="3"
+                style={{ borderColor: '#feb2b2' }}
+              />
+            </div>
+          )}
+
+<button className="rr-btn-save" onClick={guardarResultado}>
+            {seguimiento.estado === "pendiente" ? "💾 Guardar y Continuar" : "💾 Actualizar Registro"}
+          </button>
+        </div>
+      </div>
+
+      {/* Modal Agendar Siguiente */}
+      {mostrarModal && (
+        <div className="rr-modal-overlay">
+          <div className="rr-modal-content">
+            <div className="rr-modal-header">
+              <h3>📅 Agendar Siguiente Seguimiento</h3>
+              <p>Como la prospección sigue abierta, define cuándo volverás a contactar.</p>
+            </div>
+
+            {error && <p className="rr-alert-error">{error}</p>}
+
+            <div className="rr-modal-grid">
+              <div className="rr-form-group">
+                <label>Fecha y Hora <span className="rr-req">*</span></label>
+                <input type="datetime-local" className="rr-input" value={fechaSiguiente} onChange={(e) => setFechaSiguiente(e.target.value)} />
+              </div>
+
+              <div className="rr-form-group">
+                <label>Tipo de Acción <span className="rr-req">*</span></label>
+                <select className="rr-select" value={tipoSiguiente || ""} onChange={(e) => {
+                  const id = parseInt(e.target.value);
+                  setTipoSiguiente(id);
+                  const text = tiposSeguimiento.find(t => t.value === id)?.label.toLowerCase();
+                  setTipoSiguienteTexto(text);
+                }}>
+                  <option value="">Seleccionar...</option>
+                  {tiposSeguimiento.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </select>
+              </div>
+
+              <div className="rr-form-group">
+                <label>Duración estimada</label>
+                <select className="rr-select" value={duracionMinutos} onChange={(e) => setDuracionMinutos(Number(e.target.value))}>
+                  {[5, 15, 30, 45, 60, 90, 120].map(m => <option key={m} value={m}>{m} minutos</option>)}
+                </select>
+              </div>
+
+              <div className="rr-form-group rr-full-width">
+                <label>Motivo de la siguiente acción <span className="rr-req">*</span></label>
+                <input type="text" className="rr-input" placeholder="Ej: Enviar propuesta final" value={motivoSiguiente} onChange={(e) => setMotivoSiguiente(e.target.value)} />
+              </div>
+
+              <div className="rr-form-group rr-full-width">
+                <label>Nota / Instrucción</label>
+                <textarea className="rr-textarea" placeholder="Detalles para tu futuro 'yo'..." value={notaSiguiente} onChange={(e) => setNotaSiguiente(e.target.value)} rows="2" />
+              </div>
+
+              {/* Campos dinámicos de contacto */}
+              {tipoSiguienteTexto === "email" && !prospecto.correo && (
+                <div className="rr-form-group rr-full-width rr-contact-needed">
+                  <label>📧 Correo del Prospecto (Falta)</label>
+                  <input type="email" className="rr-input" value={formDataExtra.correo || ""} onChange={e => setFormDataExtra({ ...formDataExtra, correo: e.target.value })} />
+                </div>
+              )}
+              {["llamada", "whatsapp"].includes(tipoSiguienteTexto) && !prospecto.telefono && (
+                <div className="rr-form-group rr-full-width rr-contact-needed">
+                  <label>📱 Teléfono del Prospecto (Falta)</label>
+                  <input type="text" className="rr-input" value={formDataExtra.telefono || ""} onChange={e => setFormDataExtra({ ...formDataExtra, telefono: e.target.value })} />
+                </div>
+              )}
+              {tipoSiguienteTexto === "visita" && !prospecto.direccion && (
+                <div className="rr-form-group rr-full-width rr-contact-needed">
+                  <label>📍 Dirección del Prospecto (Falta)</label>
+                  <input type="text" className="rr-input" value={formDataExtra.direccion || ""} onChange={e => setFormDataExtra({ ...formDataExtra, direccion: e.target.value })} />
+                </div>
+              )}
+            </div>
+
+            <div className="rr-modal-actions">
+              <button className="rr-btn-ghost" onClick={() => setMostrarModal(false)}>Cancelar</button>
+              <button className="rr-btn-primary" onClick={agendarDesdeModal}>Finalizar y Agendar</button>
             </div>
           </div>
         </div>

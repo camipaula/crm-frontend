@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Login from "./pages/Login";
-import Home from "./pages/Home";
+import Home from "./pages/Home"; // 🏠 El Clásico
+import DashboardModerno from "./pages/DashboardModerno"; // 🚀 El Nuevo
 import ProspectosAdmin from "./pages/ProspectosAdmin";
 import ProspectosVendedora from "./pages/ProspectosVendedora";
 import CrearProspecto from "./pages/CrearProspecto";
@@ -22,18 +23,18 @@ import VerSeguimientos from "./pages/VerSeguimientos";
 import CalendarioAdmin from "./pages/CalendarioAdmin";
 import MiInformacionAdmin from "./pages/MiInformacionAdmin";
 import Documentos from "./pages/Documentos";
+import ForecastAdmin from "./pages/ForecastAdmin";
+import DashboardMetas from "./pages/DashboardMetas";
+import DashboardMetaVsReal from "./pages/DashboardMetaVsReal";
+import DashboardLeads from "./pages/DashboardLeads";
+
 const App = () => {
   const [isAuth, setIsAuth] = useState(null);
 
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("token");
-
-      if (token) {
-        setIsAuth(true);
-      } else {
-        setIsAuth(false);
-      }
+      setIsAuth(!!token);
     };
 
     checkAuth();
@@ -52,23 +53,30 @@ const App = () => {
 
         {/* Rutas para ADMINISTRADORA */}
         <Route element={<ProtectedRoute allowedRoles={["admin","lectura"]} />}>
-          <Route path="/admin" element={<Layout><Home /></Layout>} />
+          {/* Al loguearse van directo a este: */}
+          <Route path="/admin" element={<Layout><DashboardModerno /></Layout>} />
+          {/* Ruta para ver el home clásico: */}
+          <Route path="/admin-home-antiguo" element={<Layout><Home /></Layout>} />
+          
           <Route path="/prospectos-admin" element={<Layout><ProspectosAdmin /></Layout>} />
           <Route path="/crear-vendedora" element={<Layout><CrearVendedora /></Layout>} />
           <Route path="/vendedoras-admin" element={<Layout><VendedorasAdmin /></Layout>}/>
           <Route path="/editar-vendedora/:cedula_ruc" element={<Layout><EditarVendedora /></Layout>}/>
           <Route path="/seguimientos-admin" element={<Layout><SeguimientosAdmin /></Layout>} />
           <Route path="/calendario-admin" element={<Layout><CalendarioAdmin  /></Layout>} />
+          <Route path="/forecast-admin" element={<Layout><ForecastAdmin /></Layout>} />
+          <Route path="/dashboard-metas" element={<Layout><DashboardMetas /></Layout>} />
+          <Route path="/dashboard-meta-vs-real" element={<Layout><DashboardMetaVsReal /></Layout>} />
           <Route path="/mi-informacion" element={<Layout><MiInformacionAdmin /></Layout>} />
-
         </Route>
-
-      
-
 
         {/* Rutas para VENDEDORA */}
         <Route element={<ProtectedRoute allowedRoles={["vendedora"]} />}>
-          <Route path="/vendedora" element={<Layout><Home /></Layout>} />
+          {/* Al loguearse van directo a este: */}
+          <Route path="/vendedora" element={<Layout><DashboardModerno /></Layout>} />
+          {/* Ruta para ver el home clásico: */}
+          <Route path="/vendedora-home-antiguo" element={<Layout><Home /></Layout>} />
+
           <Route path="/prospectos-vendedora" element={<Layout><ProspectosVendedora /></Layout>} />
           <Route path="/seguimientos-vendedora" element={<Layout><SeguimientosVendedora /></Layout>} />
           <Route path="/calendario-vendedora" element={<Layout><CalendarioVendedora /></Layout>} />
@@ -84,10 +92,9 @@ const App = () => {
           <Route path="/abrir-venta/:id_prospecto" element={<Layout><AbrirVenta /></Layout>}/>
           <Route path="/seguimientos-prospecto/:id_prospecto" element={<Layout><SeguimientosProspecto /></Layout>} />
           <Route path="/seguimientos-prospeccion/:id_venta" element={<Layout><VerSeguimientos  /></Layout>} />
-
+          <Route path="/leads-demo" element={<Layout><DashboardLeads /></Layout>} />
         </Route>
 
-        {/* Ruta por defecto */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

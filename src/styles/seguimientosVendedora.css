@@ -1,239 +1,371 @@
-/* 📌 Contenedor principal */
-.seguimientos-container {
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  overflow: visible;
-  background: transparent;
-  box-sizing: border-box;
-}
+/* =============================================
+   SEGUIMIENTOS VENDEDORA — SaaS Premium Light Theme
+   ============================================= */
 
-/* 📌 Título */
-.title {
-  font-size: 26px;
-  font-weight: bold;
-  color: #0d2a49;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* 📥 Botón Exportar */
-.exportar-btn {
-  background: #0d2a49;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.3s;
-  margin: 0 auto 20px;
-  display: block;
-}
-
-.exportar-btn:hover {
-  background: #0b1f35;
-}
-
-/* 🎯 Filtros */
-.filtros-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.filtros-container select {
-  padding: 8px 12px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-/* 📋 Tabla */
-.seguimientos-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.seguimientos-table th,
-.seguimientos-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.seguimientos-table th {
-  background: #0d2a49;
-  color: white;
-  text-transform: uppercase;
-  font-size: 14px;
-}
-
-.seguimientos-table tr:nth-child(even) {
-  background: #f9f9f9;
-}
-
-/* 📌 Botones de acción */
-.btn-agendar,
-.btn-ver-seguimientos,
-.btn-historial-seguimientos {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s;
-  margin: 2px;
-  display: inline-block;
-  width: 100%;
-  white-space: nowrap;
-}
-
-.btn-agendar {
-  background: #28a745;
-  color: white;
-}
-
-.btn-agendar:hover {
-  background: #218838;
-}
-
-.btn-ver-seguimientos {
-  background: #007bff;
-  color: white;
-}
-
-.btn-ver-seguimientos:hover {
-  background: #0056b3;
-}
-
-.btn-historial-seguimientos {
-  background: #0d9488;
-  color: white;
-}
-
-.btn-historial-seguimientos:hover {
-  background: #0f766e;
-}
-
-.input-busqueda-nombre {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  min-width: 200px;
-  margin-left: 10px;
-}
-
-.seguimientos-table-vendedora-wrapper {
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-/* Para asegurarte que la tabla no se aplaste */
-.seguimientos-table {
-  min-width: 1000px;
-}
-
-
-/* ❗ Error */
-.error {
-  color: red;
-  text-align: center;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-/* ✅ Responsive: tarjetas en móviles, tabla oculta */
-@media (max-width: 768px) {
-  .seguimientos-container {
-    padding: 15px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .filtros-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filtros-container select {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .seguimientos-table-vendedora-wrapper {
-    display: none;
-  }
-
-  .tarjetas-seguimientos-vendedora {
-    display: block;
-    margin-top: 20px;
-  }
-
-  .card-seguimiento {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  }
-
-  .card-seguimiento h3 {
-    margin-bottom: 10px;
-    color: #0d2a49;
-    font-size: 18px;
-  }
-
-  .card-seguimiento p {
-    margin: 4px 0;
-    font-size: 14px;
-  }
-
-  .card-seguimiento .acciones {
-    margin-top: 10px;
+   .sv-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 24px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-family: 'DM Sans', 'Segoe UI Emoji', 'Apple Color Emoji', system-ui, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    animation: fadeInSv 0.4s ease-out;
   }
-
-  .card-seguimiento .acciones button {
-    font-size: 13px;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: none;
+  
+  @keyframes fadeInSv {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .sv-emoji {
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif !important;
+    font-style: normal;
+  }
+  
+  /* ─── Header ────────────────────────────────── */
+  .sv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .sv-header-titles {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .sv-header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+  
+  .sv-header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  /* ─── Botones Universales ───────────────────── */
+  .sv-btn-outline {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
-
-  .card-seguimiento .btn-ver-seguimientos {
-    background: #007bff;
-    color: white;
+  
+  .sv-btn-outline:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
   }
-
-  .card-seguimiento .btn-agendar {
-    background: #28a745;
-    color: white;
+  
+  .sv-btn-outline:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+    width: 15%;
   }
-
-  .card-seguimiento .btn-historial-seguimientos {
-    background: #0d9488;
-    color: white;
+  
+  .sv-btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
   }
-}
-
-/* ✅ Ocultar tarjetas en escritorio */
-@media (min-width: 769px) {
-  .tarjetas-seguimientos-vendedora {
-    display: none;
+  
+  .sv-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(108, 95, 240, 0.4);
   }
-}
+  
+  /* ─── Barra de Búsqueda y Filtros ───────────── */
+  .sv-search-bar {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  
+  .sv-search-inputs {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .sv-input, .sv-select {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .sv-search-input {
+    flex-grow: 1;
+    min-width: 250px;
+  }
+  
+  .sv-input:focus, .sv-select:focus {
+    background: #ffffff;
+    border-color: #6c5ff0;
+    box-shadow: 0 0 0 3px rgba(108,95,240,0.15);
+  }
+  
+  /* ─── Card y Paginación ─────────────────────── */
+  .sv-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+  }
+  
+  .sv-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+  }
+  
+  .sv-pagination span { font-size: 13.5px; color: #64748b; }
+  .sv-pagination strong { color: #0f172a; font-weight: 700; }
+  
+  /* ─── Tabla Principal ───────────────────────── */
+  .sv-table-wrapper {
+    overflow-x: auto;
+    max-height: 600px;
+  }
+  
+  .sv-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  
+  .sv-table thead th {
+    position: sticky;
+    top: 0;
+    background: rgba(248, 250, 252, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    padding: 14px 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 0 #e2e8f0;
+  }
+  
+  .sv-table td {
+    padding: 16px 20px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    background: #ffffff;
+    transition: all 0.2s ease;
+  }
+  
+  .sv-table tbody tr:hover td {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  
+  .sv-table tbody tr:hover {
+    box-shadow: inset 4px 0 0 0 #6c5ff0;
+  }
+  
+  /* Fila Extra (Siguiente Contacto) */
+  .sv-extra-row td {
+    padding: 0 20px 16px 20px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    background: transparent !important;
+  }
+  
+  .sv-next-contact-box {
+    background: #f1f5f9;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #475569;
+    display: inline-block;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .sv-next-contact-box strong { color: #0f172a; }
+  .sv-divider { color: #cbd5e1; margin: 0 8px; }
+  
+  /* Utilidades Tabla */
+  .sv-font-bold { font-weight: 700; color: #0f172a !important; }
+  .sv-text-muted { color: #94a3b8; font-style: italic; font-size: 12.5px; }
+  .sv-text-right { text-align: right !important; }
+  .sv-note-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #64748b; }
+  
+  /* ─── Badges de Estado Venta ────────────────── */
+  .sv-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  
+  .sv-badge.green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15); }
+  .sv-badge.blue { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .sv-badge.gray { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+  
+  /* ─── Status Tags (Etiquetas de Seguimiento) ── */
+  .sv-status-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  
+  .sv-status-tag.red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .sv-status-tag.orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+  .sv-status-tag.yellow { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
+  .sv-status-tag.blue { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .sv-status-tag.green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .sv-status-tag.gray { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+  
+  /* ─── Botones de Acción (Tabla) ─────────────── */
+  .sv-actions-cell {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  
+  /* Botón con texto e icono */
+  .sv-btn-table-action {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', 'Segoe UI Emoji', sans-serif !important;
+  }
+  
+  .sv-btn-table-action:hover {
+    background: #f8fafc; border-color: #94a3b8; color: #0f172a;
+    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  }
+  
+  /* Botón solo icono */
+  .sv-icon-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    font-family: 'Segoe UI Emoji', sans-serif !important;
+  }
+  
+  .sv-icon-btn:hover {
+    background: #f8fafc; border-color: #94a3b8;
+    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  }
+  
+  /* ─── Estados ───────────────────────────────── */
+  .sv-loading-state, .sv-empty-state { text-align: center; padding: 60px 20px; color: #64748b; font-size: 14px; font-weight: 500; }
+  .sv-alert-error { background: #fef2f2; color: #dc2626; padding: 16px; border-radius: 12px; border: 1px solid #fecaca; font-weight: 500; }
+  
+  /* ─── Vista Móvil ───────────────────────────── */
+  .sv-mobile-view { display: none; }
+  
+  @media (max-width: 1024px) {
+    .sv-table-wrapper { display: none; }
+    .sv-mobile-view { display: block; padding: 16px; background: #f8fafc; }
+    
+    .sv-mobile-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+      padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    
+    .sv-mc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+    .sv-mc-title { margin: 0; font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1.2; }
+    .sv-mobile-card p { margin: 6px 0; font-size: 13.5px; color: #334155; }
+    .sv-mobile-card strong { color: #64748b; }
+    .sv-divider-line { height: 1px; background: #f1f5f9; margin: 12px 0; }
+    
+    .sv-mc-actions {
+      display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f1f5f9; flex-wrap: wrap;
+    }
+    .sv-mc-actions button { flex: 1; min-width: 100px; text-align: center; justify-content: center; }
+  }
+  
+  @media (max-width: 768px) {
+    .sv-header { flex-direction: column; align-items: stretch; gap: 20px; }
+    .sv-header-actions { width: 100%; justify-content: stretch; }
+    .sv-header-actions button { flex: 1; justify-content: center; }
+    .sv-search-inputs { flex-direction: column; width: 100%; }
+  }
+  
+  /* ─── Modal ─────────────────────────────────── */
+  .sv-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px;
+  }
+  .sv-modal-content {
+    background: #ffffff; width: 100%; max-width: 500px; border-radius: 16px; padding: 32px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; gap: 16px;
+    animation: modalScaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes modalScaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .sv-modal-content h3 { margin: 0 0 8px; font-size: 20px; font-weight: 700; color: #0f172a; }
+  .sv-form-group { display: flex; flex-direction: column; gap: 8px; }
+  .sv-form-group label { font-size: 13px; font-weight: 700; color: #475569; }
+  .sv-modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #f1f5f9; }

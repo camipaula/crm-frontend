@@ -53,7 +53,10 @@ const Documentos = () => {
         prospectos: Array.isArray(data.prospectos) ? data.prospectos : [],
       });
     } catch (err) {
-      setOpciones({ general: { value: "general", label: "General (visible para todos)" }, prospectos: [] });
+      setOpciones({
+        general: { value: "general", label: "General (visible para todos)" },
+        prospectos: [],
+      });
     } finally {
       setLoadingOpciones(false);
     }
@@ -108,12 +111,15 @@ const Documentos = () => {
     setSubiendo(true);
     setMensaje("");
     setError("");
+
     try {
       const formData = new FormData();
       formData.append("archivo", archivo);
       formData.append("tipo", tipoSubir);
+
       const esGeneral = alcanceSubir === "general";
       formData.append("alcance", esGeneral ? "general" : "prospecto");
+
       if (!esGeneral && alcanceSubir.startsWith("prospecto-")) {
         const id = alcanceSubir.replace("prospecto-", "");
         if (id) formData.append("id_prospecto", id);
@@ -124,6 +130,7 @@ const Documentos = () => {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
+
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || "Error al subir el documento");
 
@@ -143,14 +150,17 @@ const Documentos = () => {
   const handleDescargar = async (doc) => {
     setDescargandoId(doc.id_documento);
     setError("");
+
     try {
       const res = await fetch(`${baseUrl}/api/documentos/${doc.id_documento}/archivo`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message || "Error al descargar");
       }
+
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -169,13 +179,16 @@ const Documentos = () => {
 
   const handleEliminar = async (id_documento) => {
     if (!window.confirm("¿Eliminar este documento?")) return;
+
     try {
       const res = await fetch(`${baseUrl}/api/documentos/${id_documento}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || "Error al eliminar");
+
       setMensaje("Documento eliminado.");
       fetchDocumentos();
     } catch (err) {
@@ -205,42 +218,129 @@ const Documentos = () => {
   };
 
   return (
-    <div className="documentos-page">
-      <h1 className="documentos-title">📁 Documentos</h1>
+    <div className="docs-container">
+      <div className="docs-header">
+        <div>
+          <h1 className="docs-title">Gestión de documentos</h1>
+          <p className="docs-subtitle">
+            Consulta, descarga y administra archivos generales o asociados a prospectos.
+          </p>
+        </div>
 
-      {mensaje && <div className="documentos-mensaje success">{mensaje}</div>}
-      {error && <div className="documentos-mensaje error">{error}</div>}
-
-      <div className="documentos-actions">
-        {puedeSubir && (
-          <button
-            type="button"
-            className="btn-documentos btn-primary"
-            onClick={() => setMostrarForm(!mostrarForm)}
-          >
-            {mostrarForm ? "✖ Cancelar" : "📤 Subir documento"}
-          </button>
-        )}
+        <div className="docs-header-actions">
+          {puedeSubir && (
+            <button
+              type="button"
+              className="docs-btn docs-btn-primary"
+              onClick={() => setMostrarForm(!mostrarForm)}
+            >
+              {mostrarForm ? "Cancelar" : "Subir documento"}
+            </button>
+          )}
+        </div>
       </div>
 
+      {(mensaje || error) && (
+        <div className="docs-alerts">
+          {mensaje && <div className="docs-alert docs-alert-success">{mensaje}</div>}
+          {error && <div className="docs-alert docs-alert-error">{error}</div>}
+        </div>
+      )}
+
       {mostrarForm && puedeSubir && (
-        <form className="documentos-form" onSubmit={handleSubir}>
-          <h3>Subir nuevo documento</h3>
-          <div className="form-row">
-            <label>
-              Archivo <span className="required">*</span>
-            </label>
-            <input
-              type="file"
-              onChange={(e) => setArchivo(e.target.files?.[0] || null)}
-              accept="*/*"
-            />
+        <form className="docs-card docs-form-card" onSubmit={handleSubir}>
+          <div className="docs-section-head">
+            <h3>Nuevo documento</h3>
+            <span>Completa los datos para subir el archivo</span>
           </div>
-          <div className="form-row">
-            <label>
-              Tipo <span className="required">*</span>
-            </label>
-            <select value={tipoSubir} onChange={(e) => setTipoSubir(e.target.value)} required>
+
+          <div className="docs-form-grid">
+            <div className="docs-field docs-field-full">
+              <label>
+                Archivo <span className="docs-required">*</span>
+              </label>
+              <input
+                className="docs-input-file"
+                type="file"
+                onChange={(e) => setArchivo(e.target.files?.[0] || null)}
+                accept="*/*"
+              />
+            </div>
+
+            <div className="docs-field">
+              <label>
+                Tipo <span className="docs-required">*</span>
+              </label>
+              <select
+                className="docs-select"
+                value={tipoSubir}
+                onChange={(e) => setTipoSubir(e.target.value)}
+                required
+              >
+                {TIPOS_VALIDOS.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="docs-field">
+              <label>
+                Alcance (¿Para quién?) <span className="docs-required">*</span>
+              </label>
+              <select
+                className="docs-select"
+                value={alcanceSubir}
+                onChange={(e) => setAlcanceSubir(e.target.value)}
+                required
+                disabled={loadingOpciones}
+              >
+                {opciones.general && (
+                  <option value={opciones.general.value}>{opciones.general.label}</option>
+                )}
+                {opciones.prospectos.map((p) => (
+                  <option key={p.id_prospecto} value={`prospecto-${p.id_prospecto}`}>
+                    {p.nombre || `Prospecto ${p.id_prospecto}`}
+                  </option>
+                ))}
+                {loadingOpciones && opciones.prospectos.length === 0 && !opciones.general && (
+                  <option value="">Cargando…</option>
+                )}
+              </select>
+            </div>
+          </div>
+
+          <div className="docs-form-actions">
+            <button
+              type="submit"
+              className="docs-btn docs-btn-primary"
+              disabled={subiendo}
+            >
+              {subiendo ? "Subiendo..." : "Guardar documento"}
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="docs-card docs-filters-card">
+        <div className="docs-section-head">
+          <h3>Filtros</h3>
+          <span>Encuentra más rápido los documentos que necesitas</span>
+        </div>
+
+        <div className="docs-filters-grid">
+          <div className="docs-field">
+            <label>Tipo</label>
+            <select
+              className="docs-select"
+              value={filtroTipo}
+              onChange={(e) => {
+                setFiltroTipo(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">Todos</option>
               {TIPOS_VALIDOS.map((t) => (
                 <option key={t.value} value={t.value}>
                   {t.label}
@@ -248,113 +348,81 @@ const Documentos = () => {
               ))}
             </select>
           </div>
-          <div className="form-row">
-            <label>Alcance (¿Para quién?) <span className="required">*</span></label>
-            <select
-              value={alcanceSubir}
-              onChange={(e) => setAlcanceSubir(e.target.value)}
-              required
-              disabled={loadingOpciones}
-            >
-              {opciones.general && (
-                <option value={opciones.general.value}>{opciones.general.label}</option>
-              )}
-              {opciones.prospectos.map((p) => (
-                <option key={p.id_prospecto} value={`prospecto-${p.id_prospecto}`}>
-                  {p.nombre || `Prospecto ${p.id_prospecto}`}
-                </option>
-              ))}
-              {loadingOpciones && opciones.prospectos.length === 0 && !opciones.general && (
-                <option value="">Cargando…</option>
-              )}
-            </select>
-          </div>
-          <button type="submit" className="btn-documentos btn-submit" disabled={subiendo}>
-            {subiendo ? "Subiendo…" : "Subir"}
-          </button>
-        </form>
-      )}
 
-      <div className="documentos-filtros">
-        <div className="filtro-grupo">
-          <label>Tipo</label>
-          <select
-            value={filtroTipo}
-            onChange={(e) => {
-              setFiltroTipo(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Todos</option>
-            {TIPOS_VALIDOS.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="filtro-grupo">
-          <label>Alcance</label>
-          <select
-            value={filtroAlcance}
-            onChange={(e) => {
-              setFiltroAlcance(e.target.value);
-              if (e.target.value !== "prospecto") setFiltroIdProspecto("");
-              setPage(1);
-            }}
-          >
-            <option value="">Todos (generales + por prospecto)</option>
-            <option value="general">Generales (visible para todos)</option>
-            <option value="prospecto">Por prospecto</option>
-          </select>
-        </div>
-        {filtroAlcance === "prospecto" && (
-          <div className="filtro-grupo">
-            <label>Prospecto</label>
+          <div className="docs-field">
+            <label>Alcance</label>
             <select
-              value={filtroIdProspecto}
+              className="docs-select"
+              value={filtroAlcance}
               onChange={(e) => {
-                setFiltroIdProspecto(e.target.value);
+                setFiltroAlcance(e.target.value);
+                if (e.target.value !== "prospecto") setFiltroIdProspecto("");
                 setPage(1);
               }}
             >
-              <option value="">Seleccionar prospecto</option>
-              {opciones.prospectos.map((p) => (
-                <option key={p.id_prospecto} value={String(p.id_prospecto)}>
-                  {p.nombre || `Prospecto ${p.id_prospecto}`}
-                </option>
-              ))}
+              <option value="">Todos (generales + por prospecto)</option>
+              <option value="general">Generales (visible para todos)</option>
+              <option value="prospecto">Por prospecto</option>
             </select>
           </div>
-        )}
-        <button
-          type="button"
-          className="btn-documentos btn-secondary"
-          onClick={() => {
-            setFiltroTipo("");
-            setFiltroAlcance("");
-            setFiltroIdProspecto("");
-            setPage(1);
-          }}
-        >
-          Limpiar filtros
-        </button>
+
+          {filtroAlcance === "prospecto" && (
+            <div className="docs-field">
+              <label>Prospecto</label>
+              <select
+                className="docs-select"
+                value={filtroIdProspecto}
+                onChange={(e) => {
+                  setFiltroIdProspecto(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value="">Seleccionar prospecto</option>
+                {opciones.prospectos.map((p) => (
+                  <option key={p.id_prospecto} value={String(p.id_prospecto)}>
+                    {p.nombre || `Prospecto ${p.id_prospecto}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="docs-field docs-field-actions">
+            <label>&nbsp;</label>
+            <button
+              type="button"
+              className="docs-btn docs-btn-secondary"
+              onClick={() => {
+                setFiltroTipo("");
+                setFiltroAlcance("");
+                setFiltroIdProspecto("");
+                setPage(1);
+              }}
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="documentos-list-wrap">
+      <div className="docs-card docs-table-card">
+        <div className="docs-section-head">
+          <h3>Listado</h3>
+          <span>
+            Total: {total} documento{total !== 1 ? "s" : ""}
+          </span>
+        </div>
+
         {loading ? (
-          <p className="documentos-loading">Cargando documentos…</p>
+          <div className="docs-empty-state">Cargando documentos...</div>
         ) : documentos.length === 0 ? (
-          <p className="documentos-empty">No hay documentos.</p>
+          <div className="docs-empty-state">No hay documentos.</div>
         ) : (
           <>
-            <p className="documentos-total">
-              Total: {total} documento{total !== 1 ? "s" : ""}
-            </p>
-            <div className="documentos-table-wrap">
-              <table className="documentos-table">
-<thead>
-                <tr>
+            <div className="docs-table-wrap">
+              <table className="docs-table">
+                <thead>
+                  <tr>
                     <th>Nombre</th>
                     <th>Tipo</th>
                     <th>Alcance</th>
@@ -368,30 +436,35 @@ const Documentos = () => {
                 <tbody>
                   {documentos.map((doc) => (
                     <tr key={doc.id_documento}>
-                      <td>{doc.nombre}</td>
+                      <td className="docs-name-cell">{doc.nombre}</td>
                       <td>
-                        <span className="badge-tipo">{doc.tipo}</span>
+                        <span className="docs-badge">{doc.tipo}</span>
                       </td>
-                      <td>{doc.alcance === "general" || doc.id_prospecto == null ? "General" : "Prospecto"}</td>
+                      <td>
+                        {doc.alcance === "general" || doc.id_prospecto == null
+                          ? "General"
+                          : "Prospecto"}
+                      </td>
                       <td>{doc.id_prospecto != null ? doc.nombre_prospecto || doc.id_prospecto : "-"}</td>
                       <td>{doc.id_venta ?? "-"}</td>
                       <td>{formatBytes(doc.tamanio)}</td>
                       <td>{formatFecha(doc.created_at)}</td>
                       <td>
-                        <div className="documentos-acciones-celda">
+                        <div className="docs-actions-cell">
                           <button
                             type="button"
-                            className="btn-documentos btn-download btn-sm"
+                            className="docs-btn docs-btn-download docs-btn-sm"
                             onClick={() => handleDescargar(doc)}
                             disabled={descargandoId === doc.id_documento}
                             title="Descargar"
                           >
-                            {descargandoId === doc.id_documento ? "…" : "⬇ Descargar"}
+                            {descargandoId === doc.id_documento ? "..." : "Descargar"}
                           </button>
+
                           {puedeSubir && (
                             <button
                               type="button"
-                              className="btn-documentos btn-danger btn-sm"
+                              className="docs-btn docs-btn-danger docs-btn-sm"
                               onClick={() => handleEliminar(doc.id_documento)}
                             >
                               Eliminar
@@ -404,22 +477,25 @@ const Documentos = () => {
                 </tbody>
               </table>
             </div>
+
             {totalPaginas > 1 && (
-              <div className="documentos-paginacion">
+              <div className="docs-pagination">
                 <button
                   type="button"
-                  className="btn-documentos btn-secondary"
+                  className="docs-btn docs-btn-secondary"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => p - 1)}
                 >
                   Anterior
                 </button>
-                <span>
+
+                <span className="docs-pagination-text">
                   Página {page} de {totalPaginas}
                 </span>
+
                 <button
                   type="button"
-                  className="btn-documentos btn-secondary"
+                  className="docs-btn docs-btn-secondary"
                   disabled={page >= totalPaginas}
                   onClick={() => setPage((p) => p + 1)}
                 >

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../styles/crearVendedora.css";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CrearVendedora = () => {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ const CrearVendedora = () => {
     try {
       setError("");
       setMensaje("");
+
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
         method: "POST",
@@ -27,7 +28,7 @@ const CrearVendedora = () => {
           nombre,
           email,
           password,
-          rol: "vendedora", 
+          rol: "vendedora",
         }),
       });
 
@@ -37,7 +38,7 @@ const CrearVendedora = () => {
       }
 
       setMensaje("Vendedora creada exitosamente");
-      navigate(-1)
+      navigate(-1);
       setCedulaRuc("");
       setNombre("");
       setEmail("");
@@ -48,40 +49,89 @@ const CrearVendedora = () => {
   };
 
   return (
-    <div className="crear-vendedora-container">
-            <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+    <div className="cv-container">
+      <div className="cv-header">
+        <div>
+          <h1 className="cv-title">Crear nueva vendedora</h1>
+          <p className="cv-subtitle">
+            Registra una nueva usuaria comercial dentro del sistema.
+          </p>
+        </div>
 
-      <h1>Crear Nueva Vendedora</h1>
+        <div className="cv-header-actions">
+          <button className="cv-btn cv-btn-secondary" onClick={() => navigate(-1)}>
+            ← Volver
+          </button>
+        </div>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Cédula/RUC"
-        value={cedula_ruc}
-        onChange={(e) => setCedulaRuc(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Nombre"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
-      />
-      <input
-        type="email"
-        placeholder="Correo electrónico"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      {(mensaje || error) && (
+        <div className="cv-alerts">
+          {mensaje && <div className="cv-alert cv-alert-success">{mensaje}</div>}
+          {error && <div className="cv-alert cv-alert-error">{error}</div>}
+        </div>
+      )}
 
-      <button onClick={crearVendedora}>Crear Vendedora</button>
+      <div className="cv-card">
+        <div className="cv-card-head">
+          <div>
+            <h3>Información de la vendedora</h3>
+            <p>Completa los datos para crear el nuevo usuario.</p>
+          </div>
+        </div>
 
-      {mensaje && <p className="mensaje">{mensaje}</p>}
-      {error && <p className="error">{error}</p>}
+        <div className="cv-form-grid">
+          <div className="cv-field">
+            <label>Cédula / RUC</label>
+            <input
+              className="cv-input"
+              type="text"
+              placeholder="Ingresa la cédula o RUC"
+              value={cedula_ruc}
+              onChange={(e) => setCedulaRuc(e.target.value)}
+            />
+          </div>
+
+          <div className="cv-field">
+            <label>Nombre</label>
+            <input
+              className="cv-input"
+              type="text"
+              placeholder="Ingresa el nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </div>
+
+          <div className="cv-field">
+            <label>Correo electrónico</label>
+            <input
+              className="cv-input"
+              type="email"
+              placeholder="Ingresa el correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="cv-field">
+            <label>Contraseña</label>
+            <input
+              className="cv-input"
+              type="password"
+              placeholder="Ingresa la contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="cv-actions">
+          <button className="cv-btn cv-btn-primary" onClick={crearVendedora}>
+            Crear vendedora
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

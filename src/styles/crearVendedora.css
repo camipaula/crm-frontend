@@ -1,48 +1,229 @@
-.crear-vendedora-container {
+.cv-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: "DM Sans", system-ui, sans-serif;
+  background: #f8fafc;
+}
+
+.cv-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cv-title {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cv-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cv-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cv-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cv-alert {
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.cv-alert-success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.cv-alert-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.cv-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  padding: 24px;
+}
+
+.cv-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.cv-card-head h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.cv-card-head p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cv-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.cv-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-field label {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cv-input {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.cv-input:focus {
+  outline: none;
+  border-color: #6c5ff0;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(108, 95, 240, 0.12);
+}
+
+.cv-input::placeholder {
+  color: #94a3b8;
+}
+
+.cv-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.cv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.cv-btn-primary {
+  color: #fff;
+  background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+  box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
+}
+
+.cv-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(108, 95, 240, 0.35);
+}
+
+.cv-btn-secondary {
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+}
+
+.cv-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+  .cv-container {
+    gap: 18px;
+  }
+
+  .cv-title {
+    font-size: 24px;
+  }
+
+  .cv-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-header-actions {
     width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e2e8f0;
-    box-sizing: border-box;
   }
-  
-  .crear-vendedora-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .crear-vendedora-container input {
+
+  .cv-header-actions .cv-btn {
     width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
   }
-  
-  .crear-vendedora-container button {
+
+  .cv-card {
+    padding: 16px;
+  }
+
+  .cv-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-actions {
+    justify-content: stretch;
+  }
+
+  .cv-actions .cv-btn {
     width: 100%;
-    padding: 10px;
-    margin-top: 12px;
-    background-color: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
   }
-  
-  .crear-vendedora-container .mensaje {
-    color: green;
-    text-align: center;
-    margin-top: 10px;
-  }
-  
-  .crear-vendedora-container .error {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
-  }
-  
+}

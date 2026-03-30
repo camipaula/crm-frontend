@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { obtenerCedulaDesdeToken } from "../utils/auth";
 import { debounce } from "lodash";
-
 import "../styles/prospectosVendedora3.css";
 
 const ProspectosVendedora = () => {
@@ -14,7 +13,6 @@ const ProspectosVendedora = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Filtros y búsqueda
   const [busquedaNombre, setBusquedaNombre] = useState("");
   const [busquedaInput, setBusquedaInput] = useState("");
   const [estadoFiltro, setEstadoFiltro] = useState([]);
@@ -37,20 +35,14 @@ const ProspectosVendedora = () => {
 
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-
   const [orden, setOrden] = useState("");
-
-
 
   const debouncedBuscar = useRef(
     debounce((valor) => {
-      setPaginaActual(1); // siempre resetear a página 1 cuando busque
+      setPaginaActual(1);
       setBusquedaNombre(valor);
     }, 500)
   ).current;
-
-
-
 
   useEffect(() => {
     const cedula = obtenerCedulaDesdeToken();
@@ -60,28 +52,28 @@ const ProspectosVendedora = () => {
     const filtrosGuardados = localStorage.getItem("filtros_prospectos_vendedora");
     const filtrosParsed = filtrosGuardados ? JSON.parse(filtrosGuardados) : null;
 
-    // Cargar opciones (ciudades, provincias, etc.)
     const cargarFiltros = async () => {
       await Promise.all([
         obtenerSectores(),
         obtenerEstados(),
         obtenerCategorias(),
         obtenerCiudades(),
-        obtenerProvincias()
+        obtenerProvincias(),
       ]);
 
-      // Solo después de que se cargan las opciones
       if (filtrosParsed) {
         if (filtrosParsed.estadoFiltro) setEstadoFiltro(filtrosParsed.estadoFiltro);
         if (filtrosParsed.fechaInicio) setFechaInicio(filtrosParsed.fechaInicio);
         if (filtrosParsed.fechaFin) setFechaFin(filtrosParsed.fechaFin);
         if (filtrosParsed.sectorFiltro) setSectorFiltro(filtrosParsed.sectorFiltro);
-        if (filtrosParsed.busquedaNombre) setBusquedaNombre(filtrosParsed.busquedaNombre);
+        if (filtrosParsed.busquedaNombre) {
+          setBusquedaNombre(filtrosParsed.busquedaNombre);
+          setBusquedaInput(filtrosParsed.busquedaNombre);
+        }
         if (filtrosParsed.ciudadFiltro) setCiudadFiltro(filtrosParsed.ciudadFiltro);
         if (filtrosParsed.provinciaFiltro) setProvinciaFiltro(filtrosParsed.provinciaFiltro);
         if (filtrosParsed.categoriaFiltro) setCategoriaFiltro(filtrosParsed.categoriaFiltro);
         if (filtrosParsed.orden) setOrden(filtrosParsed.orden);
-
       }
 
       setFiltrosInicializados(true);
@@ -89,7 +81,6 @@ const ProspectosVendedora = () => {
 
     cargarFiltros();
   }, []);
-
 
   useEffect(() => {
     if (!filtrosInicializados) return;
@@ -103,7 +94,7 @@ const ProspectosVendedora = () => {
       ciudadFiltro,
       provinciaFiltro,
       categoriaFiltro,
-      orden
+      orden,
     };
 
     localStorage.setItem("filtros_prospectos_vendedora", JSON.stringify(filtros));
@@ -117,7 +108,7 @@ const ProspectosVendedora = () => {
     provinciaFiltro,
     categoriaFiltro,
     orden,
-    filtrosInicializados
+    filtrosInicializados,
   ]);
 
   const obtenerCategorias = async () => {
@@ -157,14 +148,11 @@ const ProspectosVendedora = () => {
     }
   };
 
-
   const obtenerEstados = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/estados`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
 
@@ -183,7 +171,6 @@ const ProspectosVendedora = () => {
     }
   };
 
-
   const establecerFechasUltimos3Meses = () => {
     const hoy = new Date();
     const fin = hoy.toISOString().split("T")[0];
@@ -194,21 +181,12 @@ const ProspectosVendedora = () => {
 
     setFechaInicio(inicioFormateado);
     setFechaFin(fin);
-
     setFechaInicioDefecto(inicioFormateado);
     setFechaFinDefecto(fin);
   };
 
-
-
   useEffect(() => {
-    if (
-      !filtrosInicializados ||
-      !cedulaVendedora ||
-      !fechaInicio ||
-      !fechaFin
-    ) return;
-
+    if (!filtrosInicializados || !cedulaVendedora || !fechaInicio || !fechaFin) return;
     buscarProspectos();
   }, [
     filtrosInicializados,
@@ -222,9 +200,8 @@ const ProspectosVendedora = () => {
     provinciaFiltro,
     busquedaNombre,
     paginaActual,
-    orden
+    orden,
   ]);
-
 
   const obtenerSectores = async () => {
     try {
@@ -239,7 +216,6 @@ const ProspectosVendedora = () => {
       console.error("Error obteniendo sectores:", err);
     }
   };
-
 
   const buscarProspectos = async () => {
     try {
@@ -262,6 +238,7 @@ const ProspectosVendedora = () => {
       if (ciudadFiltro) params.append("ciudad", ciudadFiltro);
       if (provinciaFiltro) params.append("provincia", provinciaFiltro);
       if (orden) params.append("orden", orden);
+      if (busquedaNombre.trim()) params.append("nombre", busquedaNombre.trim());
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -272,27 +249,12 @@ const ProspectosVendedora = () => {
 
       setProspectos(data.prospectos || []);
       setTotalPaginas(data.totalPages || 1);
-
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  const hayFiltrosActivos = () => {
-    return (
-      estadoFiltro.length > 0 ||
-      sectorFiltro ||
-      categoriaFiltro ||
-      ciudadFiltro ||
-      provinciaFiltro ||
-      busquedaNombre.trim() !== "" ||
-      orden ||
-      fechaInicio !== fechaInicioDefecto ||
-      fechaFin !== fechaFinDefecto
-    );
-  };
-
 
   const exportarExcel = async () => {
     try {
@@ -339,10 +301,6 @@ const ProspectosVendedora = () => {
     }
   };
 
-  const prospectosFiltrados = prospectos; // usa el array directo
-
-
-
   const limpiarFiltros = () => {
     setEstadoFiltro([]);
     setSectorFiltro(null);
@@ -353,378 +311,574 @@ const ProspectosVendedora = () => {
     setPaginaActual(1);
     setBusquedaNombre("");
     setBusquedaInput("");
+    setOrden("");
     localStorage.removeItem("filtros_prospectos_vendedora");
-
   };
 
   useEffect(() => {
     return () => {
       debouncedBuscar.cancel();
     };
-  }, []);
+  }, [debouncedBuscar]);
 
-  const estadoCierre = estados.find(e => e.label.toLowerCase() === "cierre de venta");
+  const estadoCierre = estados.find((e) => e.label.toLowerCase() === "cierre de venta");
 
   const mostrarEstado = (venta) => {
     if (!venta) return "Sin estado";
     if (venta.id_estado === estadoCierre?.value && venta.monto_cierre) {
       return `Ganado ($${parseFloat(venta.monto_cierre).toFixed(2)})`;
     }
-    return estados.find(e => e.value === venta.id_estado)?.label || "Sin estado";
+    return estados.find((e) => e.value === venta.id_estado)?.label || "Sin estado";
   };
 
+  const hayFiltrosActivos = () => {
+    return (
+      estadoFiltro.length > 0 ||
+      sectorFiltro ||
+      categoriaFiltro ||
+      ciudadFiltro ||
+      provinciaFiltro ||
+      busquedaNombre.trim() !== "" ||
+      orden ||
+      fechaInicio !== fechaInicioDefecto ||
+      fechaFin !== fechaFinDefecto
+    );
+  };
+
+  const rsStyles = {
+    control: (b, s) => ({
+      ...b,
+      background: "#fff",
+      borderColor: s.isFocused ? "#6c5ff0" : "#e2e8f0",
+      boxShadow: s.isFocused ? "0 0 0 3px rgba(108,95,240,0.12)" : "none",
+      borderRadius: "8px",
+      minHeight: "38px",
+      fontSize: "13px",
+      "&:hover": { borderColor: "#c4b5fd" },
+    }),
+    menu: (b) => ({
+      ...b,
+      background: "#fff",
+      border: "1px solid #e2e8f0",
+      borderRadius: "10px",
+      boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+      zIndex: 999,
+    }),
+    option: (b, s) => ({
+      ...b,
+      background: s.isSelected ? "#6c5ff0" : s.isFocused ? "#f5f3ff" : "#fff",
+      color: s.isSelected ? "#fff" : "#334155",
+      fontSize: "13px",
+    }),
+    multiValue: (b) => ({
+      ...b,
+      background: "#ede9fe",
+      borderRadius: "6px",
+    }),
+    multiValueLabel: (b) => ({
+      ...b,
+      color: "#5b21b6",
+      fontSize: "12px",
+      fontWeight: 600,
+    }),
+    multiValueRemove: (b) => ({
+      ...b,
+      color: "#7c3aed",
+      "&:hover": { background: "#ddd6fe", color: "#4c1d95" },
+    }),
+    placeholder: (b) => ({
+      ...b,
+      color: "#94a3b8",
+      fontSize: "13px",
+    }),
+    singleValue: (b) => ({
+      ...b,
+      color: "#334155",
+      fontSize: "13px",
+    }),
+  };
 
   return (
-    <div className="vendedora-prospectos-page">
-      <h1 className="vendedora-prospectos-title">PROSPECTOS</h1>
-      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-
-      <button
-        className={`btn-toggle-filtros ${hayFiltrosActivos() ? "filtros-activos" : ""}`}
-        onClick={() => setMostrarFiltros((prev) => !prev)}
-      >
-        {mostrarFiltros ? "🔼 OCULTAR FILTROS" : "🔽 MOSTRAR FILTROS"}
-        {hayFiltrosActivos() && <span style={{ marginLeft: "8px", color: "#e74c3c" }}>●</span>}
-      </button>
-
-
-
-
-
-      {mostrarFiltros && (
-
-        <div className="admin-prospectos-filtros">
-          <div className="filtro-grupo">
-            <label>Estado(s)</label>
-            <Select
-              options={estados}
-              isMulti
-              placeholder="Seleccionar Estado(s)"
-              className="select-estado"
-              value={estadoFiltro}
-              onChange={(ops) => {
-                setEstadoFiltro(ops);
-                setPaginaActual(1);
-                buscarProspectos();
-              }}
-            />
-
+    <div className="pv2-container">
+      <div className="pv2-header">
+        <div className="pv2-header-left">
+          <div className="pv2-header-text">
+            <h1 className="pv2-title">Mis Prospectos</h1>
+            <p className="pv2-subtitle">
+              Gestión y seguimiento de tus oportunidades comerciales
+            </p>
           </div>
-
-          <div className="filtro-grupo">
-            <label>Categoría</label>
-            <Select
-              options={categorias}
-              placeholder="Seleccionar Categoría"
-              className="select-categoria"
-              value={categoriaFiltro}
-              onChange={(op) => {
-                setCategoriaFiltro(op);
-                setPaginaActual(1);
-                buscarProspectos();
-              }}
-              isClearable
-            />
-
-          </div>
-
-          <div className="filtro-grupo">
-            <label>Sector</label>
-            <Select
-              options={sectores}
-              placeholder="Seleccionar Sector"
-              className="select-sector"
-              value={sectorFiltro}
-              onChange={(op) => {
-                setSectorFiltro(op);
-                setPaginaActual(1);
-                buscarProspectos();
-              }}
-              isClearable
-            />
-
-          </div>
-
-          <div className="filtro-grupo">
-            <label>Ciudad</label>
-            <Select
-              options={ciudades}
-              placeholder="Seleccionar Ciudad"
-              className="select-ciudad"
-              value={ciudades.find((c) => c.value === ciudadFiltro) || null}
-              onChange={(op) => {
-                setCiudadFiltro(op ? op.value : null);
-                setPaginaActual(1);
-                buscarProspectos();
-              }}
-              isClearable
-            />
-
-          </div>
-
-
-          <div className="filtro-grupo">
-            <label>Provincia</label>
-            <Select
-              options={provincias}
-              placeholder="Seleccionar Provincia"
-              className="select-provincia"
-              value={provincias.find((p) => p.value === provinciaFiltro)}
-              onChange={(op) => {
-                setProvinciaFiltro(op ? op.value : null);
-                setPaginaActual(1);
-                buscarProspectos();
-              }}
-              isClearable
-            />
-
-          </div>
-
-
-
-          <div className="filtro-grupo">
-            <label>Fecha Inicio</label>
-            <input
-              type="date"
-              value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
-            />
-          </div>
-
-          <div className="filtro-grupo">
-            <label>Fecha Fin</label>
-            <input
-              type="date"
-              value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
-            />
-          </div>
-
-          <button onClick={limpiarFiltros} disabled={loading}>
-            🧹 Limpiar Filtros
-          </button>
-
-
         </div>
-      )}
 
-      <div className="botones-acciones">
-
-        <button className="vendedora-btn-nuevo-prospecto" onClick={() => navigate("/crear-prospecto")}>
-          ➕ CREAR PROSPECTO
-        </button>
-
-
-        <button onClick={exportarExcel} className="vendedora-btn-exportar">
-          📥 Exportar Excel
-        </button>
-
+        <div className="pv2-header-actions">
+          <button className="pv2-btn-ghost" onClick={exportarExcel}>
+            Exportar
+          </button>
+          <button
+            className="pv2-btn-primary"
+            onClick={() => navigate("/crear-prospecto")}
+          >
+            Nuevo Prospecto
+          </button>
+        </div>
       </div>
 
-      <div className="filtro-grupo-nombre">
-        <label>Nombre del Prospecto</label>
-        <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={busquedaInput}
-          onChange={(e) => {
-            setBusquedaInput(e.target.value);
-            debouncedBuscar(e.target.value);
-          }}
-          className="input-busqueda-nombre"
-        />
+      {error && <div className="pv2-alert-error">{error}</div>}
 
-        <div className="filtro-grupo">
-          <label>Ordenar por:</label>
-          <select value={orden} onChange={(e) => setOrden(e.target.value)}>
+      <div className="pv2-search-row">
+        <div className="pv2-search-left">
+          <div className="pv2-search-wrap">
+            <svg
+              className="pv2-search-icon"
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              className="pv2-input pv2-search-input"
+              placeholder="Buscar prospecto..."
+              value={busquedaInput}
+              onChange={(e) => {
+                setBusquedaInput(e.target.value);
+                debouncedBuscar(e.target.value);
+              }}
+            />
+          </div>
+
+          <select
+            className="pv2-select"
+            value={orden}
+            onChange={(e) => setOrden(e.target.value)}
+          >
             <option value="">Fecha de creación</option>
             <option value="proximo_contacto">Próximo contacto</option>
           </select>
         </div>
+
+        <button
+          className={`pv2-btn-filter ${mostrarFiltros ? "active" : ""}`}
+          onClick={() => setMostrarFiltros(!mostrarFiltros)}
+        >
+          Filtros
+          {hayFiltrosActivos() && <span className="pv2-filter-dot" />}
+        </button>
       </div>
 
+      {mostrarFiltros && (
+        <div className="pv2-filters-panel">
+          <div className="pv2-filters-grid">
+            <div className="pv2-filter-item">
+              <label>Estado(s)</label>
+              <Select
+                options={estados}
+                isMulti
+                styles={rsStyles}
+                placeholder="Todos"
+                value={estadoFiltro}
+                onChange={(ops) => {
+                  setEstadoFiltro(ops || []);
+                  setPaginaActual(1);
+                }}
+              />
+            </div>
 
-      <button onClick={buscarProspectos} disabled={loading}>
-        {loading ? "Cargando..." : "Buscar"}
-      </button>
+            <div className="pv2-filter-item">
+              <label>Categoría</label>
+              <Select
+                options={categorias}
+                styles={rsStyles}
+                placeholder="Todas"
+                value={categoriaFiltro}
+                onChange={(op) => {
+                  setCategoriaFiltro(op);
+                  setPaginaActual(1);
+                }}
+                isClearable
+              />
+            </div>
 
+            <div className="pv2-filter-item">
+              <label>Sector</label>
+              <Select
+                options={sectores}
+                styles={rsStyles}
+                placeholder="Todos"
+                value={sectorFiltro}
+                onChange={(op) => {
+                  setSectorFiltro(op);
+                  setPaginaActual(1);
+                }}
+                isClearable
+              />
+            </div>
 
-      {loading && <p>Cargando prospectos...</p>}
-      {error && <p className="error">{error}</p>}
+            <div className="pv2-filter-item">
+              <label>Ciudad</label>
+              <Select
+                options={ciudades}
+                styles={rsStyles}
+                placeholder="Todas"
+                value={ciudades.find((c) => c.value === ciudadFiltro) || null}
+                onChange={(op) => {
+                  setCiudadFiltro(op ? op.value : null);
+                  setPaginaActual(1);
+                }}
+                isClearable
+              />
+            </div>
 
-      <div className="paginador-lindo">
-        <div className="paginador-contenido">
-          {paginaActual > 1 && (
-            <button className="btn-paginador" onClick={() => setPaginaActual((p) => p - 1)}>
-              ⬅ Anterior
+            <div className="pv2-filter-item">
+              <label>Provincia</label>
+              <Select
+                options={provincias}
+                styles={rsStyles}
+                placeholder="Todas"
+                value={provincias.find((p) => p.value === provinciaFiltro) || null}
+                onChange={(op) => {
+                  setProvinciaFiltro(op ? op.value : null);
+                  setPaginaActual(1);
+                }}
+                isClearable
+              />
+            </div>
+
+            <div className="pv2-filter-item">
+              <label>Desde</label>
+              <input
+                type="date"
+                className="pv2-input"
+                value={fechaInicio}
+                onChange={(e) => {
+                  setFechaInicio(e.target.value);
+                  setPaginaActual(1);
+                }}
+              />
+            </div>
+
+            <div className="pv2-filter-item">
+              <label>Hasta</label>
+              <input
+                type="date"
+                className="pv2-input"
+                value={fechaFin}
+                onChange={(e) => {
+                  setFechaFin(e.target.value);
+                  setPaginaActual(1);
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="pv2-filters-footer">
+            <button className="pv2-btn-ghost" onClick={limpiarFiltros}>
+              Limpiar filtros
             </button>
-          )}
-          <span className="paginador-info">
-            Página {paginaActual} de {totalPaginas}
-          </span>
-          {paginaActual < totalPaginas && (
-            <button className="btn-paginador" onClick={() => setPaginaActual((p) => p + 1)}>
-              Siguiente ➡
-            </button>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
+      <div className="pv2-card">
+        <div className="pv2-pagination">
+          <span className="pv2-pagination-info">
+            Página <strong>{paginaActual}</strong> de <strong>{totalPaginas}</strong>
+          </span>
 
-      <div className="vendedora-prospectos-table-wrapper">
+          <div className="pv2-pagination-btns">
+            <button
+              className="pv2-page-btn"
+              disabled={paginaActual <= 1}
+              onClick={() => setPaginaActual((p) => p - 1)}
+            >
+              ‹
+            </button>
+            <button
+              className="pv2-page-btn"
+              disabled={paginaActual >= totalPaginas}
+              onClick={() => setPaginaActual((p) => p + 1)}
+            >
+              ›
+            </button>
+          </div>
+        </div>
 
-        <table className="vendedora-prospectos-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Prospecto</th>
-              <th>Objetivo</th>
-              <th># Empleados</th>
-              <th>Estado</th>
-              <th>Próximo Contacto</th>
-              <th>Última Nota</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prospectosFiltrados.length > 0 ? (
-              prospectosFiltrados.flatMap((p, index) =>
-                p.ventas.length > 0
-                  ? p.ventas.map((venta) => {
-                    const ultimaNota = venta.seguimientos
-                      ?.sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
-
-                    const proximoContacto = venta.seguimientos
-                      ?.filter((s) => s.estado === "pendiente")
-                      .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
-
-                    const proximoContactoFormateado = proximoContacto
-                      ? new Date(proximoContacto).toLocaleDateString("es-EC")
-                      : "Sin programar";
-
-                    return (
-                      <tr key={`${p.id_prospecto}-${venta.id_venta}`}>
-                        <td>{index + 1}</td>
-                        <td>{p.nombre.toUpperCase()}</td>
-                        <td>{venta.objetivo.toUpperCase() || "SIN OBJETIVO"}</td>
-                        <td>{p.empleados ?? "NO REGISTRADO"}</td>
-
-                        <td>{mostrarEstado(venta)}</td>
-                        <td>{proximoContactoFormateado}</td>
-                        <td>{ultimaNota.toUpperCase()}</td>
-                        <td>
-                          <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
-                            🔍 Ver Seguimientos
-                          </button>
-                          <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
-                            📜 Historial
-                          </button>
-                          <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                            Ver Información
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                  : [
-                    <tr key={`solo-${p.id_prospecto}`}>
-                      <td>{index + 1}</td>
-                      <td>{p.nombre}</td>
-                      <td>{p.empleados ?? "NO REGISTRADO"}</td>
-                      <td>SIN ESTADO</td>
-                      <td>SIN PROGRAMAR</td>
-                      <td>SIN NOTA</td>
-                      <td>
-                        <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
-                          ➕ Abrir Prospección
-                        </button>
-                        <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
-                          📜 Historial
-                        </button>
-                        <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                          Ver Información
-                        </button>
-                      </td>
-                    </tr>,
-                  ]
-              )
-            ) : (
-              <tr>
-                <td colSpan="6" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
-                  No hay prospectos disponibles
-                </td>
-              </tr>
-            )}
-          </tbody>
-
-        </table>
-      </div>
-      <div className="vendedora-cards-mobile">
-        {prospectosFiltrados.length > 0 ? (
-          prospectosFiltrados.flatMap((p) =>
-            p.ventas.length > 0
-              ? p.ventas.map((venta) => {
-                const ultimaNota = venta.seguimientos
-                  ?.sort((a, b) => new Date(b.fecha_programada) - new Date(a.fecha_programada))[0]?.nota ?? "Sin nota";
-
-                const proximoContacto = venta.seguimientos
-                  ?.filter((s) => s.estado === "pendiente")
-                  .sort((a, b) => new Date(a.fecha_programada) - new Date(b.fecha_programada))[0]?.fecha_programada;
-
-                const proximoContactoFormateado = proximoContacto
-                  ? new Date(proximoContacto).toLocaleDateString("es-EC")
-                  : "Sin programar";
-
-                return (
-                  <div className="vendedora-prospecto-card" key={`venta-${p.id_prospecto}-${venta.id_venta}`}>
-                    <h3>{p.nombre}</h3>
-                    <p><strong>Objetivo:</strong> {venta.objetivo || "Sin objetivo"}</p>
-                    <p><strong>Empleados:</strong> {p.empleados ?? "No registrado"}</p>
-
-                    <p><strong>Estado:</strong> {mostrarEstado(venta)}</p>
-
-                    <p><strong>Próximo Contacto:</strong> {proximoContactoFormateado}</p>
-                    <p><strong>Última Nota:</strong> {ultimaNota}</p>
-                    <div className="acciones">
-                      <button className="vendedora-btn-seguimientos" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}>
-                        Ver Seguimientos
-                      </button>
-                      <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
-                        📜 Historial
-                      </button>
-                      <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                        Ver Información
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-              : [
-                <div className="vendedora-prospecto-card" key={`solo-${p.id_prospecto}`}>
-                  <h3>{p.nombre}</h3>
-<p><strong>Empleados:</strong> {p.empleados ?? "No registrado"}</p>
-                  <p><strong>Estado:</strong> Sin estado</p>
-                  <p><strong>Próximo Contacto:</strong> Sin programar</p>
-                  <p><strong>Última Nota:</strong> Sin nota</p>
-                  <div className="acciones">
-                    <button className="vendedora-btn-abrir-prospeccion" onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}>
-                      Abrir Prospección
-                    </button>
-                    <button className="vendedora-btn-historial" onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)}>
-                      📜 Historial
-                    </button>
-                    <button className="vendedora-btn-editar" onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}>
-                      Ver Información
-                    </button>
-                  </div>
-                </div>,
-              ]
-          )
+        {loading ? (
+          <div className="pv2-loading">
+            <div className="pv2-spinner" />
+            <span>Cargando prospectos...</span>
+          </div>
         ) : (
-          <p style={{ textAlign: "center", fontWeight: "bold" }}>No hay prospectos disponibles</p>
+          <>
+            <div className="pv2-table-wrap">
+              <table className="pv2-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Prospecto</th>
+                    <th>Objetivo</th>
+                    <th># Empleados</th>
+                    <th>Estado</th>
+                    <th>Próx. Contacto</th>
+                    <th>Última Nota</th>
+                    <th style={{ textAlign: "right" }}>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {prospectos.length === 0 && (
+                    <tr>
+                      <td colSpan="8" className="pv2-empty">
+                        <div className="pv2-empty-inner">
+                          <p>No se encontraron prospectos</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+
+                  {prospectos.flatMap((p, index) =>
+                    p.ventas.length > 0
+                      ? p.ventas.map((venta) => {
+                          const ultimaNota =
+                            venta.seguimientos
+                              ?.sort(
+                                (a, b) =>
+                                  new Date(b.fecha_programada) -
+                                  new Date(a.fecha_programada)
+                              )[0]?.nota ?? "Sin nota";
+
+                          const proximoContacto = venta.seguimientos
+                            ?.filter((s) => s.estado === "pendiente")
+                            .sort(
+                              (a, b) =>
+                                new Date(a.fecha_programada) -
+                                new Date(b.fecha_programada)
+                            )[0]?.fecha_programada;
+
+                          const proximoContactoFormateado = proximoContacto
+                            ? new Date(proximoContacto).toLocaleDateString("es-EC")
+                            : null;
+
+                          const estadoTexto = mostrarEstado(venta);
+                          const esGanado = estadoTexto.toLowerCase().includes("ganado");
+
+                          return (
+                            <tr key={`${p.id_prospecto}-${venta.id_venta}`}>
+                              <td className="pv2-td-num">
+                                {(paginaActual - 1) * 10 + index + 1}
+                              </td>
+                              <td className="pv2-td-name">{p.nombre}</td>
+                              <td>{venta.objetivo || <span className="pv2-muted">Sin objetivo</span>}</td>
+                              <td>{p.empleados ?? "No registrado"}</td>
+                              <td>
+                                <span
+                                  className={`pv2-badge ${
+                                    esGanado ? "pv2-badge-green" : "pv2-badge-blue"
+                                  }`}
+                                >
+                                  {estadoTexto}
+                                </span>
+                              </td>
+                              <td>
+                                {proximoContactoFormateado ? (
+                                  <span className="pv2-date">{proximoContactoFormateado}</span>
+                                ) : (
+                                  <span className="pv2-muted">Sin programar</span>
+                                )}
+                              </td>
+                              <td className="pv2-td-note">{ultimaNota}</td>
+                              <td className="pv2-td-actions">
+                                <button
+                                  className="pv2-icon-btn pv2-icon-btn--view"
+                                  onClick={() =>
+                                    navigate(`/seguimientos-prospecto/${p.id_prospecto}`)
+                                  }
+                                  title="Ver seguimientos"
+                                >
+                                  Ver
+                                </button>
+                                <button
+                                  className="pv2-icon-btn"
+                                  onClick={() =>
+                                    navigate(
+                                      `/seguimientos-prospecto/${p.id_prospecto}#historial`
+                                    )
+                                  }
+                                  title="Historial"
+                                >
+                                  Historial
+                                </button>
+                                <button
+                                  className="pv2-icon-btn"
+                                  onClick={() =>
+                                    navigate(`/editar-prospecto/${p.id_prospecto}`)
+                                  }
+                                  title="Ver información"
+                                >
+                                  Editar
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      : [
+                          <tr key={`solo-${p.id_prospecto}`}>
+                            <td className="pv2-td-num">
+                              {(paginaActual - 1) * 10 + index + 1}
+                            </td>
+                            <td className="pv2-td-name">{p.nombre}</td>
+                            <td><span className="pv2-muted">Sin objetivo</span></td>
+                            <td>{p.empleados ?? "No registrado"}</td>
+                            <td>
+                              <span className="pv2-badge pv2-badge-gray">Sin estado</span>
+                            </td>
+                            <td><span className="pv2-muted">Sin programar</span></td>
+                            <td className="pv2-td-note">
+                              <span className="pv2-muted">Sin nota</span>
+                            </td>
+                            <td className="pv2-td-actions">
+                              <button
+                                className="pv2-icon-btn pv2-icon-btn--add"
+                                onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}
+                                title="Abrir prospección"
+                              >
+                                Abrir
+                              </button>
+                              <button
+                                className="pv2-icon-btn"
+                                onClick={() =>
+                                  navigate(
+                                    `/seguimientos-prospecto/${p.id_prospecto}#historial`
+                                  )
+                                }
+                                title="Historial"
+                              >
+                                Historial
+                              </button>
+                              <button
+                                className="pv2-icon-btn"
+                                onClick={() =>
+                                  navigate(`/editar-prospecto/${p.id_prospecto}`)
+                                }
+                                title="Ver información"
+                              >
+                                Editar
+                              </button>
+                            </td>
+                          </tr>,
+                        ]
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="pv2-mobile-view">
+              {prospectos.length === 0 && (
+                <div className="pv2-empty">
+                  <p>No se encontraron prospectos.</p>
+                </div>
+              )}
+
+              {prospectos.flatMap((p) => {
+                if (!p.ventas || p.ventas.length === 0) {
+                  return (
+                    <div className="pv2-mc" key={`solo-${p.id_prospecto}`}>
+                      <div className="pv2-mc-head">
+                        <span className="pv2-mc-name">{p.nombre}</span>
+                        <span className="pv2-badge pv2-badge-gray">Sin estado</span>
+                      </div>
+                      <p className="pv2-mc-meta">Empleados: {p.empleados ?? "No registrado"}</p>
+                      <div className="pv2-mc-actions">
+                        <button
+                          className="pv2-btn-ghost pv2-btn-sm"
+                          onClick={() => navigate(`/abrir-venta/${p.id_prospecto}`)}
+                        >
+                          Abrir
+                        </button>
+                        <button
+                          className="pv2-btn-ghost pv2-btn-sm"
+                          onClick={() =>
+                            navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)
+                          }
+                        >
+                          Historial
+                        </button>
+                        <button
+                          className="pv2-btn-ghost pv2-btn-sm"
+                          onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}
+                        >
+                          Editar
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return p.ventas.map((venta) => {
+                  const proximoContacto = venta.seguimientos
+                    ?.filter((s) => s.estado === "pendiente")
+                    .sort(
+                      (a, b) =>
+                        new Date(a.fecha_programada) - new Date(b.fecha_programada)
+                    )[0]?.fecha_programada;
+
+                  const proximoContactoFormateado = proximoContacto
+                    ? new Date(proximoContacto).toLocaleDateString("es-EC")
+                    : "Sin programar";
+
+                  const estadoTexto = mostrarEstado(venta);
+                  const esGanado = estadoTexto.toLowerCase().includes("ganado");
+
+                  return (
+                    <div className="pv2-mc" key={`v-${p.id_prospecto}-${venta.id_venta}`}>
+                      <div className="pv2-mc-head">
+                        <span className="pv2-mc-name">{p.nombre}</span>
+                        <span
+                          className={`pv2-badge ${
+                            esGanado ? "pv2-badge-green" : "pv2-badge-blue"
+                          }`}
+                        >
+                          {estadoTexto}
+                        </span>
+                      </div>
+                      <p className="pv2-mc-meta">Objetivo: {venta.objetivo || "—"}</p>
+                      <p className="pv2-mc-meta">Empleados: {p.empleados ?? "No registrado"}</p>
+                      <p className="pv2-mc-meta">Próximo: {proximoContactoFormateado}</p>
+                      <div className="pv2-mc-actions">
+                        <button
+                          className="pv2-btn-ghost pv2-btn-sm"
+                          onClick={() => navigate(`/seguimientos-prospecto/${p.id_prospecto}`)}
+                        >
+                          Ver
+                        </button>
+                        <button
+                          className="pv2-btn-ghost pv2-btn-sm"
+                          onClick={() =>
+                            navigate(`/seguimientos-prospecto/${p.id_prospecto}#historial`)
+                          }
+                        >
+                          Historial
+                        </button>
+                        <button
+                          className="pv2-btn-ghost pv2-btn-sm"
+                          onClick={() => navigate(`/editar-prospecto/${p.id_prospecto}`)}
+                        >
+                          Editar
+                        </button>
+                      </div>
+                    </div>
+                  );
+                });
+              })}
+            </div>
+          </>
         )}
       </div>
-
     </div>
   );
 };

@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRol } from "../utils/auth"; 
+import { getRol } from "../utils/auth";
 import "../styles/editarVendedora.css";
 
 const EditarVendedora = () => {
   const { cedula_ruc } = useParams();
   const navigate = useNavigate();
-    const rol = getRol(); // OBTENER ROL
-  const esSoloLectura = rol === "lectura"; // MARCAR SI ES SOLO LECTURA
-
+  const rol = getRol();
+  const esSoloLectura = rol === "lectura";
 
   const [vendedora, setVendedora] = useState(null);
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); // Para cambiar la contraseña
-  const [estado, setEstado] = useState(1); // Para inactivar/activar
+  const [password, setPassword] = useState("");
+  const [estado, setEstado] = useState(1);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -28,25 +27,26 @@ const EditarVendedora = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) throw new Error("Error al obtener vendedora");
+      if (!res.ok) throw new Error("Error al obtener datos de la vendedora");
 
       const data = await res.json();
       setVendedora(data);
       setNombre(data.nombre);
       setEmail(data.email);
-      setEstado(data.estado); // Guardar estado actual (activa/inactiva)
+      setEstado(data.estado);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const guardarCambios = async () => {
+  const guardarCambios = async (e) => {
+    e.preventDefault(); // Previene recarga si se envuelve en un form
     try {
       const token = localStorage.getItem("token");
       const bodyData = { nombre, email, estado };
 
       if (password.trim()) {
-        bodyData.password = password; // Solo se envía si el usuario cambia la contraseña
+        bodyData.password = password;
       }
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/vendedoras/${cedula_ruc}`, {
@@ -60,7 +60,7 @@ const EditarVendedora = () => {
 
       if (!res.ok) throw new Error("Error al guardar cambios");
 
-      alert("Cambios guardados correctamente");
+      alert("¡Perfil actualizado con éxito!");
       navigate(-1);
     } catch (err) {
       setError(err.message);
@@ -80,75 +80,100 @@ const EditarVendedora = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ estado: nuevoEstado }), 
+          body: JSON.stringify({ estado: nuevoEstado }),
         }
       );
-  
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Error al cambiar el estado");
       }
-  
+
       setEstado(nuevoEstado);
-      alert(`Vendedora ${nuevoEstado === 1 ? "Activada" : "Inactivada"} correctamente`);
+      alert(`Estado actualizado a: ${nuevoEstado === 1 ? "ACTIVA" : "INACTIVA"}`);
     } catch (err) {
-      console.error("Error al cambiar el estado:", err);
       setError(err.message);
     }
   };
-  
-  
 
-  if (!vendedora) return <p>Cargando vendedora...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (!vendedora && !error) return (
+    <div className="ev-wrapper">
+      <div className="ev-loading">Cargando perfil...</div>
+    </div>
+  );
 
   return (
-    <div className="editar-vendedora-container">
-      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-
-      <h1>EDITAR VENDEDOR/A</h1>
-
-      <div className="form-group">
-        <label>Nombre:</label>
-        <input
-          type="text"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          disabled={esSoloLectura}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={esSoloLectura}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Nueva Contraseña (Opcional):</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Ingrese una nueva contraseña"
-          disabled={esSoloLectura}
-        />
-      </div>
- {!esSoloLectura && (
-        <>
-      <button onClick={guardarCambios} className="btn-guardar">
-        GUARDAR CAMBIOS
+    <div className="ev-wrapper">
+      <button className="ev-btn-volver" onClick={() => navigate(-1)}>
+        ⬅ Volver al listado
       </button>
 
-      <button onClick={toggleEstado} className={`btn-estado ${estado === 1 ? "inactiva" : "activa"}`}>
-        {estado === 1 ? "MARCAR COMO INACTIVO" : "ACTIVAR VENDEDOR/A"}
-      </button>
-       </>
-       )}
+      <div className="ev-card">
+        <div className="ev-card-header">
+          <h2>Perfil de Vendedora</h2>
+          <span className={`ev-badge ${estado === 1 ? "ev-badge-activa" : "ev-badge-inactiva"}`}>
+            {estado === 1 ? "ACTIVA" : "INACTIVA"}
+          </span>
+        </div>
+
+        {error && <div className="ev-error">{error}</div>}
+
+        <form className="ev-form" onSubmit={guardarCambios}>
+          <div className="ev-form-group">
+            <label>Cédula / RUC (No editable)</label>
+            <input type="text" value={cedula_ruc} disabled />
+          </div>
+
+          <div className="ev-form-group">
+            <label>Nombre Completo</label>
+            <input
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              disabled={esSoloLectura}
+              placeholder="Ej. María Pérez"
+            />
+          </div>
+
+          <div className="ev-form-group">
+            <label>Correo Electrónico</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={esSoloLectura}
+              placeholder="correo@empresa.com"
+            />
+          </div>
+
+          <div className="ev-form-group">
+            <label>Nueva Contraseña <span className="ev-optional">(Solo si desea cambiarla)</span></label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={esSoloLectura}
+              placeholder="••••••••"
+            />
+          </div>
+
+          {!esSoloLectura && (
+            <div className="ev-actions">
+              <button type="submit" className="ev-btn-guardar">
+                💾 Guardar Cambios
+              </button>
+
+              <button 
+                type="button" 
+                onClick={toggleEstado} 
+                className={`ev-btn-toggle ${estado === 1 ? "ev-btn-danger" : "ev-btn-success"}`}
+              >
+                {estado === 1 ? "🚫 Inactivar Usuario" : "✅ Activar Usuario"}
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 };

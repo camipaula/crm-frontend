@@ -1,175 +1,248 @@
-/* 📌 Contenedor Principal Moderno */
-.crear-prospecto-container {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 30px !important;
-  background: #ffffff !important;
-  border-radius: 16px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e2e8f0 !important;
-  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  overflow: visible !important;
-  box-sizing: border-box !important;
+/* =============================================
+   CREAR PROSPECTO — SaaS Premium Light Theme
+   ============================================= */
+
+/* ─── Contenedor raíz ───────────────────────── */
+.cp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 900px; /* Limita el ancho para que no se estire demasiado en monitores grandes */
+  margin: 0 auto; /* Lo centra en la pantalla */
+  font-family: 'DM Sans', 'Segoe UI Emoji', system-ui, sans-serif;
+  background-color: transparent;
+  animation: fadeInCp 0.4s ease-out;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes fadeInCp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* 📌 Título */
-.crear-prospecto-container h1 {
-  font-size: 28px !important;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  text-align: center !important;
-  font-weight: 700 !important;
-  margin-bottom: 30px !important;
-  letter-spacing: -0.5px !important;
+/* ─── Header ────────────────────────────────── */
+.cp-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
-/* 📌 Formularios */
-form {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px !important;
+.cp-btn-volver {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-/* 📌 Etiquetas */
-label {
-  font-size: 15px !important;
-  font-weight: 600 !important;
-  color: #333 !important;
-  margin-bottom: 4px !important;
+.cp-btn-volver:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
 }
 
-/* 📌 Inputs / Selects / Textareas */
-.crear-prospecto-container input,
-.crear-prospecto-container select,
-.crear-prospecto-container textarea {
-  padding: 14px 18px !important;
-  border: 2px solid #e2e8f0 !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
-  background: #f8fafc !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  font-family: inherit !important;
+.cp-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 6px;
+  letter-spacing: -0.03em;
 }
 
-.crear-prospecto-container input:focus,
-.crear-prospecto-container select:focus,
-.crear-prospecto-container textarea:focus {
-  outline: none !important;
-  border-color: #667eea !important;
-  background: #ffffff !important;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
-  transform: translateY(-2px) !important;
+.cp-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
 }
 
-textarea {
-  resize: vertical !important;
-  min-height: 100px !important;
+/* ─── Alertas ───────────────────────────────── */
+.cp-alert-error, .cp-alert-success {
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
-/* 📌 Estado visual */
-.estado-label {
-  font-weight: bold !important;
-  color: #007bff !important;
-  background: #f1f8ff !important;
-  padding: 8px 12px !important;
-  border-radius: 6px !important;
-  border: 1px solid #cce5ff !important;
+.cp-alert-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }
 
-/* 📌 Botones */
-.crear-prospecto-container button[type="submit"],
-.crear-prospecto-container .btn-cerrar {
-  padding: 14px 24px !important;
-  font-size: 15px !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  border: none !important;
-  cursor: pointer !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+.cp-alert-success {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
 }
 
-.crear-prospecto-container button[type="submit"] {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+/* ─── Tarjeta del Formulario ────────────────── */
+.cp-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
-.crear-prospecto-container button[type="submit"]:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+.cp-form {
+  display: flex;
+  flex-direction: column;
 }
 
-.crear-prospecto-container .btn-cerrar {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  color: white !important;
-  margin-top: 10px !important;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+/* ─── Cuadrícula del Formulario (GRID) ──────── */
+.cp-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  gap: 20px 24px;
+  padding: 32px;
 }
 
-.crear-prospecto-container .btn-cerrar:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
+.cp-full-width {
+  grid-column: 1 / -1; /* Ocupa todas las columnas disponibles */
 }
 
-/* 📌 Mensajes */
-.crear-prospecto-container .success {
-  color: #10b981 !important;
-  text-align: center !important;
-  font-weight: 600 !important;
-  padding: 12px !important;
-  background: rgba(16, 185, 129, 0.1) !important;
-  border-radius: 8px !important;
-  border-left: 4px solid #10b981 !important;
+.cp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.crear-prospecto-container .error {
-  color: #ef4444 !important;
-  text-align: center !important;
-  font-weight: 600 !important;
-  padding: 12px !important;
-  background: rgba(239, 68, 68, 0.1) !important;
-  border-radius: 8px !important;
-  border-left: 4px solid #ef4444 !important;
+.cp-form-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
 }
 
+.cp-required {
+  color: #ef4444;
+  margin-left: 2px;
+}
 
+/* ─── Inputs, Selects y Textareas ───────────── */
+.cp-input, .cp-select, .cp-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #0f172a;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
 
+.cp-input:focus, .cp-select:focus, .cp-textarea:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #6c5ff0;
+  box-shadow: 0 0 0 3px rgba(108, 95, 240, 0.15);
+}
 
-/* 📱 Responsive */
+.cp-input::placeholder, .cp-textarea::placeholder {
+  color: #94a3b8;
+}
+
+.cp-textarea {
+  resize: vertical; /* Permite cambiar el tamaño solo hacia abajo */
+  min-height: 80px;
+}
+
+/* Quitar flechas de los input number */
+.cp-input[type="number"]::-webkit-inner-spin-button,
+.cp-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ─── Botones de Acción (Footer del form) ───── */
+.cp-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cp-btn-secondary {
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cp-btn-secondary:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.cp-btn-primary {
+  background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cp-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(108, 95, 240, 0.4);
+}
+
+.cp-btn-primary:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ─── Modo Responsivo (Móviles) ─────────────── */
 @media (max-width: 768px) {
-  .crear-prospecto-container {
-    padding: 18px !important;
-    width: 95% !important;
+  .cp-container {
+    padding: 10px;
+  }
+  
+  .cp-form-grid {
+    grid-template-columns: 1fr; /* Pasa a 1 sola columna en pantallas pequeñas */
+    padding: 20px;
+    gap: 16px;
   }
 
-  form {
-    gap: 16px !important;
+  .cp-form-actions {
+    flex-direction: column-reverse;
+    padding: 20px;
+    gap: 12px;
   }
 
-  input,
-  select,
-  textarea {
-    font-size: 14px !important;
-    padding: 10px !important;
-  }
-
-  button[type="submit"],
-  .btn-cerrar {
-    font-size: 14px !important;
-    padding: 10px !important;
+  .cp-btn-secondary, .cp-btn-primary {
+    width: 100%;
   }
 }

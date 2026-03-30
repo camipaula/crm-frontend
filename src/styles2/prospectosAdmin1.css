@@ -1,0 +1,451 @@
+/* 📌 Contenedor principal moderno */
+.admin-prospectos-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  box-sizing: border-box !important;
+}
+
+.admin-prospectos-filtros {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.admin-prospectos-table {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.admin-prospectos-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-prospectos-page::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.admin-prospectos-page::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.5);
+  border-radius: 10px;
+}
+
+.admin-prospectos-page::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.7);
+}
+
+/* 📌 Título */
+.admin-prospectos-title {
+  font-size: 32px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  margin-bottom: 30px !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* 📌 Filtros */
+.admin-prospectos-filtros {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+  gap: 15px !important;
+  padding: 25px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 16px !important;
+  margin-bottom: 30px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.admin-prospectos-filtros:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+}
+
+.filtro-grupo {
+  display: flex !important;
+  flex-direction: column !important;
+  font-size: 14px !important;
+}
+
+.filtro-grupo label {
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+  font-size: 13px !important;
+  color: #1f3b5c !important;
+}
+
+.admin-prospectos-filtros select,
+.admin-prospectos-filtros input {
+  font-size: 14px !important;
+  padding: 12px 16px !important;
+  min-height: 44px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  outline: none !important;
+  flex: 1 !important;
+  min-width: 200px !important;
+  background: #f8fafc !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.admin-prospectos-filtros select:focus,
+.admin-prospectos-filtros input:focus {
+  border-color: #667eea !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
+}
+
+.admin-prospectos-filtros button {
+  padding: 12px 20px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+}
+
+.admin-prospectos-filtros button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* 📋 Tabla */
+.admin-prospectos-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.admin-prospectos-table {
+  all: unset !important;
+  display: table !important;
+  width: 100% !important;
+  min-width: 1000px;
+  border-collapse: collapse !important;
+  font-size: 16px;
+  margin-top: 20px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  overflow: hidden !important;
+}
+
+.admin-prospectos-table th,
+.admin-prospectos-table td {
+  padding: 12px 16px;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  text-align: left !important;
+  font-size: 15px;
+}
+
+/* Columna de acciones más compacta */
+.admin-prospectos-table th:last-child,
+.admin-prospectos-table td:last-child {
+  width: auto !important;
+  min-width: 180px !important;
+  max-width: 220px !important;
+  padding: 8px 12px !important;
+}
+
+.admin-prospectos-table th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+}
+
+.admin-prospectos-table tr:nth-child(even) {
+  background: #f9f9f9 !important;
+}
+
+/* 🛠️ Contenedor de botones de acción en tabla */
+.admin-botones-acciones {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-width: 200px !important;
+}
+
+/* 🛠️ Botones acción */
+.admin-btn-editar,
+.admin-btn-eliminar,
+.admin-btn-seguimientos,
+.admin-btn-historial,
+.admin-btn-abrir-prospeccion {
+  padding: 6px 10px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+.admin-btn-editar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+.admin-btn-editar:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
+}
+
+.admin-btn-eliminar {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: white !important;
+  padding: 6px 8px !important;
+  font-size: 14px !important;
+}
+
+.admin-btn-eliminar:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3) !important;
+}
+
+.admin-btn-seguimientos {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+.admin-btn-seguimientos:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
+}
+
+.admin-btn-historial {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+  color: white !important;
+}
+
+.admin-btn-historial:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3) !important;
+}
+
+.admin-btn-abrir-prospeccion {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+}
+
+.admin-btn-abrir-prospeccion:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* ➕ Crear nuevo */
+.admin-btn-nuevo-prospecto {
+  width: 100% !important;
+  margin-top: 20px !important;
+  padding: 14px !important;
+  font-size: 17px !important;
+  background: #007bffbb !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: background 0.3s ease !important;
+}
+
+.admin-btn-nuevo-prospecto:hover {
+  background: #0056b3 !important;
+}
+
+/* 📌 Error */
+.error {
+  color: red !important;
+  font-size: 14px !important;
+  margin-top: 10px !important;
+}
+
+/* 📌 React-Select */
+.select-estado {
+  width: 200px !important;
+}
+
+.select__control {
+  border: 1px solid #ccc !important;
+  border-radius: 5px !important;
+}
+
+.select__option--is-selected {
+  background-color: #10355c !important;
+  color: white !important;
+}
+
+.input-busqueda-nombre {
+  width: 100% !important;
+  max-width: 220px !important;
+  padding: 6px 8px !important;
+  font-size: 13px !important;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.btn-toggle-filtros {
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-toggle-filtros:hover {
+  background-color: #574fd6;
+}
+
+/* 🟨 Cards móviles */
+.admin-prospectos-cards-mobile {
+  display: none !important;
+}
+
+
+.skeleton-row {
+  height: 30px;
+  background: linear-gradient(-90deg, #eeeeee 0%, #dddddd 50%, #eeeeee 100%);
+  background-size: 400% 400%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  margin: 10px 0;
+}
+
+.paginador-lindo {
+  margin: 24px auto 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.paginador-contenido {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  background: #f4f4f4;
+  padding: 6px 14px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.btn-paginador {
+  background-color: transparent;
+  color: #1f3b5c;
+  border: none;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-paginador:hover {
+  background-color: #d9e3f0;
+}
+
+.paginador-info {
+  color: #444;
+  font-weight: 500;
+}
+
+
+
+
+@media (max-width: 768px) {
+  .admin-prospectos-page {
+    padding: 15px !important;
+  }
+
+  .admin-prospectos-filtros {
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 15px !important;
+  }
+
+  .admin-prospectos-filtros select,
+  .admin-prospectos-filtros input {
+    font-size: 13px !important;
+    padding: 8px !important;
+  }
+
+  .admin-prospectos-filtros button {
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+  }
+
+  .admin-btn-nuevo-prospecto {
+    font-size: 16px !important;
+    padding: 10px !important;
+  }
+
+  .admin-prospectos-table {
+    display: none !important;
+  }
+
+  .admin-prospectos-cards-mobile {
+    display: block !important;
+    margin-top: 20px !important;
+  }
+
+  .admin-prospecto-card {
+    background: #ffffff !important;
+    border: 1px solid #ccc !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+    margin-bottom: 15px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .admin-prospecto-card h3 {
+    margin: 0 0 8px 0 !important;
+    font-size: 18px !important;
+    color: #1f3b5c !important;
+  }
+
+  .admin-prospecto-card p {
+    margin: 4px 0 !important;
+    font-size: 14px !important;
+    color: #444 !important;
+  }
+
+  .admin-prospecto-card .acciones {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    margin-top: 10px !important;
+  }
+
+  .admin-prospecto-card .acciones button {
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+  }
+}

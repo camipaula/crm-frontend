@@ -1,16 +1,16 @@
-// CalendarioAdmin.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { getRol } from "../utils/auth";
 import Select from "react-select";
+import { getRol } from "../utils/auth";
 import "../styles/calendarioAdmin.css";
 
 const CalendarioAdmin = () => {
   const navigate = useNavigate();
+
   const [eventos, setEventos] = useState([]);
   const [vendedoras, setVendedoras] = useState([]);
   const [vendedoraSeleccionada, setVendedoraSeleccionada] = useState(null);
@@ -39,10 +39,11 @@ const CalendarioAdmin = () => {
   const [tipoSeleccionadoTexto, setTipoSeleccionadoTexto] = useState("");
   const [prospectoDatos, setProspectoDatos] = useState({});
   const [formDataExtra, setFormDataExtra] = useState({});
+
   const rol = getRol();
   const esSoloLectura = rol === "lectura";
 
-  const colores = ["#1a73e8", "#34a853", "#fbbc05", "#ea4335", "#ff6d00", "#8e44ad", "#16a085"];
+  const colores = ["#6c5ff0", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6"];
 
   useEffect(() => {
     cargarVendedoras();
@@ -55,7 +56,6 @@ const CalendarioAdmin = () => {
       cargarProspectos(vendedoraNueva.value);
     }
   }, [vendedoraNueva]);
-
 
   const cargarVendedoras = async () => {
     try {
@@ -73,12 +73,15 @@ const CalendarioAdmin = () => {
   const cargarProspectos = async (cedula_vendedora) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/prospectos?cedula_vendedora=${cedula_vendedora}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
 
@@ -88,7 +91,6 @@ const CalendarioAdmin = () => {
       }
 
       setProspectos(data.prospectos.map((p) => ({ value: p.id_prospecto, label: p.nombre })));
-
     } catch (err) {
       console.error("Error cargando prospectos:", err);
     }
@@ -137,7 +139,6 @@ const CalendarioAdmin = () => {
     }
   };
 
-
   const cargarVentas = async (id_prospecto) => {
     try {
       const token = localStorage.getItem("token");
@@ -153,7 +154,6 @@ const CalendarioAdmin = () => {
       return [];
     }
   };
-
 
   const cargarTiposSeguimiento = async () => {
     try {
@@ -181,8 +181,7 @@ const CalendarioAdmin = () => {
       let colorIndex = Object.keys(nuevosColores).length;
 
       const eventosConvertidos = data.map((seguimiento) => {
-        const vendedoraNombre = seguimiento.vendedora_seguimiento.nombre;
-
+        const vendedoraNombre = seguimiento.venta?.prospecto?.vendedora_prospecto?.nombre || "No asignada";
         if (!nuevosColores[vendedoraNombre]) {
           nuevosColores[vendedoraNombre] = colores[colorIndex % colores.length];
           colorIndex++;
@@ -192,8 +191,10 @@ const CalendarioAdmin = () => {
           id: seguimiento.id_seguimiento,
           title: seguimiento.motivo,
           start: new Date(seguimiento.fecha_programada.replace("Z", "")),
-          end: new Date(new Date(seguimiento.fecha_programada).getTime() + (seguimiento.duracion_minutos || 30) * 60000),
-
+          end: new Date(
+            new Date(seguimiento.fecha_programada).getTime() +
+              (seguimiento.duracion_minutos || 30) * 60000
+          ),
           extendedProps: {
             tipo: seguimiento.tipo_seguimiento.descripcion,
             objetivo: seguimiento.venta.objetivo,
@@ -201,7 +202,6 @@ const CalendarioAdmin = () => {
             vendedora: vendedoraNombre,
             fecha: seguimiento.fecha_programada,
             duracion_minutos: seguimiento.duracion_minutos || 30,
-
           },
           color: nuevosColores[vendedoraNombre],
           textColor: "#fff",
@@ -216,9 +216,7 @@ const CalendarioAdmin = () => {
   };
 
   const formatearParaDatetimeLocal = (fechaStr) => {
-    const fecha = new Date(
-      typeof fechaStr === "string" ? fechaStr.replace("Z", "") : fechaStr
-    );
+    const fecha = new Date(typeof fechaStr === "string" ? fechaStr.replace("Z", "") : fechaStr);
     const año = fecha.getFullYear();
     const mes = String(fecha.getMonth() + 1).padStart(2, "0");
     const dia = String(fecha.getDate()).padStart(2, "0");
@@ -239,7 +237,6 @@ const CalendarioAdmin = () => {
     });
   };
 
-
   const agendarSeguimiento = async () => {
     if (!vendedoraNueva || !ventaSeleccionada || !tipoSeleccionado) {
       setError("Faltan campos requeridos");
@@ -248,30 +245,42 @@ const CalendarioAdmin = () => {
 
     try {
       const token = localStorage.getItem("token");
+
       if (tipoSeleccionadoTexto === "email" && !prospectoDatos.correo && !formDataExtra.correo) {
         alert("El prospecto necesita un correo para agendar un Email.");
         return;
       }
-      if (["llamada", "whatsapp"].includes(tipoSeleccionadoTexto) && !prospectoDatos.telefono && !formDataExtra.telefono) {
+
+      if (
+        ["llamada", "whatsapp"].includes(tipoSeleccionadoTexto) &&
+        !prospectoDatos.telefono &&
+        !formDataExtra.telefono
+      ) {
         alert("El prospecto necesita un teléfono para este tipo de seguimiento.");
         return;
       }
-      if (tipoSeleccionadoTexto === "visita" && !prospectoDatos.direccion && !formDataExtra.direccion) {
+
+      if (
+        tipoSeleccionadoTexto === "visita" &&
+        !prospectoDatos.direccion &&
+        !formDataExtra.direccion
+      ) {
         alert("El prospecto necesita una dirección para agendar una visita.");
         return;
       }
 
-      // 👉 Si llenamos nuevos datos, actualizamos al prospecto
       if (Object.keys(formDataExtra).length > 0 && prospectoSeleccionado) {
-        const token = localStorage.getItem("token");
-        const resActualizar = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospectoSeleccionado.value}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formDataExtra),
-        });
+        const resActualizar = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/prospectos/${prospectoSeleccionado.value}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formDataExtra),
+          }
+        );
 
         if (!resActualizar.ok) {
           alert("Error actualizando datos del prospecto");
@@ -299,18 +308,18 @@ const CalendarioAdmin = () => {
 
       alert("Seguimiento agendado correctamente");
       setMostrarModalNuevo(false);
-      cargarAgenda();
+      cargarAgenda(vendedoraSeleccionada?.value || "");
       limpiarCampos();
     } catch (err) {
       console.error("Error al agendar:", err);
       setError(err.message);
     }
   };
+
   const editarSeguimientoDesdeModal = async (detalle) => {
     try {
       const token = localStorage.getItem("token");
-
-      const tipo = detalle.tipoSeleccionado || tiposSeguimiento.find(t => t.label === detalle.tipo);
+      const tipo = detalle.tipoSeleccionado || tiposSeguimiento.find((t) => t.label === detalle.tipo);
       const id_tipo = tipo?.value;
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/seguimientos/${detalle.id}/editar`, {
@@ -326,12 +335,11 @@ const CalendarioAdmin = () => {
         }),
       });
 
-
       if (!res.ok) throw new Error("No se pudo editar el seguimiento");
-      alert("Seguimiento actualizado correctamente");
 
+      alert("Seguimiento actualizado correctamente");
       setModalDetalle(null);
-      cargarAgenda();
+      cargarAgenda(vendedoraSeleccionada?.value || "");
     } catch (err) {
       console.error("Error al editar seguimiento:", err);
       alert("Ocurrió un error al editar el seguimiento");
@@ -350,7 +358,7 @@ const CalendarioAdmin = () => {
 
       alert("Seguimiento eliminado correctamente");
       setModalDetalle(null);
-      cargarAgenda();
+      cargarAgenda(vendedoraSeleccionada?.value || "");
     } catch (err) {
       console.error("Error al eliminar seguimiento:", err);
       alert("Ocurrió un error al eliminar el seguimiento");
@@ -372,6 +380,7 @@ const CalendarioAdmin = () => {
           estado: "Captación/ensayo",
         }),
       });
+
       const { venta } = await res.json();
 
       setVentas([{ value: venta.id_venta, label: venta.objetivo }]);
@@ -383,7 +392,6 @@ const CalendarioAdmin = () => {
     }
   };
 
-
   const limpiarCampos = () => {
     setVendedoraNueva(null);
     setProspectos([]);
@@ -391,335 +399,622 @@ const CalendarioAdmin = () => {
     setVentas([]);
     setVentaSeleccionada(null);
     setTipoSeleccionado(null);
+    setTipoSeleccionadoTexto("");
     setMotivo("");
     setError("");
     setFechaSeleccionada("");
+    setProspectoDatos({});
+    setFormDataExtra({});
+  };
+
+  const rsStyles = {
+    control: (base, state) => ({
+      ...base,
+      background: "#fff",
+      borderColor: state.isFocused ? "#6c5ff0" : "#e2e8f0",
+      boxShadow: state.isFocused ? "0 0 0 3px rgba(108,95,240,0.12)" : "none",
+      borderRadius: "10px",
+      minHeight: "42px",
+      fontSize: "13px",
+      "&:hover": {
+        borderColor: "#c4b5fd",
+      },
+    }),
+    menu: (base) => ({
+      ...base,
+      background: "#fff",
+      border: "1px solid #e2e8f0",
+      borderRadius: "12px",
+      boxShadow: "0 10px 30px rgba(15, 23, 42, 0.10)",
+      overflow: "hidden",
+      zIndex: 9999,
+    }),
+    option: (base, state) => ({
+      ...base,
+      background: state.isSelected ? "#6c5ff0" : state.isFocused ? "#f5f3ff" : "#fff",
+      color: state.isSelected ? "#fff" : "#334155",
+      fontSize: "13px",
+      cursor: "pointer",
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: "#94a3b8",
+      fontSize: "13px",
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: "#334155",
+      fontSize: "13px",
+    }),
   };
 
   return (
-    <div className="calendario-container">
-      <h2>📅 AGENDA VENDEDORAS</h2>
-      {vendedoraSeleccionada && (
-        <p className="info">
-          Agenda de: <strong>{vendedoraSeleccionada.label}</strong>
-        </p>
+    <div className="ca-container">
+      <div className="ca-header">
+        <div className="ca-header-left">
+          <div className="ca-header-text">
+            <h1 className="ca-title">Calendario Administrativo</h1>
+            <p className="ca-subtitle">
+              Agenda de seguimientos y control de citas comerciales
+            </p>
+          </div>
+        </div>
+
+        <div className="ca-header-actions">
+          <button className="ca-btn-ghost" onClick={() => navigate(-1)}>
+            ← Volver
+          </button>
+        </div>
+      </div>
+
+      <div className="ca-toolbar">
+        <div className="ca-toolbar-left">
+          <div className="ca-filter-block">
+            <label className="ca-label">Filtrar por vendedora</label>
+            <Select
+              options={[{ value: "", label: "Todas las vendedoras" }, ...vendedoras]}
+              placeholder="Seleccionar vendedora"
+              value={vendedoraSeleccionada}
+              onChange={(vendedora) => {
+                setVendedoraSeleccionada(vendedora);
+                cargarAgenda(vendedora?.value || "");
+              }}
+              isClearable
+              styles={rsStyles}
+            />
+          </div>
+
+          {vendedoraSeleccionada && (
+            <div className="ca-active-filter">
+              Agenda de: <strong>{vendedoraSeleccionada.label}</strong>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {Object.keys(mapaColoresVendedoras).length > 0 && (
+        <div className="ca-legend-card">
+          <div className="ca-legend-title">Vendedoras</div>
+          <div className="ca-legend-list">
+            {Object.entries(mapaColoresVendedoras).map(([nombre, color]) => (
+              <div key={nombre} className="ca-legend-item">
+                <span className="ca-legend-dot" style={{ backgroundColor: color }} />
+                <span>{nombre}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
-      <Select
-        options={[{ value: "", label: "Todas las vendedoras" }, ...vendedoras]}
-        placeholder="Filtrar por Vendedora"
-        onChange={(vendedora) => {
-          setVendedoraSeleccionada(vendedora);
-          cargarAgenda(vendedora?.value || "");
-        }}
-        isClearable
-      />
-      <button className="btn-volver" onClick={() => navigate(-1)}>← Volver</button>
+      <div className="ca-card">
+        <div className="ca-calendar-wrap">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            locale="es"
+            slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
+            slotMinTime="08:00:00"
+            slotMaxTime="19:00:00"
+            height="auto"
+            events={eventos}
+            eventClick={({ event }) => {
+              setModoEdicion(false);
+              setModalDetalle({
+                id: event.id,
+                motivo: event.title,
+                tipo: event.extendedProps.tipo,
+                objetivo: event.extendedProps.objetivo,
+                prospecto: event.extendedProps.prospecto,
+                vendedora: event.extendedProps.vendedora,
+                fecha: event.extendedProps.fecha,
+                duracion_minutos: event.extendedProps.duracion_minutos || 30,
+              });
+            }}
+            dateClick={({ date, view }) => {
+              const isSoloFecha = view.type === "dayGridMonth";
+              const fecha = isSoloFecha
+                ? `${date.toISOString().slice(0, 10)}T09:00`
+                : formatearParaDatetimeLocal(date);
 
-      <FullCalendar
+              setFechaSeleccionada(fecha);
+              setVendedoraNueva(vendedoraSeleccionada);
 
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-        locale="es"
-        slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: "short" }}
-        slotMinTime="08:00:00"
-        slotMaxTime="19:00:00"
-        height="auto"
-        events={eventos}
-        eventClick={({ event }) => {
-          setModoEdicion(false);
-          setModalDetalle({
-            id: event.id,
-            motivo: event.title,
-            tipo: event.extendedProps.tipo,
-            objetivo: event.extendedProps.objetivo,
-            prospecto: event.extendedProps.prospecto,
-            vendedora: event.extendedProps.vendedora,
-            fecha: event.extendedProps.fecha,
-            duracion_minutos: event.extendedProps.duracion_minutos || 30,
+              if (vendedoraSeleccionada) {
+                cargarProspectos(vendedoraSeleccionada.value);
+              }
 
-          });
-        }}
-        dateClick={({ date, view }) => {
-          const isSoloFecha = view.type === "dayGridMonth";
-          const fecha = isSoloFecha
-            ? `${date.toISOString().slice(0, 10)}T09:00`
-            : formatearParaDatetimeLocal(date);
-          setFechaSeleccionada(fecha);
-          setVendedoraNueva(vendedoraSeleccionada);
-          if (vendedoraSeleccionada) {
-            cargarProspectos(vendedoraSeleccionada.value);
-          }
-          setMostrarModalNuevo(true);
-        }}
-        eventContent={({ event, view }) => {
-          const prospecto = event.extendedProps.prospecto || "";
-          const tipo = event.extendedProps.tipo || "";
-          const duracion = event.extendedProps.duracion_minutos || 30;
+              setMostrarModalNuevo(true);
+            }}
+            eventContent={({ event, view }) => {
+              const prospecto = event.extendedProps.prospecto || "";
+              const tipo = event.extendedProps.tipo || "";
+              const duracion = event.extendedProps.duracion_minutos || 30;
 
-          //const motivo = event.title;
-          /* const hora = new Date(event.start).toLocaleTimeString("es-EC", {
-             hour: "2-digit",
-             minute: "2-digit",
-             hour12: false,
-           });*/
+              if (view.type === "dayGridMonth") {
+                return (
+                  <div className="ca-event ca-event-month" title={`${prospecto} - ${tipo} (${duracion} min)`}>
+                    <span className="ca-event-title">{prospecto}</span>
+                    <span className="ca-event-meta">{tipo}</span>
+                  </div>
+                );
+              }
 
-          if (view.type === "dayGridMonth") {
-            return (
-              <div className="evento-mes" title={`${prospecto} - ${tipo} (${duracion} min)`}>
-                <b>{prospecto}</b> - {tipo}
-              </div>
-            );
-          }
-          else {
-            // En semana/día mostramos hora y motivo
-            return (
-              <div>
-                <b>{prospecto}</b> - {tipo} ({duracion} min)
-              </div>
-            );
-          }
-        }}
-      />
-
+              return (
+                <div className="ca-event">
+                  <span className="ca-event-title">{prospecto}</span>
+                  <span className="ca-event-meta">
+                    {tipo} ({duracion} min)
+                  </span>
+                </div>
+              );
+            }}
+          />
+        </div>
+      </div>
 
       {modalDetalle && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>📌 Detalles de la Cita</h3>
-            <p><b>Prospecto:</b> {modalDetalle.prospecto}</p>
-            <p><b>Vendedora:</b> {modalDetalle.vendedora}</p>
-            <p><b>Objetivo:</b> {modalDetalle.objetivo}</p>
-            <p><b>Duración:</b> {modalDetalle.duracion_minutos} minutos</p>
-
-
-            {modoEdicion ? (
-              <>
-                <label><b>Tipo:</b></label>
-                <Select
-                  options={tiposSeguimiento}
-                  defaultValue={tiposSeguimiento.find(t => t.label === modalDetalle.tipo)}
-                  onChange={(opcion) =>
-                    setModalDetalle({ ...modalDetalle, tipoSeleccionado: opcion })
-                  }
-                />
-
-
-
-
-                <label><b>Fecha y Hora:</b></label>
-                <input
-                  type="datetime-local"
-                  value={formatearParaDatetimeLocal(modalDetalle.fecha)}
-                  onChange={(e) =>
-                    setModalDetalle({ ...modalDetalle, fecha: e.target.value })
-                  }
-                />
-
-                <label><b>Motivo:</b></label>
-                <input
-                  type="text"
-                  value={modalDetalle.motivo}
-                  onChange={(e) =>
-                    setModalDetalle({ ...modalDetalle, motivo: e.target.value })
-                  }
-                />
-              </>
-            ) : (
-              <>
-                <p><b>Tipo:</b> {modalDetalle.tipo}</p>
-                <p><b>Fecha y Hora:</b> {formatearFechaVisual(modalDetalle.fecha)}</p>
-
-                <p><b>Motivo:</b> {modalDetalle.motivo}</p>
-
-              </>
-            )}
-
-            {!esSoloLectura && (<div className="modal-actions">
+        <div className="ca-modal-overlay">
+          <div className="ca-modal">
+            <div className="ca-modal-header">
+              <div>
+                <h3 className="ca-modal-title">Detalle de la cita</h3>
+                <p className="ca-modal-subtitle">Información del seguimiento agendado</p>
+              </div>
               <button
-                onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
-                className="btn-registrar"
+                className="ca-icon-close"
+                onClick={() => {
+                  setModalDetalle(null);
+                  setModoEdicion(false);
+                }}
               >
-                ✍️ Registrar Resultado
+                ×
               </button>
+            </div>
+
+            <div className="ca-modal-body">
+              <div className="ca-detail-grid">
+                <div className="ca-detail-item">
+                  <span className="ca-detail-label">Prospecto</span>
+                  <span className="ca-detail-value">{modalDetalle.prospecto}</span>
+                </div>
+
+                <div className="ca-detail-item">
+                  <span className="ca-detail-label">Vendedora</span>
+                  <span className="ca-detail-value">{modalDetalle.vendedora}</span>
+                </div>
+
+                <div className="ca-detail-item">
+                  <span className="ca-detail-label">Objetivo</span>
+                  <span className="ca-detail-value">{modalDetalle.objetivo}</span>
+                </div>
+
+                <div className="ca-detail-item">
+                  <span className="ca-detail-label">Duración</span>
+                  <span className="ca-detail-value">{modalDetalle.duracion_minutos} minutos</span>
+                </div>
+              </div>
+
               {modoEdicion ? (
-                <>
-                  <button onClick={() => editarSeguimientoDesdeModal(modalDetalle)}>💾 Guardar</button>
-                  <button onClick={() => setModoEdicion(false)}>Cancelar</button>
-                </>
+                <div className="ca-form-grid">
+                  <div className="ca-field">
+                    <label className="ca-label">Tipo</label>
+                    <Select
+                      options={tiposSeguimiento}
+                      value={modalDetalle.tipoSeleccionado || tiposSeguimiento.find((t) => t.label === modalDetalle.tipo)}
+                      onChange={(opcion) =>
+                        setModalDetalle({ ...modalDetalle, tipoSeleccionado: opcion })
+                      }
+                      styles={rsStyles}
+                    />
+                  </div>
+
+                  <div className="ca-field">
+                    <label className="ca-label">Fecha y hora</label>
+                    <input
+                      className="ca-input"
+                      type="datetime-local"
+                      value={formatearParaDatetimeLocal(modalDetalle.fecha)}
+                      onChange={(e) =>
+                        setModalDetalle({ ...modalDetalle, fecha: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="ca-field ca-field-full">
+                    <label className="ca-label">Motivo</label>
+                    <input
+                      className="ca-input"
+                      type="text"
+                      value={modalDetalle.motivo}
+                      onChange={(e) =>
+                        setModalDetalle({ ...modalDetalle, motivo: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
               ) : (
-                <button onClick={() => setModoEdicion(true)}>✏️ Editar</button>
+                <div className="ca-detail-grid ca-detail-grid-secondary">
+                  <div className="ca-detail-item">
+                    <span className="ca-detail-label">Tipo</span>
+                    <span className="ca-detail-value">{modalDetalle.tipo}</span>
+                  </div>
+
+                  <div className="ca-detail-item">
+                    <span className="ca-detail-label">Fecha y hora</span>
+                    <span className="ca-detail-value">{formatearFechaVisual(modalDetalle.fecha)}</span>
+                  </div>
+
+                  <div className="ca-detail-item ca-detail-item-full">
+                    <span className="ca-detail-label">Motivo</span>
+                    <span className="ca-detail-value">{modalDetalle.motivo}</span>
+                  </div>
+                </div>
               )}
-              <button onClick={() => eliminarSeguimientoDesdeModal(modalDetalle.id)}>🗑️ Eliminar</button>
-            </div>)}
+            </div>
 
-            <button onClick={() => { setModalDetalle(null); setModoEdicion(false); }}>Cerrar</button>
+            <div className="ca-modal-actions">
+              {!esSoloLectura && (
+                <>
+                  <button
+                    className="ca-btn-primary"
+                    onClick={() => navigate(`/registrar-resultado/${modalDetalle.id}`)}
+                  >
+                    Registrar resultado
+                  </button>
 
+                  {modoEdicion ? (
+                    <>
+                      <button
+                        className="ca-btn-success"
+                        onClick={() => editarSeguimientoDesdeModal(modalDetalle)}
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        className="ca-btn-ghost"
+                        onClick={() => setModoEdicion(false)}
+                      >
+                        Cancelar edición
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="ca-btn-ghost"
+                      onClick={() => setModoEdicion(true)}
+                    >
+                      Editar
+                    </button>
+                  )}
+
+                  <button
+                    className="ca-btn-danger"
+                    onClick={() => eliminarSeguimientoDesdeModal(modalDetalle.id)}
+                  >
+                    Eliminar
+                  </button>
+                </>
+              )}
+
+              <button
+                className="ca-btn-ghost"
+                onClick={() => {
+                  setModalDetalle(null);
+                  setModoEdicion(false);
+                }}
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}
-
 
       {mostrarModalNuevo && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>➕ Agendar Cita</h3>
-            {error && <p className="error">{error}</p>}
+        <div className="ca-modal-overlay">
+          <div className="ca-modal">
+            <div className="ca-modal-header">
+              <div>
+                <h3 className="ca-modal-title">Agendar cita</h3>
+                <p className="ca-modal-subtitle">Programa un nuevo seguimiento</p>
+              </div>
+              <button
+                className="ca-icon-close"
+                onClick={() => setMostrarModalNuevo(false)}
+              >
+                ×
+              </button>
+            </div>
 
-            <p><b>Fecha:</b></p>
-            <input
-              type="datetime-local"
-              value={fechaSeleccionada}
-              onChange={(e) => setFechaSeleccionada(e.target.value)}
-            />
+            <div className="ca-modal-body">
+              {error && <div className="ca-alert-error">{error}</div>}
 
-            <Select
-              options={vendedoras}
-              placeholder="Seleccionar Vendedora"
-              value={vendedoraNueva}
-              onChange={(vendedora) => {
-                setVendedoraNueva(vendedora);
-                cargarProspectos(vendedora.value);
-              }}
-            />
+              <div className="ca-form-grid">
+                <div className="ca-field">
+                  <label className="ca-label">Fecha</label>
+                  <input
+                    className="ca-input"
+                    type="datetime-local"
+                    value={fechaSeleccionada}
+                    onChange={(e) => setFechaSeleccionada(e.target.value)}
+                  />
+                </div>
 
-            <Select
-              options={[...prospectos, { value: "nuevo", label: "➕ Crear nuevo prospecto" }]}
-              placeholder="Seleccionar Prospecto"
-              onChange={async (prospecto) => {
-                if (prospecto.value === "nuevo") {
-                  return setMostrarModalNuevoProspecto(true);
-                }
+                <div className="ca-field">
+                  <label className="ca-label">Vendedora</label>
+                  <Select
+                    options={vendedoras}
+                    placeholder="Seleccionar vendedora"
+                    value={vendedoraNueva}
+                    onChange={(vendedora) => {
+                      setVendedoraNueva(vendedora);
+                      cargarProspectos(vendedora.value);
+                    }}
+                    styles={rsStyles}
+                  />
+                </div>
 
-                setProspectoSeleccionado(prospecto);
+                <div className="ca-field">
+                  <label className="ca-label">Prospecto</label>
+                  <Select
+                    options={[...prospectos, { value: "nuevo", label: "➕ Crear nuevo prospecto" }]}
+                    placeholder="Seleccionar prospecto"
+                    value={prospectoSeleccionado}
+                    onChange={async (prospecto) => {
+                      if (prospecto.value === "nuevo") {
+                        return setMostrarModalNuevoProspecto(true);
+                      }
 
-                const token = localStorage.getItem("token");
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.value}`, {
-                  headers: { Authorization: `Bearer ${token}` },
-                });
-                const data = await res.json();
-                setProspectoDatos(data);
+                      setProspectoSeleccionado(prospecto);
 
-                const ventasCargadas = await cargarVentas(prospecto.value);
-                if (ventasCargadas.length === 0) {
-                  setMostrarModalNuevaVenta(true);
-                }
-              }}
-              isDisabled={!vendedoraNueva}
-            />
+                      const token = localStorage.getItem("token");
+                      const res = await fetch(
+                        `${import.meta.env.VITE_API_URL}/api/prospectos/${prospecto.value}`,
+                        {
+                          headers: { Authorization: `Bearer ${token}` },
+                        }
+                      );
+                      const data = await res.json();
+                      setProspectoDatos(data);
 
-            <Select
-              options={ventas}
-              placeholder="Seleccionar Venta"
-              onChange={setVentaSeleccionada}
-              isDisabled={!prospectoSeleccionado}
-            />
+                      const ventasCargadas = await cargarVentas(prospecto.value);
+                      if (ventasCargadas.length === 0) {
+                        setMostrarModalNuevaVenta(true);
+                      }
+                    }}
+                    isDisabled={!vendedoraNueva}
+                    styles={rsStyles}
+                  />
+                </div>
 
-            <Select
-              options={tiposSeguimiento}
-              placeholder="Tipo de Seguimiento"
-              onChange={(tipo) => {
-                setTipoSeleccionado(tipo);
-                setTipoSeleccionadoTexto(tipo?.label.toLowerCase());
-              }}
-            />
+                <div className="ca-field">
+                  <label className="ca-label">Venta</label>
+                  <Select
+                    options={ventas}
+                    placeholder="Seleccionar venta"
+                    value={ventaSeleccionada}
+                    onChange={setVentaSeleccionada}
+                    isDisabled={!prospectoSeleccionado}
+                    styles={rsStyles}
+                  />
+                </div>
 
-            <input
-              type="text"
-              placeholder="Motivo"
-              value={motivo}
-              onChange={(e) => setMotivo(e.target.value)}
-            />
+                <div className="ca-field">
+                  <label className="ca-label">Tipo de seguimiento</label>
+                  <Select
+                    options={tiposSeguimiento}
+                    placeholder="Tipo de seguimiento"
+                    value={tipoSeleccionado}
+                    onChange={(tipo) => {
+                      setTipoSeleccionado(tipo);
+                      setTipoSeleccionadoTexto(tipo?.label.toLowerCase());
+                    }}
+                    styles={rsStyles}
+                  />
+                </div>
 
-            {/* ✅ Campos adicionales si faltan datos en el prospecto */}
-            {tipoSeleccionadoTexto === "email" && !prospectoDatos.correo && (
-              <>
-                <label>Correo del Prospecto *</label>
-                <input
-                  type="email"
-                  value={formDataExtra.correo || ""}
-                  onChange={(e) => setFormDataExtra({ ...formDataExtra, correo: e.target.value })}
-                  required
-                />
-              </>
-            )}
+                <div className="ca-field ca-field-full">
+                  <label className="ca-label">Motivo</label>
+                  <input
+                    className="ca-input"
+                    type="text"
+                    placeholder="Motivo"
+                    value={motivo}
+                    onChange={(e) => setMotivo(e.target.value)}
+                  />
+                </div>
 
-            {["llamada", "whatsapp"].includes(tipoSeleccionadoTexto) && !prospectoDatos.telefono && (
-              <>
-                <label>Teléfono del Prospecto *</label>
-                <input
-                  type="text"
-                  value={formDataExtra.telefono || ""}
-                  onChange={(e) => setFormDataExtra({ ...formDataExtra, telefono: e.target.value })}
-                  required
-                />
-              </>
-            )}
+                {tipoSeleccionadoTexto === "email" && !prospectoDatos.correo && (
+                  <div className="ca-field ca-field-full">
+                    <label className="ca-label">Correo del prospecto *</label>
+                    <input
+                      className="ca-input"
+                      type="email"
+                      value={formDataExtra.correo || ""}
+                      onChange={(e) =>
+                        setFormDataExtra({ ...formDataExtra, correo: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                )}
 
-            {tipoSeleccionadoTexto === "visita" && !prospectoDatos.direccion && (
-              <>
-                <label>Dirección del Prospecto *</label>
-                <input
-                  type="text"
-                  value={formDataExtra.direccion || ""}
-                  onChange={(e) => setFormDataExtra({ ...formDataExtra, direccion: e.target.value })}
-                  required
-                />
-              </>
-            )}
+                {["llamada", "whatsapp"].includes(tipoSeleccionadoTexto) &&
+                  !prospectoDatos.telefono && (
+                    <div className="ca-field ca-field-full">
+                      <label className="ca-label">Teléfono del prospecto *</label>
+                      <input
+                        className="ca-input"
+                        type="text"
+                        value={formDataExtra.telefono || ""}
+                        onChange={(e) =>
+                          setFormDataExtra({ ...formDataExtra, telefono: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  )}
 
-            <button onClick={agendarSeguimiento}>Agendar</button>
-            <button onClick={() => setMostrarModalNuevo(false)}>Cancelar</button>
+                {tipoSeleccionadoTexto === "visita" && !prospectoDatos.direccion && (
+                  <div className="ca-field ca-field-full">
+                    <label className="ca-label">Dirección del prospecto *</label>
+                    <input
+                      className="ca-input"
+                      type="text"
+                      value={formDataExtra.direccion || ""}
+                      onChange={(e) =>
+                        setFormDataExtra({ ...formDataExtra, direccion: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="ca-modal-actions">
+              <button className="ca-btn-primary" onClick={agendarSeguimiento}>
+                Agendar
+              </button>
+              <button className="ca-btn-ghost" onClick={() => setMostrarModalNuevo(false)}>
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
-
 
       {mostrarModalNuevoProspecto && (
-        <div className="modal modal-small">
-          <div className="modal-content">
-            <h3>➕ Nuevo Prospecto</h3>
-            <input
-              type="text"
-              placeholder="Nombre del Prospecto"
-              value={nuevoNombre}
-              onChange={(e) => setNuevoNombre(e.target.value)}
-            />
-            <p><b>Estado:</b> Captación/ensayo</p>
-            <input
-              type="text"
-              placeholder="Objetivo de la Prospección"
-              value={nuevoObjetivo}
-              onChange={(e) => setNuevoObjetivo(e.target.value)}
-            />
-            <button onClick={crearProspectoYVenta}>Crear y Usar</button>
-            <button onClick={() => setMostrarModalNuevoProspecto(false)}>Cancelar</button>
+        <div className="ca-modal-overlay">
+          <div className="ca-modal ca-modal-sm">
+            <div className="ca-modal-header">
+              <div>
+                <h3 className="ca-modal-title">Nuevo prospecto</h3>
+                <p className="ca-modal-subtitle">Crea un prospecto rápido para usarlo aquí</p>
+              </div>
+              <button
+                className="ca-icon-close"
+                onClick={() => setMostrarModalNuevoProspecto(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="ca-modal-body">
+              <div className="ca-form-grid">
+                <div className="ca-field ca-field-full">
+                  <label className="ca-label">Nombre del prospecto</label>
+                  <input
+                    className="ca-input"
+                    type="text"
+                    placeholder="Nombre del prospecto"
+                    value={nuevoNombre}
+                    onChange={(e) => setNuevoNombre(e.target.value)}
+                  />
+                </div>
+
+                <div className="ca-field ca-field-full">
+                  <label className="ca-label">Estado</label>
+                  <div className="ca-static-value">Captación/ensayo</div>
+                </div>
+
+                <div className="ca-field ca-field-full">
+                  <label className="ca-label">Objetivo de la prospección</label>
+                  <input
+                    className="ca-input"
+                    type="text"
+                    placeholder="Objetivo de la prospección"
+                    value={nuevoObjetivo}
+                    onChange={(e) => setNuevoObjetivo(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="ca-modal-actions">
+              <button className="ca-btn-primary" onClick={crearProspectoYVenta}>
+                Crear y usar
+              </button>
+              <button
+                className="ca-btn-ghost"
+                onClick={() => setMostrarModalNuevoProspecto(false)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
-
 
       {mostrarModalNuevaVenta && (
-        <div className="modal modal-small">
-          <div className="modal-content">
-            <h3>➕ Nueva Prospección</h3>
-            <input
-              type="text"
-              placeholder="Objetivo de la prospección"
-              value={objetivoNuevaVenta}
-              onChange={(e) => setObjetivoNuevaVenta(e.target.value)}
-            />
-            <button onClick={crearVentaParaProspecto}>Crear y Usar</button>
-            <button onClick={() => setMostrarModalNuevaVenta(false)}>Cancelar</button>
+        <div className="ca-modal-overlay">
+          <div className="ca-modal ca-modal-sm">
+            <div className="ca-modal-header">
+              <div>
+                <h3 className="ca-modal-title">Nueva prospección</h3>
+                <p className="ca-modal-subtitle">Crea una venta para el prospecto seleccionado</p>
+              </div>
+              <button
+                className="ca-icon-close"
+                onClick={() => setMostrarModalNuevaVenta(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="ca-modal-body">
+              <div className="ca-form-grid">
+                <div className="ca-field ca-field-full">
+                  <label className="ca-label">Objetivo de la prospección</label>
+                  <input
+                    className="ca-input"
+                    type="text"
+                    placeholder="Objetivo de la prospección"
+                    value={objetivoNuevaVenta}
+                    onChange={(e) => setObjetivoNuevaVenta(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="ca-modal-actions">
+              <button className="ca-btn-primary" onClick={crearVentaParaProspecto}>
+                Crear y usar
+              </button>
+              <button
+                className="ca-btn-ghost"
+                onClick={() => setMostrarModalNuevaVenta(false)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };

@@ -1,136 +1,256 @@
-/* 📌 Contenedor Principal Moderno */
-.agendar-container {
+.ags-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 30px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  text-align: center;
-  animation: fadeInUp 0.5s ease-out;
+  min-height: 100vh;
   box-sizing: border-box;
+  font-family: "DM Sans", system-ui, sans-serif;
+  background: #f8fafc;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.ags-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-/* 📌 Título */
-.agendar-container h1 {
+.ags-title {
+  margin: 0 0 6px;
   font-size: 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 700;
-  margin-bottom: 30px;
-  letter-spacing: -0.5px;
 }
 
-/* 📌 Estilos del Formulario */
-.agendar-container form {
+.ags-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ags-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ags-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  padding: 24px;
+}
+
+.ags-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ags-card-head h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ags-card-head p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.ags-prospecto-box {
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.ags-label-inline {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ags-prospecto-name {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ags-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* 📌 Campos de entrada */
-.agendar-container input,
-.agendar-container textarea {
+.ags-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.ags-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.ags-field-full {
+  grid-column: 1 / -1;
+}
+
+.ags-field label {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ags-input,
+.ags-select,
+.ags-textarea {
   width: 100%;
-  padding: 14px 18px;
-  border: 2px solid #e2e8f0;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 12px 14px;
   border-radius: 12px;
-  font-size: 16px;
-  outline: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0;
   background: #f8fafc;
+  color: #0f172a;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.ags-input:focus,
+.ags-select:focus,
+.ags-textarea:focus {
+  outline: none;
+  border-color: #6c5ff0;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(108, 95, 240, 0.12);
+}
+
+.ags-textarea {
+  min-height: 120px;
+  resize: vertical;
   font-family: inherit;
 }
 
-.agendar-container input:focus,
-.agendar-container textarea:focus {
-  border-color: #667eea;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-  transform: translateY(-2px);
-}
-
-.agendar-container textarea {
-  resize: vertical;
-  min-height: 120px;
-}
-
-/* 📌 Selector de Seguimiento */
-.custom-select .css-2b097c-container {
-  width: 100%;
-}
-
-/* 📌 Botón */
-.agendar-container button {
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+.ags-alert {
+  padding: 12px 14px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
+  border: 1px solid;
+}
+
+.ags-alert-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.ags-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ags-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  margin-top: 10px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-.agendar-container button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+.ags-btn-primary {
+  color: #fff;
+  background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+  box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
 }
 
-.agendar-container button:active {
-  transform: translateY(0);
+.ags-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(108, 95, 240, 0.35);
 }
 
-/* 📌 Mensajes de error */
-.agendar-container .error {
-  color: #ef4444;
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 10px;
-  padding: 10px;
-  background: rgba(239, 68, 68, 0.1);
-  border-radius: 8px;
-  border-left: 4px solid #ef4444;
+.ags-btn-secondary {
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e2e8f0;
 }
 
-/* 📱 Responsive */
+.ags-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
 @media (max-width: 768px) {
-  .agendar-container {
-    min-width: 85vw;
-    padding: 30px 20px;
-    margin: 30px auto;
+  .ags-container {
+    gap: 18px;
   }
 
-  .agendar-container h1 {
+  .ags-title {
     font-size: 24px;
   }
 
-  .agendar-container input,
-  .agendar-container textarea {
-    font-size: 14px;
-    padding: 12px 16px;
+  .ags-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .agendar-container button {
-    font-size: 15px;
-    padding: 12px 20px;
+  .ags-header-actions {
+    width: 100%;
+  }
+
+  .ags-header-actions .ags-btn {
+    width: 100%;
+  }
+
+  .ags-card {
+    padding: 16px;
+  }
+
+  .ags-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ags-actions {
+    justify-content: stretch;
+  }
+
+  .ags-actions .ags-btn {
+    width: 100%;
   }
 }

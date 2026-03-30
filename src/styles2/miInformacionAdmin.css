@@ -1,0 +1,102 @@
+/* 📌 Contenedor principal */
+.mi-info-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    box-sizing: border-box;
+  }
+  
+  /* 📌 Título */
+  .mi-info-container h2 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  /* 📌 Campos de datos */
+  .mi-info-container p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .mi-info-container strong {
+    display: inline-block;
+    width: 140px;
+  }
+  
+  /* 📌 Inputs */
+  .mi-info-container input {
+    width: calc(100% - 150px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+  }
+  
+  .mi-info-container input:focus {
+    border-color: #007bff;
+  }
+  
+  /* 📌 Botones */
+  .mi-info-container button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+    transition: background 0.3s;
+  }
+  
+  /* Botón Editar / Cancelar */
+  .mi-info-container button:first-of-type {
+    background-color: #007bff;
+    color: white;
+  }
+  .mi-info-container button:first-of-type:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Botón Guardar */
+  .mi-info-container button:last-of-type {
+    background-color: #28a745;
+    color: white;
+  }
+  .mi-info-container button:last-of-type:hover {
+    background-color: #218838;
+  }
+  
+  /* 📱 Responsive */
+  @media (max-width: 768px) {
+    .mi-info-container {
+      padding: 20px;
+    }
+  
+    .mi-info-container strong {
+      display: block;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  
+    .mi-info-container input {
+      width: 100%;
+    }
+  
+    .mi-info-container button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+  

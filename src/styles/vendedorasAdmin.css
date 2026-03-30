@@ -1,209 +1,228 @@
-/* 📌 Contenedor principal */
-.vendedoras-container {
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  overflow: visible;
-  background: transparent;
-  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  box-sizing: border-box;
-}
+/* =============================================
+   VENDEDORAS ADMIN — Clean Light Theme
+   ============================================= */
 
-/* 🏷️ Título */
-.title {
-  font-size: 28px;
-  color: #1f3b5c;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-/* 🔍 Filtros */
-.filtros {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  gap: 12px;
-}
-
-.filtros label {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f3b5c;
-}
-
-.filtros select {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  outline: none;
-}
-
-/* 🔘 Botón crear */
-.btn-crear {
-  width: 100%;
-  padding: 14px;
-  background-color: #007bff;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-bottom: 20px;
-}
-
-.btn-crear:hover {
-  background-color: #0056b3;
-}
-
-/* 📋 Tabla */
-.vendedoras-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 15px;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
-}
-
-.vendedoras-table th {
-  background-color: #1f3b5c;
-  color: white;
-  padding: 16px;
-  text-transform: uppercase;
-}
-
-.vendedoras-table td {
-  border: 1px solid #e0e0e0;
-  padding: 14px;
-  text-align: center;
-  color: #333;
-}
-
-.vendedoras-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.vendedoras-table tr:hover {
-  background-color: #f0f8ff;
-}
-
-/* ✏️ Botones de acción */
-.btn-editar {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 14px;
-}
-
-.btn-editar:hover {
-  background-color: #0056b3;
-}
-
-.btn-eliminar {
-  background-color: #dc3545;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 14px;
-}
-
-.btn-eliminar:hover {
-  background-color: #c82333;
-}
-
-/* 🟦 Tarjetas para móviles */
-.cards-mobile {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .vendedoras-table {
-    display: none;
-  }
-
-  .cards-mobile {
+   .va-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 20px;
+    gap: 20px;
+    width: 100%;
+    animation: vaFadeIn 0.4s ease-out;
   }
-
-  .vendedora-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  
+  @keyframes vaFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  .vendedora-card .info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .vendedora-card h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1f3b5c;
-    margin: 0;
-  }
-
-  .vendedora-card p {
-    font-size: 14px;
-    color: #555;
-    margin: 0;
-  }
-
-  .vendedora-card .acciones {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
-  .vendedora-card .acciones button {
+  
+  /* Botón Volver */
+  .va-btn-volver {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-size: 13px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: none;
+    font-weight: 600;
     cursor: pointer;
-    white-space: nowrap;
+    width: fit-content;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
-
-  .vendedora-card .btn-editar {
-    background-color: #007bff;
+  
+  .va-btn-volver:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  
+  /* Header */
+  .va-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .va-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+  }
+  
+  .va-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+  }
+  
+  .va-btn-crear {
+    background: #6366f1; /* Azul índigo moderno */
     color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
   }
-
-  .vendedora-card .btn-editar:hover {
-    background-color: #0056b3;
+  
+  .va-btn-crear:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
   }
-
-  .vendedora-card .btn-eliminar {
-    background-color: #dc3545;
-    color: white;
+  
+  /* Toolbar (Filtros) */
+  .va-toolbar {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 8px;
   }
-
-  .vendedora-card .btn-eliminar:hover {
-    background-color: #c82333;
+  
+  .va-filtros {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
-}
+  
+  .va-filtros label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+  }
+  
+  .va-filtros select {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  
+  .va-filtros select:focus {
+    border-color: #6366f1;
+  }
+  
+  /* Tarjeta Principal */
+  .va-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  }
+  
+  /* Tabla Escritorio */
+  .va-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .va-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+  
+  .va-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .va-table td {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  
+  .va-table tbody tr:hover {
+    background: #f8fafc;
+  }
+  
+  .va-td-bold { color: #0f172a; font-weight: 600; font-size: 14px; }
+  .va-td-light { color: #475569; font-size: 13.5px; }
+  
+  /* Badges */
+  .va-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  
+  .va-badge-activa {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+  }
+  
+  .va-badge-inactiva {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  
+  /* Botón Editar Tabla */
+  .va-btn-editar {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .va-btn-editar:hover {
+    background: #f1f5f9;
+    border-color: #6366f1;
+    color: #4f46e5;
+  }
+  
+  /* Utilidades */
+  .va-empty { padding: 40px; text-align: center; color: #64748b; }
+  .va-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 16px; border-radius: 12px; }
+  .va-loading { text-align: center; padding: 40px; color: #64748b; }
+  .va-spinner { width: 30px; height: 30px; border: 3px solid #e0e7ff; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
+  
+  /* Tarjetas Móvil */
+  .va-mobile-cards { display: none; }
+  .va-m-card { padding: 16px; border-bottom: 1px solid #e2e8f0; }
+  .va-m-card:last-child { border-bottom: none; }
+  .va-m-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .va-m-body p { margin: 4px 0; font-size: 13px; color: #475569; }
+  .va-m-body span { color: #94a3b8; font-weight: 500; }
+  .va-btn-full { width: 100%; margin-top: 12px; padding: 10px; }
+  
+  @media (max-width: 768px) {
+    .va-table-container { display: none; }
+    .va-mobile-cards { display: block; }
+    .va-header { flex-direction: column; align-items: flex-start; }
+    .va-btn-crear { width: 100%; text-align: center; }
+    .va-toolbar { width: 100%; }
+    .va-filtros { width: 100%; justify-content: space-between; }
+  }

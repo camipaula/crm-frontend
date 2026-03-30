@@ -1,142 +1,183 @@
-/* 🎨 Contenedor principal moderno */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  background-size: 200% 200%;
-  animation: gradientShift 15s ease infinite;
-  position: relative;
-  overflow: hidden;
-}
+/* =============================================
+   LOGIN — SaaS Premium Light Theme
+   ============================================= */
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.login-container::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
-  animation: float 20s linear infinite;
-}
-
-@keyframes float {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(-50px, -50px); }
-}
-
-/* 🎯 Caja del login */
-.login-box {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  padding: 50px 40px;
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5);
-  text-align: center;
-  width: 400px;
-  max-width: 90vw;
-  position: relative;
-  z-index: 1;
-  animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-30px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* 📝 Título */
-.login-box h2 {
-  margin-bottom: 30px;
-  font-size: 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 700;
-  letter-spacing: -1px;
-}
-
-/* 📥 Inputs */
-.login-box input {
-  width: 100%;
-  padding: 14px 18px;
-  margin: 12px 0;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 16px;
-  background: #f8fafc;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: inherit;
-}
-
-.login-box input:focus {
-  outline: none;
-  border-color: #667eea;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-  transform: translateY(-2px);
-}
-
-/* 🎯 Botón */
-.login-button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-  margin-top: 10px;
-}
-
-.login-button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
-}
-
-.login-button:active {
-  transform: translateY(0) !important;
-}
-
-/* ❌ Mensaje de error */
-.login-box .error {
-  color: #ef4444;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  padding: 10px;
-  background: rgba(239, 68, 68, 0.1);
-  border-radius: 8px;
-  border-left: 4px solid #ef4444;
-}
-
-/* 📱 Responsive */
-@media (max-width: 480px) {
-  .login-box {
-    padding: 40px 30px;
-    width: 95vw;
+   .lg-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    font-family: 'DM Sans', 'Segoe UI Emoji', system-ui, sans-serif;
+    padding: 20px;
+    box-sizing: border-box;
   }
   
-  .login-box h2 {
-    font-size: 26px;
+  .lg-emoji {
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif !important;
+    font-style: normal;
   }
-}
+  
+  /* ─── Tarjeta Principal ─────────────────────── */
+  .lg-box {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    padding: 48px 40px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 10px 15px -5px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  @keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* ─── Header ────────────────────────────────── */
+  .lg-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  
+  .lg-logo {
+    width: 64px;
+    height: 64px;
+    background: #eef2ff;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 12px rgba(108, 95, 240, 0.15);
+    border: 1px solid #e0e7ff;
+  }
+  
+  .lg-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px;
+    letter-spacing: -0.03em;
+  }
+  
+  .lg-subtitle {
+    font-size: 14.5px;
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  /* ─── Alertas de Error ──────────────────────── */
+  .lg-error {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 24px;
+    animation: shake 0.4s ease-in-out;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+  }
+  
+  /* ─── Formulario ────────────────────────────── */
+  .lg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .lg-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .lg-input-group label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #334155;
+  }
+  
+  .lg-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .lg-input::placeholder {
+    color: #94a3b8;
+  }
+  
+  .lg-input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #6c5ff0;
+    box-shadow: 0 0 0 4px rgba(108, 95, 240, 0.15);
+  }
+  
+  .lg-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f1f5f9;
+  }
+  
+  /* ─── Botón Submit ──────────────────────────── */
+  .lg-btn-submit {
+    margin-top: 12px;
+    width: 100%;
+    background: linear-gradient(135deg, #6c5ff0, #5b4fdd);
+    color: #ffffff;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 15.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 16px rgba(108, 95, 240, 0.3);
+  }
+  
+  .lg-btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108, 95, 240, 0.4);
+  }
+  
+  .lg-btn-submit:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(108, 95, 240, 0.2);
+  }
+  
+  .lg-btn-submit:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* ─── Modo Móvil ────────────────────────────── */
+  @media (max-width: 480px) {
+    .lg-box {
+      padding: 32px 24px;
+      border-radius: 20px;
+    }
+  }

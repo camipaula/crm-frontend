@@ -1,158 +1,180 @@
-/********* 📌 CONTENEDOR PRINCIPAL *********/
-.editar-prospecto-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  box-sizing: border-box;
-}
+/* =============================================
+   EDITAR / VER PROSPECTO — SaaS Premium Light
+   ============================================= */
 
-/********* 📌 TÍTULO *********/
-.editar-prospecto-container h1 {
-  text-align: center;
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/********* 📌 MENSAJES *********/
-.success {
-  color: #28a745;
-  font-size: 14px;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.error {
-  color: red;
-  font-size: 14px;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-/********* 📌 FORMULARIO *********/
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-/********* 📌 LABELS *********/
-label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 15px;
-  color: #444;
-}
-
-/********* 📌 INPUTS, TEXTAREAS Y SELECTS *********/
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  transition: border 0.3s;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border: 1px solid #007bff;
-}
-
-/* 🔹 Textarea más alto */
-textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
-/* 🔹 Inputs deshabilitados */
-input:disabled,
-textarea:disabled,
-select:disabled {
-  background: #f0f0f0;
-  cursor: not-allowed;
-}
-
-/********* 📌 BOTONES *********/
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.btn-editar {
-  background: #ffc107;
-  color: black;
-}
-
-.btn-editar:hover {
-  background: #e0a800;
-}
-
-.btn-guardar {
-  background: #007bffbb;
-  color: white;
-}
-
-.btn-guardar:hover {
-  background: #1e3f63bb;
-}
-
-.btn-cerrar {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-cerrar:hover {
-  background: #c82333;
-}
-
-/********* 📱 RESPONSIVE PARA MÓVILES *********/
-@media (max-width: 768px) {
-  .editar-prospecto-container {
-    width: 90%; /* 🔹 Más compacto */
-    padding: 10%;
-  }
-
-  .editar-prospecto-container h1 {
-    font-size: 20px;
-  }
-
-  label {
-    font-size: 13px;
-  }
-
-  input,
-  textarea,
-  select {
-    font-size: 13px;
-    padding: 8px;
-  }
-
-  button {
-    font-size: 13px;
-    padding: 8px;
-  }
-
-  .button-container {
+   .ep-container {
+    display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 24px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    box-sizing: border-box;
+    animation: fadeInEp 0.4s ease-out;
   }
-}
+  
+  @keyframes fadeInEp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* ─── Header ────────────────────────────────── */
+  .ep-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .ep-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .ep-header-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .ep-title {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0f172a 0%, #6c5ff0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+  
+  .ep-subtitle { font-size: 15px; color: #64748b; margin: 0; font-weight: 600; }
+  
+  /* ─── Botones ───────────────────────────────── */
+  .ep-btn-outline {
+    background: #ffffff; border: 1px solid #cbd5e1; color: #475569;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; width: fit-content;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .ep-btn-outline:hover { background: #f8fafc; color: #0f172a; border-color: #94a3b8; transform: translateY(-1px); }
+  
+  .ep-btn-primary {
+    background: linear-gradient(135deg, #6c5ff0, #5b4fdd); color: white;
+    border: none; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(108, 95, 240, 0.25);
+  }
+  .ep-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(108, 95, 240, 0.4); }
+  
+  .ep-btn-ghost {
+    background: transparent; border: 1px solid transparent; color: #64748b;
+    padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .ep-btn-ghost:hover { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+  
+  /* ─── Tarjeta Principal ─────────────────────── */
+  .ep-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+  }
+  
+  .ep-section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 20px 0;
+  }
+  
+  .ep-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 28px 0;
+    width: 100%;
+  }
+  
+  /* ─── Formulario y Grid ─────────────────────── */
+  .ep-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .ep-full-width { grid-column: span 2; }
+  
+  .ep-form-group { display: flex; flex-direction: column; gap: 8px; }
+  .ep-form-group label { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em; }
+  
+  .ep-input, .ep-select, .ep-textarea {
+    width: 100%; padding: 12px 16px; background: #ffffff;
+    border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit;
+    font-size: 14.5px; color: #0f172a; outline: none; transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .ep-textarea { resize: vertical; min-height: 80px; }
+  
+  /* Focus State (Modo Edición) */
+  .ep-input:focus:not(:disabled), 
+  .ep-select:focus:not(:disabled), 
+  .ep-textarea:focus:not(:disabled) {
+    border-color: #6c5ff0;
+    box-shadow: 0 0 0 3px rgba(108,95,240,0.15);
+  }
+  
+  /* Disabled State (Modo Lectura) */
+  .ep-input:disabled, 
+  .ep-select:disabled, 
+  .ep-textarea:disabled {
+    background: #f8fafc;
+    border-color: transparent;
+    color: #334155;
+    font-weight: 500;
+    cursor: default;
+    -webkit-text-fill-color: #334155; /* Para Safari/iOS */
+    opacity: 1; /* Para evitar que se vea gris claro feo */
+  }
+  
+  /* Ocultar flechita del select cuando está deshabilitado */
+  .ep-select:disabled {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+  }
+  
+  .ep-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+  }
+  
+  /* ─── Estados ───────────────────────────────── */
+  .ep-loading { padding: 60px; text-align: center; color: #64748b; font-weight: 600; font-size: 16px;}
+  .ep-alert-error { background: #fef2f2; color: #dc2626; padding: 14px 20px; border-radius: 10px; border: 1px solid #fecaca; font-weight: 600; font-size: 14px; }
+  .ep-alert-success { background: #ecfdf5; color: #059669; padding: 14px 20px; border-radius: 10px; border: 1px solid #a7f3d0; font-weight: 600; font-size: 14px; animation: slideDownEp 0.3s ease;}
+  
+  @keyframes slideDownEp {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* ─── Responsive ────────────────────────────── */
+  @media (max-width: 768px) {
+    .ep-grid { grid-template-columns: 1fr; }
+    .ep-full-width { grid-column: span 1; }
+    .ep-card { padding: 24px 16px; }
+    .ep-header { flex-direction: column; align-items: stretch; }
+    .ep-header-actions button { width: 100%; justify-content: center; }
+    .ep-form-actions { flex-direction: column-reverse; }
+    .ep-form-actions button { width: 100%; justify-content: center; }
+  }

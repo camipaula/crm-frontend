@@ -11,8 +11,6 @@ const CrearProspecto = () => {
   const [esAdmin, setEsAdmin] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
-
-
   const [categorias, setCategorias] = useState([]);
   const [categoriasVenta, setCategoriasVenta] = useState([]);
   const [origenes, setOrigenes] = useState([]);
@@ -40,7 +38,6 @@ const CrearProspecto = () => {
   });
 
   useEffect(() => {
-
     obtenerCategorias();
     cargarCategoriasVenta();
     cargarOrigenes();
@@ -72,9 +69,6 @@ const CrearProspecto = () => {
     }
   };
 
-
-
-
   const cargarVendedoras = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -86,9 +80,9 @@ const CrearProspecto = () => {
     } catch (err) {
       setError("Error al cargar vendedoras");
       console.error("Error al cargar vendedoras:", err);
-
     }
   };
+
   const obtenerCategorias = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categorias`);
@@ -201,148 +195,162 @@ const CrearProspecto = () => {
     }
   };
 
-
   return (
-    <div className="crear-prospecto-container">
-      <button className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-      <h1>Crear Prospecto</h1>
+    <div className="cp-container">
+      <div className="cp-header">
+        <button className="cp-btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+        <div className="cp-header-text">
+          <h1 className="cp-title">Crear Nuevo Prospecto</h1>
+          <p className="cp-subtitle">Registra la información inicial para la oportunidad de venta</p>
+        </div>
+      </div>
 
-      {mensaje && <p className="success">{mensaje}</p>}
-      {error && <p className="error">{error}</p>}
+      {mensaje && <div className="cp-alert-success">{mensaje}</div>}
+      {error && <div className="cp-alert-error">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <label>Nombre <span className="required">*</span>:</label>
-        <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
+      <div className="cp-card">
+        <form onSubmit={handleSubmit} className="cp-form">
+          <div className="cp-form-grid">
+            
+            {/* Fila 1: Nombre (ancho completo) */}
+            <div className="cp-form-group cp-full-width">
+              <label>Nombre del Prospecto / Empresa <span className="cp-required">*</span></label>
+              <input type="text" className="cp-input" name="nombre" value={formData.nombre} onChange={handleChange} required placeholder="Ej. Corporación ABC" />
+            </div>
 
+            {/* Fila 2: Categoría y Origen */}
+            <div className="cp-form-group">
+              <label>Categoría <span className="cp-required">*</span></label>
+              <select className="cp-select" name="id_categoria" value={formData.id_categoria || ""} onChange={handleChange} required>
+                <option value="">Seleccione una categoría...</option>
+                {categorias.map((c) => (
+                  <option key={c.id_categoria} value={c.id_categoria}>{c.nombre}</option>
+                ))}
+              </select>
+            </div>
 
-        <label>Categoría <span className="required">*</span>:</label>
-        <select
-          name="id_categoria"
-          value={formData.id_categoria || ""}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Seleccione una categoría...</option>
-          {categorias.map((c) => (
-            <option key={c.id_categoria} value={c.id_categoria}>
-              {c.nombre}
-            </option>
-          ))}
-        </select>
+            <div className="cp-form-group">
+              <label>Origen <span className="cp-required">*</span></label>
+              <select className="cp-select" name="id_origen" value={formData.id_origen || ""} onChange={handleChange} required>
+                <option value="">Seleccione...</option>
+                {origenes.map((o) => (
+                  <option key={o.id_origen} value={o.id_origen}>{o.descripcion}</option>
+                ))}
+              </select>
+            </div>
 
-       
+            {/* Fila 3: Empleados y Monto Proyectado */}
+            <div className="cp-form-group">
+              <label>Número de Empleados <span className="cp-required">*</span></label>
+              <input type="number" className="cp-input" name="empleados" value={formData.empleados} onWheel={(e) => e.target.blur()} onChange={handleChange} required placeholder="Ej. 150" />
+            </div>
 
-        <label>Origen <span className="required">*</span>:</label>
-        <select name="id_origen" value={formData.id_origen || ""} onChange={handleChange} required>
-          <option value="">Seleccione...</option>
-          {origenes.map((o) => (
-            <option key={o.id_origen} value={o.id_origen}>{o.descripcion}</option>
-          ))}
-        </select>
-        <label>Número de Empleados <span className="required">*</span>:</label>
-        <input
-          type="number"
-          name="empleados"
-          value={formData.empleados}
-          onWheel={(e) => e.target.blur()}
+            <div className="cp-form-group">
+              <label>Monto Proyectado ($) <span className="cp-required">*</span></label>
+              <input type="number" className="cp-input" name="monto_proyectado" value={formData.monto_proyectado} onChange={handleChange} required onWheel={(e) => e.target.blur()} placeholder="Ej. 5000" />
+            </div>
 
-          onChange={handleChange}
-          required
-        />
-        <label>Nombre del Contacto:</label>
-        <input type="text" name="nombre_contacto" value={formData.nombre_contacto} onChange={handleChange} />
+            {/* Fila 4: Contacto y Correo */}
+            <div className="cp-form-group">
+              <label>Nombre del Contacto</label>
+              <input type="text" className="cp-input" name="nombre_contacto" value={formData.nombre_contacto} onChange={handleChange} placeholder="Ej. Juan Pérez" />
+            </div>
 
-        <label>Correo: </label>
-        <input type="email" name="correo" value={formData.correo} onChange={handleChange} />
+            <div className="cp-form-group">
+              <label>Correo Electrónico</label>
+              <input type="email" className="cp-input" name="correo" value={formData.correo} onChange={handleChange} placeholder="correo@empresa.com" />
+            </div>
 
-        <label>Teléfono: </label>
-        <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} />
+            {/* Fila 5: Teléfono y Cédula/RUC */}
+            <div className="cp-form-group">
+              <label>Teléfono</label>
+              <input type="text" className="cp-input" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Ej. 0991234567" />
+            </div>
 
-        <label>Dirección:</label>
-        <input type="text" name="direccion" value={formData.direccion} onChange={handleChange} />
+            <div className="cp-form-group">
+              <label>Cédula / RUC</label>
+              <input type="text" className="cp-input" name="cedula_ruc" value={formData.cedula_ruc} onChange={handleChange} placeholder="Ej. 1700000000001" />
+            </div>
 
-        <label>Provincia:</label>
-        <input type="text" name="provincia" value={formData.provincia} onChange={handleChange} />
+            {/* Fila 6: Provincia y Ciudad */}
+            <div className="cp-form-group">
+              <label>Provincia</label>
+              <input type="text" className="cp-input" name="provincia" value={formData.provincia} onChange={handleChange} placeholder="Ej. Pichincha" />
+            </div>
 
-        <label>Ciudad:</label>
-        <input type="text" name="ciudad" value={formData.ciudad} onChange={handleChange} />
+            <div className="cp-form-group">
+              <label>Ciudad</label>
+              <input type="text" className="cp-input" name="ciudad" value={formData.ciudad} onChange={handleChange} placeholder="Ej. Quito" />
+            </div>
 
-        <label>Sector:</label>
-        <input type="text" name="sector" value={formData.sector} onChange={handleChange} />
+            {/* Fila 7: Sector y Dirección */}
+            <div className="cp-form-group">
+              <label>Sector</label>
+              <input type="text" className="cp-input" name="sector" value={formData.sector} onChange={handleChange} placeholder="Ej. Norte" />
+            </div>
 
-        <label>Cédula/RUC:</label>
-        <input type="text" name="cedula_ruc" value={formData.cedula_ruc} onChange={handleChange} />
+            <div className="cp-form-group">
+              <label>Dirección</label>
+              <input type="text" className="cp-input" name="direccion" value={formData.direccion} onChange={handleChange} placeholder="Av. Principal y Secundaria" />
+            </div>
 
+            {/* Fila 8: Objetivo (Ancho completo) */}
+            <div className="cp-form-group cp-full-width">
+              <label>Objetivo de la Prospección <span className="cp-required">*</span></label>
+              <textarea className="cp-textarea" name="objetivo" value={formData.objetivo || ""} onChange={handleChange} required placeholder="¿Qué buscamos lograr con este prospecto?" rows="3" />
+            </div>
 
+            {/* Fila 9: Descripción y Nota */}
+            <div className="cp-form-group cp-full-width">
+              <label>Descripción de la Empresa</label>
+              <textarea className="cp-textarea" name="descripcion" value={formData.descripcion} onChange={handleChange} placeholder="Breve perfil de la empresa..." rows="2" />
+            </div>
 
+            <div className="cp-form-group cp-full-width">
+              <label>Nota Interna Adicional</label>
+              <textarea className="cp-textarea" name="nota" value={formData.nota} onChange={handleChange} placeholder="Cualquier información relevante..." rows="2" />
+            </div>
 
+            {/* Fila 10: Datos Finales */}
+            {esAdmin && (
+              <div className="cp-form-group">
+                <label>Asignar Vendedora <span className="cp-required">*</span></label>
+                <select className="cp-select" name="cedula_vendedora" value={formData.cedula_vendedora} onChange={handleChange} required>
+                  <option value="">Seleccione una vendedora...</option>
+                  {vendedoras.map((v) => (
+                    <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-        <label>Descripción:</label>
-        <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} />
+            <div className="cp-form-group">
+              <label>Categoría de Venta</label>
+              <select className="cp-select" name="id_categoria_venta" value={formData.id_categoria_venta ?? ""} onChange={handleChange}>
+                <option value="">Seleccione categoría de venta...</option>
+                {categoriasVenta.map((c) => (
+                  <option key={c.id_categoria_venta} value={c.id_categoria_venta}>{c.nombre}</option>
+                ))}
+              </select>
+            </div>
 
-        <label>Nota:</label>
-        <textarea name="nota" value={formData.nota} onChange={handleChange} />
+            <div className="cp-form-group">
+              <label>Fecha de Creación</label>
+              <input type="date" className="cp-input" name="created_at" value={formData.created_at} onChange={handleChange} />
+            </div>
 
+          </div>
 
-
-
-        <label>Fecha de Creación:</label>
-        <input type="date" name="created_at" value={formData.created_at} onChange={handleChange} />
-
-        {/* Solo si es admin, muestra selector de vendedora */}
-        {esAdmin && (
-          <>
-            <label>Asignar Vendedora <span className="required">*</span>:</label>
-            <select
-              name="cedula_vendedora"
-              value={formData.cedula_vendedora}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Seleccione una vendedora...</option>
-              {vendedoras.map((v) => (
-                <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre}</option>
-              ))}
-            </select>
-          </>
-        )}
-        <label>Categoría de venta:</label>
-        <select
-          name="id_categoria_venta"
-          value={formData.id_categoria_venta ?? ""}
-          onChange={handleChange}
-        >
-          <option value="">Seleccione categoría de venta...</option>
-          {categoriasVenta.map((c) => (
-            <option key={c.id_categoria_venta} value={c.id_categoria_venta}>
-              {c.nombre}
-            </option>
-          ))}
-        </select>
-
-        <label>Objetivo de la Prospección <span className="required">*</span>:</label>
-        <textarea
-          name="objetivo"
-          value={formData.objetivo || ""}
-          onChange={handleChange}
-          required
-        />
-        <label>Monto Proyectado de la Venta <span className="required">*</span>:</label>
-        <input
-          type="number"
-          name="monto_proyectado"
-          value={formData.monto_proyectado}
-          onChange={handleChange}
-          required
-          onWheel={(e) => e.target.blur()}
-
-        />
-
-        <button type="submit" disabled={enviando}>
-          {enviando ? "Creando..." : "Crear Prospecto"}
-        </button>
-        <button type="button" className="btn-cerrar" onClick={() => navigate(-1)}>Cerrar</button>
-      </form>
+          <div className="cp-form-actions">
+            <button type="button" className="cp-btn-secondary" onClick={() => navigate(-1)}>
+              Cancelar
+            </button>
+            <button type="submit" className="cp-btn-primary" disabled={enviando}>
+              {enviando ? "Creando..." : "💾 Guardar Prospecto"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
