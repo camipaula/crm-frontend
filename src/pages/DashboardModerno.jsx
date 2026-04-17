@@ -7,6 +7,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
 import FunnelD3 from "../components/FunnelD3";
 import "../styles/dashboardModerno.css";
@@ -22,10 +27,11 @@ const COLORS = [
   "#f97316",
 ];
 
+// ACTUALIZADO: Los nombres correctos de la base de datos
 const ordenEstadosAbiertas = [
-  "Captación/ensayo",
+  "Captación",
   "Citas",
-  "Cotizaciones",
+  "Cotizaciones/ensayo",
   "Seguimiento",
   "Cierre de venta",
 ];
@@ -72,6 +78,9 @@ const DashboardModerno = () => {
 
   const token = localStorage.getItem("token");
 
+  const anioActualStr = new Date().getFullYear().toString();
+  const anioPasadoStr = (new Date().getFullYear() - 1).toString();
+
   const graficoVentasSinPerdidas = useMemo(
     () => (dashboardData?.graficoVentas || []).filter((d) => d.estado !== "Perdidas"),
     [dashboardData]
@@ -110,13 +119,6 @@ const DashboardModerno = () => {
   const formatearFecha = (fecha) => {
     if (!fecha) return "—";
     return new Date(fecha).toLocaleDateString();
-  };
-
-  const formatearMoneda = (valor) => {
-    if (valor == null || valor === "") return "—";
-    const numero = Number(valor);
-    if (Number.isNaN(numero)) return valor;
-    return `$${numero.toFixed(2)}`;
   };
 
   const fetchCategorias = async () => {
@@ -336,6 +338,13 @@ const DashboardModerno = () => {
     });
   }, [dashboardData]);
 
+  const formatearMoneda = (valor) => {
+    if (valor == null || valor === "") return "—";
+    const numero = Number(valor);
+    if (Number.isNaN(numero)) return valor;
+    return `$${numero.toFixed(2)}`;
+  };
+
   if (loading && !dashboardData) {
     return (
       <div className="db-loading">
@@ -518,6 +527,12 @@ const DashboardModerno = () => {
               variant="amber"
             />
             <StatCard
+              title="Valor del Pipeline"
+              value={formatearMoneda(dashboardData.valorPipeline ?? 0)}
+              sub="Dinero proyectado a cerrar"
+              variant="blue"
+            />
+            <StatCard
               title="Tiempo Promedio"
               value={`${dashboardData.promedioDiasCierre ?? 0} días`}
               sub="Promedio de cierre"
@@ -646,6 +661,53 @@ const DashboardModerno = () => {
               </div>
             </div>
 
+            {/* GRÁFICO: RENDIMIENTO DE VENDEDORAS */}
+            <div className="db-card">
+              <div className="db-card-header">
+                <h3 className="db-card-title">Efectividad por Vendedora (Win Rate)</h3>
+              </div>
+              <div className="db-chart-wrapper" style={{ display: 'flex', alignItems: 'center' }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dashboardData.rendimientoVendedoras || []} layout="vertical" margin={{ left: 20, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                    <XAxis type="number" domain={[0, 100]} hide />
+                    <YAxis dataKey="vendedora" type="category" width={100} tick={{ fontSize: 12, fill: '#475569' }} axisLine={false} tickLine={false} />
+                    <Tooltip 
+                      cursor={{fill: 'transparent'}}
+                      formatter={(value, name, props) => [
+                        `${value}% (${props.payload.ganadas} ganadas)`, 
+                        "Tasa de Cierre"
+                      ]} 
+                    />
+                    <Bar dataKey="winRate" fill="#10b981" radius={[0, 6, 6, 0]} barSize={25} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* GRÁFICO NUEVO: COMPARATIVA AÑO VS AÑO */}
+            <div className="db-card full-width">
+              <div className="db-card-header">
+                <h3 className="db-card-title">Comparativa de Ventas: Este Año vs Año Pasado</h3>
+              </div>
+              <div className="db-chart-wrapper">
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={dashboardData.comparativaAnual || []} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="mes" tick={{ fill: '#64748b', fontSize: 13 }} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis tickFormatter={(val) => `$${val}`} tick={{ fill: '#64748b', fontSize: 13 }} tickLine={false} axisLine={false} />
+                    <Tooltip 
+                      formatter={(value, name) => [formatearMoneda(value), `Ventas ${name}`]}
+                      contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                    />
+                    <Legend wrapperStyle={{ paddingTop: "15px" }} />
+                    <Bar dataKey={anioPasadoStr} fill="#cbd5e1" name={anioPasadoStr} radius={[4, 4, 0, 0]} barSize={30} />
+                    <Bar dataKey={anioActualStr} fill="#6366f1" name={anioActualStr} radius={[4, 4, 0, 0]} barSize={30} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
             <div className="db-card">
               <div className="db-card-header">
                 <h3 className="db-card-title">Prospectos por Categoría</h3>
@@ -909,9 +971,8 @@ const DashboardModerno = () => {
                 </button>
               </div>
             </div>
-          </div>
-          {/* TABLA DE PROSPECCIONES DECLINADAS / PERDIDAS */}
-          <div className="db-card full-width">
+
+            <div className="db-card full-width">
               <div className="db-card-header">
                 <h3 className="db-card-title">Prospecciones Declinadas / Perdidas</h3>
               </div>
@@ -984,6 +1045,7 @@ const DashboardModerno = () => {
                 </button>
               </div>
             </div>
+          </div>
         </>
       )}
 

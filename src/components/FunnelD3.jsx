@@ -2,53 +2,29 @@ import { useEffect, useRef } from "react";
 import D3Funnel from "d3-funnel";
 import PropTypes from "prop-types";
 
-const ordenFases = [
-  "Captación",
-  "Citas",
-  "Cotizaciones/ensayo",
-  "Seguimiento",
-  "Cierre de venta",
-  "Prospección declinada",
-];
-
-const colores = [
-  "#9e9e9e",  // Captación
-  "#03a9f4",  // Citas
-  "#9c27b0",  // Cotizaciones/ensayo
-  "#4caf50",  // Seguimiento
-  "#2e7d32",  // Cierre de venta
-  "#f44336",  // Prospección declinada
-];
+// ACTUALIZADO PARA HACER MATCH CON LA BASE DE DATOS
+const coloresFases = {
+  "Captación": "#9e9e9e",            // Gris
+  "Citas": "#03a9f4",                // Azul claro
+  "Cotizaciones/ensayo": "#9c27b0",  // Morado
+  "Seguimiento": "#ff9800",          // Naranja
+  "Cierre de venta": "#4caf50",      // Verde
+  "Prospección declinada": "#f44336" // Rojo (NUEVO)
+};
 
 const FunnelD3 = ({ data }) => {
   const containerRef = useRef(null);
-
-  // Helper para buscar el índice ignorando mayúsculas/minúsculas
-  const getIndex = (estado) => {
-    const idx = ordenFases.findIndex(
-      (f) => f.toLowerCase() === (estado || "").toLowerCase()
-    );
-    return idx !== -1 ? idx : 99; // Si no lo encuentra, lo manda al final
-  };
-
-  const dataOrdenada = [...data].sort((a, b) => getIndex(a.estado) - getIndex(b.estado));
 
   useEffect(() => {
     if (!data || data.length === 0) return;
 
     containerRef.current.innerHTML = "";
 
-    // Mapeamos los datos y le inyectamos el color EXACTO como tercer parámetro
-    const funnelData = dataOrdenada.map((item) => {
-      const index = getIndex(item.estado);
-      const colorElegido = index !== 99 ? colores[index] : "#cccccc"; // Gris por defecto
-
-      return [
-        item.estado.toUpperCase(), // Label
-        item.cantidad,             // Value
-        colorElegido               // Color específico mágico para d3-funnel ✨
-      ];
-    });
+    const funnelData = data.map((item) => [
+      item.estado.toUpperCase(),
+      item.cantidad,
+      coloresFases[item.estado] || "#cccccc", 
+    ]);
 
     const chart = new D3Funnel(containerRef.current);
 
@@ -56,62 +32,64 @@ const FunnelD3 = ({ data }) => {
       chart: {
         bottomWidth: 1 / 3,
         curve: { enabled: true },
-        animate: 200,
+        animate: 300,
         width: containerRef.current.offsetWidth || 350,
-        height: 300,
+        height: 320,
       },
       block: {
         dynamicHeight: true,
-        minHeight: 15,
+        minHeight: 25, 
         highlight: true,
-        // Eliminamos el fill: { scale: colores } de aquí para que use el color que le mandamos arriba
       },
       label: {
-        fontSize: "14px",
-        color: "#000",
-        format: (label) => label,
+        fontSize: "12px",
+        fill: "#fff",
+        format: "{l}: {f}", 
+      },
+      tooltip: {
+        enabled: true,
+        format: "{l}: {f} prospectos", 
       },
     });
-  }, [data, dataOrdenada]);
+  }, [data]);
 
   return (
     <div style={{ width: "100%", overflow: "hidden" }}>
-      <h3>📌 FASES DE PROSPECCIÓN</h3>
       <div
         ref={containerRef}
         style={{
           width: "100%",
-          maxWidth: "350px",
+          maxWidth: "400px",
           margin: "0 auto",
         }}
       ></div>
 
-      {/* Leyenda */}
-      <div style={{ marginTop: "10px" }}>
-        {dataOrdenada.map((fase, idx) => {
-          const index = getIndex(fase.estado);
-          const colorFase = index !== 99 ? colores[index] : "#cccccc";
-
-          return (
-            <div
-              key={idx}
-              style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}
-            >
+      {/* Leyenda Inferior */}
+      <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        {data.map((fase, idx) => (
+          <div
+            key={idx}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+          >
+            <div style={{ display: "flex", alignItems: "center" }}>
               <div
                 style={{
-                  width: "12px",
-                  height: "12px",
-                  backgroundColor: colorFase,
-                  marginRight: "8px",
-                  borderRadius: "2px",
+                  width: "14px",
+                  height: "14px",
+                  backgroundColor: coloresFases[fase.estado] || "#cccccc",
+                  marginRight: "10px",
+                  borderRadius: "3px",
                 }}
               ></div>
-              <span style={{ fontSize: "13px", color: "#333" }}>
-                {fase.estado.toUpperCase()}: {fase.cantidad} ({fase.porcentaje}%)
+              <span style={{ fontSize: "14px", color: "#475569", fontWeight: "500" }}>
+                {fase.estado}
               </span>
             </div>
-          );
-        })}
+            <span style={{ fontSize: "14px", color: "#0f172a", fontWeight: "700" }}>
+              {fase.cantidad} <span style={{ color: "#64748b", fontWeight: "400", fontSize: "12px" }}>({fase.porcentaje}%)</span>
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
