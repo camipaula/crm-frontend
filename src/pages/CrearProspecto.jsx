@@ -147,7 +147,8 @@ const CrearProspecto = () => {
       { campo: formData.objetivo, mensaje: "Debe ingresar el objetivo de la prospección." },
       { campo: formData.empleados, mensaje: "Debe ingresar el número de empleados." },
       { campo: formData.monto_proyectado, mensaje: "Debe ingresar el monto proyectado de la venta." },
-      { campo: formData.cedula_vendedora, mensaje: "Debe asignar una vendedora." }
+      { campo: formData.cedula_vendedora, mensaje: "Debe asignar una vendedora." },
+      { campo: formData.id_categoria_venta, mensaje: "Debe seleccionar una categoría de venta." }
     ];
 
     for (const item of camposObligatorios) {
@@ -179,7 +180,7 @@ const CrearProspecto = () => {
         body: JSON.stringify({
           ...formData,
           id_categoria_venta: formData.id_categoria_venta ?? null,
-          estado: "Captación/ensayo",
+          estado: "Captación", // <--- NOMBRE ACTUALIZADO
         }),
       });
 
@@ -325,8 +326,8 @@ const CrearProspecto = () => {
             )}
 
             <div className="cp-form-group">
-              <label>Categoría de Venta</label>
-              <select className="cp-select" name="id_categoria_venta" value={formData.id_categoria_venta ?? ""} onChange={handleChange}>
+              <label>Categoría de Venta <span className="cp-required">*</span></label>
+              <select className="cp-select" name="id_categoria_venta" value={formData.id_categoria_venta ?? ""} onChange={handleChange} required>
                 <option value="">Seleccione categoría de venta...</option>
                 {categoriasVenta.map((c) => (
                   <option key={c.id_categoria_venta} value={c.id_categoria_venta}>{c.nombre}</option>

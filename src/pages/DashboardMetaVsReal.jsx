@@ -5,6 +5,7 @@ import {
   ResponsiveContainer, Legend, LineChart, Line, PieChart,
   Pie, Cell, ReferenceLine,
 } from "recharts";
+import Select from "react-select";
 import "../styles/dashboardMetas.css";
 import "../styles/dashboardMetaVsReal.css";
 
@@ -52,9 +53,10 @@ const DashboardMetaVsReal = () => {
 
   /* ── Estado de filtros ── */
   const [anio, setAnio] = useState(actual);
-  const [mes, setMes] = useState("");
+  const [mesesFiltro, setMesesFiltro] = useState([]); 
   const [cedula, setCedula] = useState("");
   const [idCateg, setIdCateg] = useState("");
+  const [triggerBusqueda, setTriggerBusqueda] = useState(0); // <--- NUEVO
 
   /* ── Estado de catálogos ── */
   const [vendedoras, setVendedoras] = useState([]);
@@ -114,13 +116,15 @@ const DashboardMetaVsReal = () => {
   };
 
   /* ── Recargar datos cuando cambian los filtros ── */
-  useEffect(() => { cargar(); }, [anio, mes, cedula, idCateg]);
+  useEffect(() => { cargar(); }, [triggerBusqueda]);
 
   const cargar = async () => {
     setLoading(true); setError(""); setSyncMsg("");
     try {
       let url = `${base()}/api/dashboard/metas-comparacion?anio=${anio}`;
-      if (mes) url += `&mes=${mes}`;
+      if (mesesFiltro.length > 0) {
+        url += `&meses=${mesesFiltro.map(m => m.value).join(",")}`;
+      }
       if (cedula) url += `&cedula_vendedora=${encodeURIComponent(cedula)}`;
       if (idCateg) url += `&id_categoria_venta=${idCateg}`;
 
@@ -180,30 +184,33 @@ const DashboardMetaVsReal = () => {
   const porMes = data?.comparacionPorMes ?? [];
   const porVend = data?.comparacionPorVendedora ?? [];
   const porCategoria = useMemo(() => data?.comparacionPorCategoria ?? [], [data]);
-  const mesNum = data?.periodo?.mes ?? null;
-  const periodoLabel = mesNum ? `${MESES[mesNum - 1]} ${anio}` : `${anio}`;
+  
+  const mesesArr = data?.periodo?.meses || [];
+  const hasMeses = mesesArr.length > 0;
+  const nombreMeses = hasMeses ? mesesArr.map(m => MESES[m - 1]).join(", ") : "";
+  const periodoLabel = hasMeses ? `${nombreMeses} ${anio}` : `${anio}`;
 
   const topVendedoras = useMemo(() =>
     porVend
       .filter(r => r.tipo === "match")
       .map(r => ({
         nombre: r.nombre || r.cedula_ruc || "—",
-        cumplimiento: mesNum != null ? r.cumplimientoMes : r.cumplimientoAnio,
-        meta: mesNum != null ? r.metaMes : r.metaAnio,
-        real: mesNum != null ? r.realMes : r.realAnio,
+        cumplimiento: hasMeses ? r.cumplimientoMes : r.cumplimientoAnio,
+        meta: hasMeses ? r.metaMes : r.metaAnio,
+        real: hasMeses ? r.realMes : r.realAnio,
       }))
       .filter(r => r.cumplimiento != null)
       .sort((a, b) => (b.cumplimiento ?? 0) - (a.cumplimiento ?? 0))
       .slice(0, 5)
-    , [porVend, mesNum]);
+    , [porVend, hasMeses]);
 
   const enRiesgo = useMemo(() =>
     porVend.filter(r => {
       if (r.tipo !== "match") return false;
-      const c = mesNum != null ? r.cumplimientoMes : r.cumplimientoAnio;
+      const c = hasMeses ? r.cumplimientoMes : r.cumplimientoAnio;
       return c != null && c < 0.7;
     })
-    , [porVend, mesNum]);
+    , [porVend, hasMeses]);
 
   const soloCRM = useMemo(() => porVend.filter(r => r.tipo === "solo_meta"), [porVend]);
   const soloAPI = useMemo(() => porVend.filter(r => r.tipo === "solo_real_externa"), [porVend]);
@@ -222,8 +229,8 @@ const DashboardMetaVsReal = () => {
   const gapAnio = (kpis.realAcumuladaAnio != null && kpis.metaAcumuladaAnio != null) ? r2(kpis.realAcumuladaAnio - kpis.metaAcumuladaAnio) : null;
 
   const heatmapData = useMemo(() =>
-    porMes.map(m => ({ ...m, esActivo: mesNum != null && m.mes === mesNum }))
-    , [porMes, mesNum]);
+    porMes.map(m => ({ ...m, esActivo: hasMeses && mesesArr.includes(m.mes) }))
+    , [porMes, hasMeses, mesesArr]);
 
   if (loading && !data) return (
     <div className="dashboard-metas-container dashboard-meta-vs-real">
@@ -262,12 +269,19 @@ const DashboardMetaVsReal = () => {
           </select>
         </label>
 
-        <label>
-          Mes:
-          <select value={mes} onChange={e => { setMes(e.target.value); }}>
-            <option value="">Todo el año</option>
-            {MESES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-          </select>
+        <label style={{ minWidth: "220px", zIndex: 100 }}>
+          Meses:
+          <Select 
+            isMulti
+            options={MESES.map((m, i) => ({ value: i + 1, label: m }))}
+            value={mesesFiltro}
+            onChange={setMesesFiltro}
+            placeholder="Todo el año"
+            styles={{
+              control: (b) => ({ ...b, minHeight: '38px', borderRadius: '8px' }),
+              menu: (b) => ({ ...b, zIndex: 999 })
+            }}
+          />
         </label>
 
         <label>
@@ -291,6 +305,15 @@ const DashboardMetaVsReal = () => {
         </label>
 
         <div className="filtros-metas-actions">
+          <button 
+            type="button" 
+            className="btn-primary" 
+            onClick={() => setTriggerBusqueda(prev => prev + 1)}
+            style={{ marginRight: '10px', padding: '8px 16px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            🔍 Buscar
+          </button>
+          
           <button type="button" className="btn-sincronizar" onClick={sincronizar} disabled={syncing}>
             {syncing ? "Sincronizando..." : "🔄 Actualizar totales reales"}
           </button>
@@ -327,21 +350,21 @@ const DashboardMetaVsReal = () => {
           )}
         </div>
 
-        {mesNum != null && <>
+        {hasMeses && <>
           <div className="kpi-card">
-            <span className="kpi-label">Meta {MESES[mesNum - 1]}</span>
+            <span className="kpi-label">Meta {nombreMeses}</span>
             <span className="kpi-value meta">{usd(kpis.metaTotalMes)}</span>
           </div>
           <div className="kpi-card">
-            <span className="kpi-label">Real {MESES[mesNum - 1]}</span>
+            <span className="kpi-label">Real {nombreMeses}</span>
             <span className="kpi-value real">{usd(kpis.realTotalMes)}</span>
           </div>
           <div className="kpi-card destacado">
-            <span className="kpi-label">Cumplimiento {MESES[mesNum - 1]}</span>
+            <span className="kpi-label">Cumplimiento {nombreMeses}</span>
             <span className={`kpi-value ${levelClass(kpis.cumplimientoMes)}`}>{pct(kpis.cumplimientoMes)}</span>
           </div>
           <div className="kpi-card">
-            <span className="kpi-label">Gap mes (real − meta)</span>
+            <span className="kpi-label">Gap periodo (real − meta)</span>
             <span className={`kpi-value ${gapMes == null ? "" : gapMes >= 0 ? "ok" : "danger"}`}>
               {gapMes != null ? usd(gapMes) : "—"}
             </span>
@@ -411,7 +434,7 @@ const DashboardMetaVsReal = () => {
         <h2 className="section-title">🏆 Top vendedoras — {periodoLabel}</h2>
         <div className="mvr-card">
           <p className="mvr-card-title">
-            Top 5 · cumplimiento {mesNum != null ? `${MESES[mesNum - 1]}` : "anual"}
+            Top 5 · cumplimiento {hasMeses ? nombreMeses : "anual"}
           </p>
           {topVendedoras.map((r, i) => {
             const lvl = levelClass(r.cumplimiento);
@@ -441,7 +464,7 @@ const DashboardMetaVsReal = () => {
                 <tr>
                   {["Vendedora", "Categoría",
                     "Meta año", "Real año", "Cumpl. año",
-                    ...(mesNum ? [`Meta ${MESES[mesNum - 1]}`, `Real ${MESES[mesNum - 1]}`, "Cumpl. mes"] : [])
+                    ...(hasMeses ? [`Meta periodo`, `Real periodo`, "Cumpl. periodo"] : [])
                   ].map(h => <th key={h}>{h}</th>)}
                 </tr>
               </thead>
@@ -453,7 +476,7 @@ const DashboardMetaVsReal = () => {
                     <td className="num">{usd(r.metaAnio)}</td>
                     <td className="num">{usd(r.realAnio)}</td>
                     <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
-                    {mesNum && <>
+                    {hasMeses && <>
                       <td className="num">{usd(r.metaMes)}</td>
                       <td className="num">{usd(r.realMes)}</td>
                       <td className="num" style={cumplStyle(r.cumplimientoMes)}>{pct(r.cumplimientoMes)}</td>
@@ -465,35 +488,6 @@ const DashboardMetaVsReal = () => {
           </div>
         </div>
       </>}
-
-      {/* ══ Alineación ══ 
-      <h2 className="section-title">🔗 Alineación de datos</h2>
-      <div className="mvr-card-grid-2">
-        <div className="mvr-card">
-          <p className="mvr-card-title">Solo en CRM (sin ventas reales)</p>
-          <div className="alineacion-count" style={{ color: CHART_META }}>{soloCRM.length}</div>
-          <div className="alineacion-list">
-            {soloCRM.map((r, i) => (
-              <div key={i} className="alineacion-row">
-                <span>{r.nombre} · {r.categoria}</span>
-                <span className="monto meta">{usd(r.metaAnio)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mvr-card">
-          <p className="mvr-card-title">Solo en API externa (sin meta)</p>
-          <div className="alineacion-count" style={{ color: CHART_REAL }}>{soloAPI.length}</div>
-          <div className="alineacion-list">
-            {soloAPI.map((r, i) => (
-              <div key={i} className="alineacion-row">
-                <span>{r.codigo_vendedora_externo ?? r.nombre} · {r.categoria}</span>
-                <span className="monto real">{usd(r.realAnio)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>*/}
 
       {/* ══ Match manual ══ */}
       <h2 className="section-title">🔀 Match de Vendedoras (Múltiples códigos)</h2>
@@ -516,10 +510,8 @@ const DashboardMetaVsReal = () => {
                 ...Object.values(matches).flat() 
               ]));
 
-              // Función que saca la información original
               const getExtInfo = (cod) => codigosExternos.find(c => c.codigo_vendedora_externo === cod);
 
-              // Filtrado inteligente: busca por el nombre externo O por el código
               const filtrados = todosLosCodigos.filter(c => {
                 const info = getExtInfo(c);
                 const strForSearch = info?.nombre_vendedora_externo 
@@ -534,8 +526,6 @@ const DashboardMetaVsReal = () => {
                     <strong>{v.nombre}</strong>
                   </td>
                   <td style={{ position: 'relative' }}>
-                    
-                    {/* BOTÓN DESPLEGABLE */}
                     <div 
                       className={`custom-multiselect ${isDropdownOpen ? 'active' : ''}`}
                       onClick={() => {
@@ -555,7 +545,6 @@ const DashboardMetaVsReal = () => {
                       <span className="arrow">{isDropdownOpen ? "▲" : "▼"}</span>
                     </div>
 
-                    {/* LISTA DESPLEGABLE */}
                     {isDropdownOpen && (
                       <div className="multiselect-dropdown">
                         <input 
@@ -584,13 +573,10 @@ const DashboardMetaVsReal = () => {
                                   checked={seleccionados.includes(cod)}
                                   onChange={() => toggleCodigoMatch(v.id_usuario, cod)}
                                 />
-                                
-                                {/* 🌟 NOMBRE GRANDE Y CÓDIGO CHIQUITO GRIS 🌟 */}
                                 <span>
                                   {info?.nombre_vendedora_externo || "Desconocido"}{" "}
                                   <small style={{ color: "#94a3b8", fontSize: "0.85em" }}>({cod})</small>
                                 </span>
-                                
                                 {estaAsignadoAOtro && (
                                   <small className="tag-warning" style={{marginLeft: "8px", color: "orange"}}>
                                     (Asignado a otro)
@@ -611,7 +597,6 @@ const DashboardMetaVsReal = () => {
                       className="btn-guardar-match"
                       onClick={async () => {
                         const codigosAsignar = matches[v.id_usuario] || [];
-                        
                         try {
                           const res = await fetch(`${base()}/api/ventas/match-vendedora`, {
                             method: "POST",
@@ -674,7 +659,7 @@ const DashboardMetaVsReal = () => {
             <span>🔴 &lt;80%</span>
             <span>🟡 80–99%</span>
             <span>🟢 ≥100%</span>
-            {mesNum && <span className="heatmap-legend-active">⬛ Mes seleccionado</span>}
+            {hasMeses && <span className="heatmap-legend-active">⬛ Seleccionado</span>}
           </div>
         </div>
       </>}
@@ -706,14 +691,15 @@ const DashboardMetaVsReal = () => {
               />
               <ReferenceLine y={1} stroke={CHART_REF} strokeDasharray="4 4"
                 label={{ value: "100%", fill: CHART_REF, fontSize: 10 }} />
-              {mesNum && (
+              {hasMeses && mesesArr.map(m => (
                 <ReferenceLine
-                  x={MESES[mesNum - 1]}
+                  key={m}
+                  x={MESES[m - 1]}
                   stroke="#6366f1"
                   strokeDasharray="4 4"
-                  label={{ value: MESES[mesNum - 1], fill: "#6366f1", fontSize: 10 }}
+                  label={{ value: MESES[m - 1], fill: "#6366f1", fontSize: 10 }}
                 />
-              )}
+              ))}
               <Line
                 dataKey="cumplimiento" name="Cumplimiento"
                 stroke={CHART_LINE} strokeWidth={2.5}
@@ -781,14 +767,15 @@ const DashboardMetaVsReal = () => {
                 )}
               />
               <Legend />
-              {mesNum && (
+              {hasMeses && mesesArr.map(m => (
                 <ReferenceLine
-                  x={MESES[mesNum - 1]}
+                  key={m}
+                  x={MESES[m - 1]}
                   stroke="#6366f1"
                   strokeDasharray="4 4"
-                  label={{ value: "Mes activo", fill: "#6366f1", fontSize: 10, position: "top" }}
+                  label={{ value: "Activo", fill: "#6366f1", fontSize: 10, position: "top" }}
                 />
-              )}
+              ))}
               <Bar dataKey="meta" name="Meta" fill={CHART_META} radius={[4, 4, 0, 0]} />
               <Bar dataKey="real" name="Real" fill={CHART_REAL} radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -807,8 +794,8 @@ const DashboardMetaVsReal = () => {
                   {[
                     "Vendedora", "Categoría", "Tipo",
                     "Meta año", "Real año", "Cumpl. año",
-                    ...(mesNum
-                      ? [`Meta ${MESES[mesNum - 1]}`, `Real ${MESES[mesNum - 1]}`, "Cumpl. mes"]
+                    ...(hasMeses
+                      ? [`Meta periodo`, `Real periodo`, "Cumpl. periodo"]
                       : [])
                   ].map(h => <th key={h}>{h}</th>)}
                 </tr>
@@ -838,7 +825,7 @@ const DashboardMetaVsReal = () => {
                     <td className="num">{usd(r.metaAnio)}</td>
                     <td className="num">{usd(r.realAnio)}</td>
                     <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
-                    {mesNum && <>
+                    {hasMeses && <>
                       <td className="num">{usd(r.metaMes)}</td>
                       <td className="num">{usd(r.realMes)}</td>
                       <td className="num" style={cumplStyle(r.cumplimientoMes)}>{pct(r.cumplimientoMes)}</td>
@@ -858,9 +845,6 @@ const DashboardMetaVsReal = () => {
         <button type="button" className="btn-link" onClick={() => navigate("/forecast-admin")}>
           📊 Ir a Forecast / Metas
         </button>
-       {/* <button type="button" className="btn-link" onClick={() => navigate("/dashboard-metas")}>
-          📈 Ir a Dashboard solo metas
-        </button>*/}
       </div>
 
     </div>
