@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  LabelList
 } from "recharts";
 import FunnelD3 from "../components/FunnelD3";
 import "../styles/dashboardModerno.css";
@@ -80,6 +81,50 @@ const DashboardModerno = () => {
 
   const anioActualStr = new Date().getFullYear().toString();
   const anioPasadoStr = (new Date().getFullYear() - 1).toString();
+  // NUEVA FUNCIÓN PARA EL PORCENTAJE EN ROJO/VERDE (CORREGIDA)
+// NUEVA FUNCIÓN PARA EL PORCENTAJE EN ROJO/VERDE (SOLUCIÓN DEFINITIVA)
+  const renderCustomizedLabel = (props) => {
+    const { x, y, width, index } = props;
+
+    // 1. Buscamos la fila exacta en los datos usando el índice
+    const fila = dashboardData?.comparativaAnual?.[index];
+    if (!fila) return null;
+
+    // 2. Obtenemos los valores reales
+    const actual = Number(fila[anioActualStr]) || 0;
+    const pasado = Number(fila[anioPasadoStr]) || 0;
+
+    // Si ambos están en 0, no mostramos texto para que no se vea amontonado
+    if (actual === 0 && pasado === 0) return null;
+
+    // 3. Calculamos el porcentaje
+    let pct = 0;
+    if (pasado > 0) {
+      pct = ((actual - pasado) / pasado) * 100;
+    } else if (actual > 0) {
+      pct = 100; // Si antes no vendió nada y hoy sí, es un 100% de crecimiento
+    }
+
+    // 4. Definimos los colores y el signo
+    const isNegative = actual < pasado; 
+    const color = isNegative ? "#ef4444" : "#10b981"; // Rojo si bajaron, Verde si subieron o se mantienen
+    const sign = pct > 0 ? "+" : "";
+
+    if (typeof x !== 'number' || typeof y !== 'number') return null;
+
+    return (
+      <text
+        x={x + width / 2}
+        y={y - 10}
+        fill={color}
+        textAnchor="middle"
+        fontSize={13}
+        fontWeight="bold"
+      >
+        {sign}{pct.toFixed(1)}%
+      </text>
+    );
+  };
 
   const graficoVentasSinPerdidas = useMemo(
     () => (dashboardData?.graficoVentas || []).filter((d) => d.estado !== "Perdidas"),
@@ -661,6 +706,32 @@ const DashboardModerno = () => {
               </div>
             </div>
 
+    {/* GRÁFICO NUEVO: COMPARATIVA AÑO VS AÑO CON PORCENTAJE */}
+            <div className="db-card full-width">
+              <div className="db-card-header">
+                <h3 className="db-card-title">Comparativa de Ventas: Este Año vs Año Pasado</h3>
+              </div>
+              <div className="db-chart-wrapper">
+                <ResponsiveContainer width="100%" height={340}>
+                  <BarChart data={dashboardData.comparativaAnual || []} margin={{ top: 30, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="mes" tick={{ fill: '#64748b', fontSize: 13 }} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis tickFormatter={(val) => `$${val}`} tick={{ fill: '#64748b', fontSize: 13 }} tickLine={false} axisLine={false} />
+                    <Tooltip 
+                      formatter={(value, name) => [formatearMoneda(value), `Ventas ${name}`]}
+                      contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                    />
+                    <Legend wrapperStyle={{ paddingTop: "15px" }} />
+                    <Bar dataKey={anioPasadoStr} fill="#cbd5e1" name={anioPasadoStr} radius={[4, 4, 0, 0]} barSize={30} />
+                    <Bar dataKey={anioActualStr} fill="#6366f1" name={anioActualStr} radius={[4, 4, 0, 0]} barSize={30}>
+                      {/* 👇 ACÁ LLAMAMOS A NUESTRA ETIQUETA PERSONALIZADA 👇 */}
+                      <LabelList dataKey={anioActualStr} content={renderCustomizedLabel} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
             {/* GRÁFICO: RENDIMIENTO DE VENDEDORAS */}
             <div className="db-card">
               <div className="db-card-header">
@@ -685,28 +756,6 @@ const DashboardModerno = () => {
               </div>
             </div>
 
-            {/* GRÁFICO NUEVO: COMPARATIVA AÑO VS AÑO */}
-            <div className="db-card full-width">
-              <div className="db-card-header">
-                <h3 className="db-card-title">Comparativa de Ventas: Este Año vs Año Pasado</h3>
-              </div>
-              <div className="db-chart-wrapper">
-                <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={dashboardData.comparativaAnual || []} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="mes" tick={{ fill: '#64748b', fontSize: 13 }} tickLine={false} axisLine={false} dy={10} />
-                    <YAxis tickFormatter={(val) => `$${val}`} tick={{ fill: '#64748b', fontSize: 13 }} tickLine={false} axisLine={false} />
-                    <Tooltip 
-                      formatter={(value, name) => [formatearMoneda(value), `Ventas ${name}`]}
-                      contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
-                    />
-                    <Legend wrapperStyle={{ paddingTop: "15px" }} />
-                    <Bar dataKey={anioPasadoStr} fill="#cbd5e1" name={anioPasadoStr} radius={[4, 4, 0, 0]} barSize={30} />
-                    <Bar dataKey={anioActualStr} fill="#6366f1" name={anioActualStr} radius={[4, 4, 0, 0]} barSize={30} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
             
             <div className="db-card">
               <div className="db-card-header">
