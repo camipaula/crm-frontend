@@ -56,7 +56,11 @@ const DashboardMetaVsReal = () => {
   const [mesesFiltro, setMesesFiltro] = useState([]); 
   const [cedula, setCedula] = useState("");
   const [idCateg, setIdCateg] = useState("");
-  const [triggerBusqueda, setTriggerBusqueda] = useState(0); // <--- NUEVO
+  const [triggerBusqueda, setTriggerBusqueda] = useState(0);
+
+  /* ── Estados de visibilidad (Colapsables) ── */
+  const [mostrarMatch, setMostrarMatch] = useState(false);
+  const [mostrarTablaDetalle, setMostrarTablaDetalle] = useState(false);
 
   /* ── Estado de catálogos ── */
   const [vendedoras, setVendedoras] = useState([]);
@@ -489,145 +493,157 @@ const DashboardMetaVsReal = () => {
         </div>
       </>}
 
-      {/* ══ Match manual ══ */}
-      <h2 className="section-title">🔀 Match de Vendedoras (Múltiples códigos)</h2>
-      <div className="mvr-card tabla-comparacion-wrapper">
-        <table className="tabla-comparacion">
-          <thead>
-            <tr>
-              <th style={{ width: '30%' }}>Vendedora CRM</th>
-              <th style={{ width: '50%' }}>Vendedora Externa Vinculada</th>
-              <th style={{ width: '20%' }}>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {vendedoras.map(v => {
-              const isDropdownOpen = openDropdown === v.id_usuario;
-              const seleccionados = matches[v.id_usuario] || [];
-              
-              const todosLosCodigos = Array.from(new Set([
-                ...codigosExternos.map(c => c.codigo_vendedora_externo),
-                ...Object.values(matches).flat() 
-              ]));
+      {/* ══ Match manual (Ahora colapsable) ══ */}
+      <h2 
+        className="section-title" 
+        onClick={() => setMostrarMatch(!mostrarMatch)}
+        style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", userSelect: "none", background: "#f8fafc", padding: "8px 12px", borderRadius: "8px" }}
+      >
+        <span>🔀 Match de Vendedoras (Múltiples códigos)</span>
+        <span style={{ fontSize: "0.85em", color: "#64748b", fontWeight: "normal" }}>
+          {mostrarMatch ? "▲ Ocultar sección" : "▼ Mostrar sección"}
+        </span>
+      </h2>
+      
+      {mostrarMatch && (
+        <div className="mvr-card tabla-comparacion-wrapper">
+          <table className="tabla-comparacion">
+            <thead>
+              <tr>
+                <th style={{ width: '30%' }}>Vendedora CRM</th>
+                <th style={{ width: '50%' }}>Vendedora Externa Vinculada</th>
+                <th style={{ width: '20%' }}>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vendedoras.map(v => {
+                const isDropdownOpen = openDropdown === v.id_usuario;
+                const seleccionados = matches[v.id_usuario] || [];
+                
+                const todosLosCodigos = Array.from(new Set([
+                  ...codigosExternos.map(c => c.codigo_vendedora_externo),
+                  ...Object.values(matches).flat() 
+                ]));
 
-              const getExtInfo = (cod) => codigosExternos.find(c => c.codigo_vendedora_externo === cod);
+                const getExtInfo = (cod) => codigosExternos.find(c => c.codigo_vendedora_externo === cod);
 
-              const filtrados = todosLosCodigos.filter(c => {
-                const info = getExtInfo(c);
-                const strForSearch = info?.nombre_vendedora_externo 
-                  ? `${info.nombre_vendedora_externo} ${c}` 
-                  : c;
-                return strForSearch.toLowerCase().includes(searchTerm.toLowerCase());
-              });
+                const filtrados = todosLosCodigos.filter(c => {
+                  const info = getExtInfo(c);
+                  const strForSearch = info?.nombre_vendedora_externo 
+                    ? `${info.nombre_vendedora_externo} ${c}` 
+                    : c;
+                  return strForSearch.toLowerCase().includes(searchTerm.toLowerCase());
+                });
 
-              return (
-                <tr key={v.id_usuario}>
-                  <td>
-                    <strong>{v.nombre}</strong>
-                  </td>
-                  <td style={{ position: 'relative' }}>
-                    <div 
-                      className={`custom-multiselect ${isDropdownOpen ? 'active' : ''}`}
-                      onClick={() => {
-                        setOpenDropdown(isDropdownOpen ? null : v.id_usuario);
-                        setSearchTerm(""); 
-                      }}
-                    >
-                      <div className="selected-tags">
-                        {seleccionados.length > 0 
-                          ? seleccionados.map(cod => {
-                              const info = getExtInfo(cod);
-                              const nombre = info?.nombre_vendedora_externo || "Desconocido";
-                              return `${nombre} (${cod})`;
-                            }).join(", ") 
-                          : "Seleccionar nombre externo..."}
-                      </div>
-                      <span className="arrow">{isDropdownOpen ? "▲" : "▼"}</span>
-                    </div>
-
-                    {isDropdownOpen && (
-                      <div className="multiselect-dropdown">
-                        <input 
-                          type="text" 
-                          className="dropdown-search" 
-                          placeholder="Buscar por nombre o código..." 
-                          autoFocus
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          onClick={(e) => e.stopPropagation()} 
-                        />
-                        <div className="dropdown-options">
-                          {filtrados.map(cod => {
-                            let dueñoId = null;
-                            Object.keys(matches).forEach(key => {
-                              if (matches[key].includes(cod)) dueñoId = parseInt(key);
-                            });
-                            
-                            const estaAsignadoAOtro = dueñoId !== null && dueñoId !== v.id_usuario;
-                            const info = getExtInfo(cod);
-
-                            return (
-                              <label key={cod} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
-                                <input
-                                  type="checkbox"
-                                  checked={seleccionados.includes(cod)}
-                                  onChange={() => toggleCodigoMatch(v.id_usuario, cod)}
-                                />
-                                <span>
-                                  {info?.nombre_vendedora_externo || "Desconocido"}{" "}
-                                  <small style={{ color: "#94a3b8", fontSize: "0.85em" }}>({cod})</small>
-                                </span>
-                                {estaAsignadoAOtro && (
-                                  <small className="tag-warning" style={{marginLeft: "8px", color: "orange"}}>
-                                    (Asignado a otro)
-                                  </small>
-                                )}
-                              </label>
-                            );
-                          })}
-                          {filtrados.length === 0 && (
-                            <div className="no-results">No se encontraron resultados</div>
-                          )}
+                return (
+                  <tr key={v.id_usuario}>
+                    <td>
+                      <strong>{v.nombre}</strong>
+                    </td>
+                    <td style={{ position: 'relative' }}>
+                      <div 
+                        className={`custom-multiselect ${isDropdownOpen ? 'active' : ''}`}
+                        onClick={() => {
+                          setOpenDropdown(isDropdownOpen ? null : v.id_usuario);
+                          setSearchTerm(""); 
+                        }}
+                      >
+                        <div className="selected-tags">
+                          {seleccionados.length > 0 
+                            ? seleccionados.map(cod => {
+                                const info = getExtInfo(cod);
+                                const nombre = info?.nombre_vendedora_externo || "Desconocido";
+                                return `${nombre} (${cod})`;
+                              }).join(", ") 
+                            : "Seleccionar nombre externo..."}
                         </div>
+                        <span className="arrow">{isDropdownOpen ? "▲" : "▼"}</span>
                       </div>
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="btn-guardar-match"
-                      onClick={async () => {
-                        const codigosAsignar = matches[v.id_usuario] || [];
-                        try {
-                          const res = await fetch(`${base()}/api/ventas/match-vendedora`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json", ...auth() },
-                            body: JSON.stringify({ 
-                              id_usuario: v.id_usuario, 
-                              codigos_externos: codigosAsignar 
-                            }),
-                          });
 
-                          const json = await res.json();
-                          if (res.ok) {
-                            setOpenDropdown(null); 
-                            await cargar(); 
-                          } else {
-                            alert("Error: " + json.message);
+                      {isDropdownOpen && (
+                        <div className="multiselect-dropdown">
+                          <input 
+                            type="text" 
+                            className="dropdown-search" 
+                            placeholder="Buscar por nombre o código..." 
+                            autoFocus
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onClick={(e) => e.stopPropagation()} 
+                          />
+                          <div className="dropdown-options">
+                            {filtrados.map(cod => {
+                              let dueñoId = null;
+                              Object.keys(matches).forEach(key => {
+                                if (matches[key].includes(cod)) dueñoId = parseInt(key);
+                              });
+                              
+                              const estaAsignadoAOtro = dueñoId !== null && dueñoId !== v.id_usuario;
+                              const info = getExtInfo(cod);
+
+                              return (
+                                <label key={cod} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
+                                  <input
+                                    type="checkbox"
+                                    checked={seleccionados.includes(cod)}
+                                    onChange={() => toggleCodigoMatch(v.id_usuario, cod)}
+                                  />
+                                  <span>
+                                    {info?.nombre_vendedora_externo || "Desconocido"}{" "}
+                                    <small style={{ color: "#94a3b8", fontSize: "0.85em" }}>({cod})</small>
+                                  </span>
+                                  {estaAsignadoAOtro && (
+                                    <small className="tag-warning" style={{marginLeft: "8px", color: "orange"}}>
+                                      (Asignado a otro)
+                                    </small>
+                                  )}
+                                </label>
+                              );
+                            })}
+                            {filtrados.length === 0 && (
+                              <div className="no-results">No se encontraron resultados</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        className="btn-guardar-match"
+                        onClick={async () => {
+                          const codigosAsignar = matches[v.id_usuario] || [];
+                          try {
+                            const res = await fetch(`${base()}/api/ventas/match-vendedora`, {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json", ...auth() },
+                              body: JSON.stringify({ 
+                                id_usuario: v.id_usuario, 
+                                codigos_externos: codigosAsignar 
+                              }),
+                            });
+
+                            const json = await res.json();
+                            if (res.ok) {
+                              setOpenDropdown(null); 
+                              await cargar(); 
+                            } else {
+                              alert("Error: " + json.message);
+                            }
+                          } catch (err) {
+                            alert("❌ Error al conectar con el servidor.");
                           }
-                        } catch (err) {
-                          alert("❌ Error al conectar con el servidor.");
-                        }
-                      }}
-                    >
-                      Guardar
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                        }}
+                      >
+                        Guardar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* ══ Heatmap ══ */}
       {porMes.length > 0 && <>
@@ -783,62 +799,74 @@ const DashboardMetaVsReal = () => {
         </div>
       </>}
 
-      {/* ══ Tabla detalle por vendedora/categoría ══ */}
-      <h2 className="section-title">👩‍💼 Meta vs Real por vendedora y categoría — {periodoLabel}</h2>
-      <div className="dashboard-card card-metas tabla-comparacion-wrapper">
-        {porVend.length > 0 ? (
-          <div className="tabla-comparacion-scroll">
-            <table className="tabla-comparacion">
-              <thead>
-                <tr>
-                  {[
-                    "Vendedora", "Categoría", "Tipo",
-                    "Meta año", "Real año", "Cumpl. año",
-                    ...(hasMeses
-                      ? [`Meta periodo`, `Real periodo`, "Cumpl. periodo"]
-                      : [])
-                  ].map(h => <th key={h}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {porVend.map((r, i) => (
-                  <tr
-                    key={i}
-                    className={
-                      r.tipo === "match" ? "tipo-match"
-                        : r.tipo === "solo_meta" ? "tipo-solo-meta"
-                          : "tipo-solo-real"
-                    }
-                  >
-                    <td>{r.nombre || "—"}</td>
-                    <td>{r.categoria || "—"}</td>
-                    <td>
-                      <span className={`tipo-badge ${r.tipo === "match" ? "match"
-                          : r.tipo === "solo_meta" ? "solo-meta"
-                            : "solo-real"
-                        }`}>
-                        {r.tipo === "match" ? "✓ Match"
-                          : r.tipo === "solo_meta" ? "Solo meta"
-                            : "Solo real"}
-                      </span>
-                    </td>
-                    <td className="num">{usd(r.metaAnio)}</td>
-                    <td className="num">{usd(r.realAnio)}</td>
-                    <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
-                    {hasMeses && <>
-                      <td className="num">{usd(r.metaMes)}</td>
-                      <td className="num">{usd(r.realMes)}</td>
-                      <td className="num" style={cumplStyle(r.cumplimientoMes)}>{pct(r.cumplimientoMes)}</td>
-                    </>}
+      {/* ══ Tabla detalle por vendedora/categoría (Ahora colapsable y sin mes en el título) ══ */}
+      <h2 
+        className="section-title" 
+        onClick={() => setMostrarTablaDetalle(!mostrarTablaDetalle)}
+        style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", userSelect: "none", background: "#f8fafc", padding: "8px 12px", borderRadius: "8px" }}
+      >
+        <span>👩‍💼 Meta vs Real por vendedora y categoría</span>
+        <span style={{ fontSize: "0.85em", color: "#64748b", fontWeight: "normal" }}>
+          {mostrarTablaDetalle ? "▲ Ocultar sección" : "▼ Mostrar sección"}
+        </span>
+      </h2>
+      
+      {mostrarTablaDetalle && (
+        <div className="dashboard-card card-metas tabla-comparacion-wrapper">
+          {porVend.length > 0 ? (
+            <div className="tabla-comparacion-scroll">
+              <table className="tabla-comparacion">
+                <thead>
+                  <tr>
+                    {[
+                      "Vendedora", "Categoría", "Tipo",
+                      "Meta año", "Real año", "Cumpl. año",
+                      ...(hasMeses
+                        ? [`Meta periodo`, `Real periodo`, "Cumpl. periodo"]
+                        : [])
+                    ].map(h => <th key={h}>{h}</th>)}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="sin-datos">No hay datos de comparación para los filtros seleccionados.</p>
-        )}
-      </div>
+                </thead>
+                <tbody>
+                  {porVend.map((r, i) => (
+                    <tr
+                      key={i}
+                      className={
+                        r.tipo === "match" ? "tipo-match"
+                          : r.tipo === "solo_meta" ? "tipo-solo-meta"
+                            : "tipo-solo-real"
+                      }
+                    >
+                      <td>{r.nombre || "—"}</td>
+                      <td>{r.categoria || "—"}</td>
+                      <td>
+                        <span className={`tipo-badge ${r.tipo === "match" ? "match"
+                            : r.tipo === "solo_meta" ? "solo-meta"
+                              : "solo-real"
+                          }`}>
+                          {r.tipo === "match" ? "✓ Match"
+                            : r.tipo === "solo_meta" ? "Solo meta"
+                              : "Solo real"}
+                        </span>
+                      </td>
+                      <td className="num">{usd(r.metaAnio)}</td>
+                      <td className="num">{usd(r.realAnio)}</td>
+                      <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
+                      {hasMeses && <>
+                        <td className="num">{usd(r.metaMes)}</td>
+                        <td className="num">{usd(r.realMes)}</td>
+                        <td className="num" style={cumplStyle(r.cumplimientoMes)}>{pct(r.cumplimientoMes)}</td>
+                      </>}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="sin-datos">No hay datos de comparación para los filtros seleccionados.</p>
+          )}
+        </div>
+      )}
 
       {/* ── Footer ── */}
       <div className="dashboard-metas-footer" style={{ marginTop: '20px' }}>
