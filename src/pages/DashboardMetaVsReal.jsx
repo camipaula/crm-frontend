@@ -10,7 +10,7 @@ import "../styles/dashboardMetas.css";
 import "../styles/dashboardMetaVsReal.css";
 
 /* ─── Constantes ─────────────────────────────────────────── */
-const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+const MESES = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
 const PIE_PALETTE = ["#1a73e8", "#34a853", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#f43f5e", "#84cc16"];
 const CHART_META = "#1a73e8";
 const CHART_REAL = "#34a853";
@@ -37,7 +37,7 @@ const cumplStyle = (c) => ({
 const ChartTooltip = ({ active, payload, label, render }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="tooltip-comparacion">
+    <div className="tooltip-comparacion" style={{ textTransform: 'uppercase' }}>
       <strong style={{ display: "block", marginBottom: 4 }}>{label}</strong>
       {render(payload)}
     </div>
@@ -134,7 +134,7 @@ const DashboardMetaVsReal = () => {
 
       const res = await fetch(url, { headers: auth() });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json?.message || `Error ${res.status}`);
+      if (!res.ok) throw new Error(json?.message ? json.message.toUpperCase() : `ERROR ${res.status}`);
 
       setData(json);
       if (Array.isArray(json.categorias)) setCategorias(json.categorias);
@@ -153,8 +153,8 @@ const DashboardMetaVsReal = () => {
         method: "POST", headers: auth(),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json?.message || "Error al sincronizar");
-      setSyncMsg(`✓ Procesados: ${json.procesados ?? 0}, creados: ${json.creados ?? 0}, actualizados: ${json.actualizados ?? 0}.`);
+      if (!res.ok) throw new Error(json?.message ? json.message.toUpperCase() : "ERROR AL SINCRONIZAR");
+      setSyncMsg(`✓ PROCESADOS: ${json.procesados ?? 0}, CREADOS: ${json.creados ?? 0}, ACTUALIZADOS: ${json.actualizados ?? 0}.`);
       
       await cargarCodigosYMatches(); 
       await cargar();
@@ -216,14 +216,11 @@ const DashboardMetaVsReal = () => {
     })
     , [porVend, hasMeses]);
 
-  const soloCRM = useMemo(() => porVend.filter(r => r.tipo === "solo_meta"), [porVend]);
-  const soloAPI = useMemo(() => porVend.filter(r => r.tipo === "solo_real_externa"), [porVend]);
-
   const donutMeta = useMemo(() =>
-    porCategoria.map((c, i) => ({ name: c.categoria, value: c.meta ?? 0, fill: PIE_PALETTE[i % PIE_PALETTE.length] }))
+    porCategoria.map((c, i) => ({ name: c.categoria?.toUpperCase(), value: c.meta ?? 0, fill: PIE_PALETTE[i % PIE_PALETTE.length] }))
     , [porCategoria]);
   const donutReal = useMemo(() =>
-    porCategoria.map((c, i) => ({ name: c.categoria, value: c.real ?? 0, fill: PIE_PALETTE[i % PIE_PALETTE.length] }))
+    porCategoria.map((c, i) => ({ name: c.categoria?.toUpperCase(), value: c.real ?? 0, fill: PIE_PALETTE[i % PIE_PALETTE.length] }))
     , [porCategoria]);
 
   const totalDonutMeta = useMemo(() => donutMeta.reduce((s, x) => s + x.value, 0), [donutMeta]);
@@ -237,35 +234,35 @@ const DashboardMetaVsReal = () => {
     , [porMes, hasMeses, mesesArr]);
 
   if (loading && !data) return (
-    <div className="dashboard-metas-container dashboard-meta-vs-real">
-      <button type="button" className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-      <p className="loading-msg">Cargando comparación meta vs real...</p>
+    <div className="dashboard-metas-container dashboard-meta-vs-real" style={{ textTransform: 'uppercase' }}>
+      <button type="button" className="btn-volver" onClick={() => navigate(-1)}>⬅️ VOLVER</button>
+      <p className="loading-msg">CARGANDO COMPARACIÓN META VS REAL...</p>
     </div>
   );
   if (error && !data) return (
-    <div className="dashboard-metas-container dashboard-meta-vs-real">
-      <button type="button" className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
+    <div className="dashboard-metas-container dashboard-meta-vs-real" style={{ textTransform: 'uppercase' }}>
+      <button type="button" className="btn-volver" onClick={() => navigate(-1)}>⬅️ VOLVER</button>
       <p className="error-msg">{error}</p>
     </div>
   );
 
   return (
-    <div className="dashboard-metas-container dashboard-meta-vs-real">
+    <div className="dashboard-metas-container dashboard-meta-vs-real" style={{ textTransform: 'uppercase' }}>
 
       {/* ── Header ── */}
-      <button type="button" className="btn-volver" onClick={() => navigate(-1)}>⬅️ Volver</button>
-      <h1 className="title">Meta vs Real</h1>
+      <button type="button" className="btn-volver" onClick={() => navigate(-1)}>⬅️ VOLVER</button>
+      <h1 className="title">META VS REAL</h1>
       <p className="subtitle">
-        Comparación de metas (forecast) con ventas reales · {periodoLabel}
+        COMPARACIÓN DE METAS (FORECAST) CON VENTAS REALES · {periodoLabel}
         {idCateg && categorias.find(c => c.id_categoria_venta === Number(idCateg))
-          ? ` · ${categorias.find(c => c.id_categoria_venta === Number(idCateg)).nombre}`
+          ? ` · ${categorias.find(c => c.id_categoria_venta === Number(idCateg)).nombre.toUpperCase()}`
           : ""}
       </p>
 
       {/* ── Filtros ── */}
       <div className="filtros-metas">
         <label>
-          Año:
+          AÑO:
           <select value={anio} onChange={e => setAnio(Number(e.target.value))}>
             {[actual - 2, actual - 1, actual, actual + 1, actual + 2]
               .filter(y => y >= 2024)
@@ -274,36 +271,36 @@ const DashboardMetaVsReal = () => {
         </label>
 
         <label style={{ minWidth: "220px", zIndex: 100 }}>
-          Meses:
+          MESES:
           <Select 
             isMulti
             options={MESES.map((m, i) => ({ value: i + 1, label: m }))}
             value={mesesFiltro}
             onChange={setMesesFiltro}
-            placeholder="Todo el año"
+            placeholder="TODO EL AÑO"
             styles={{
-              control: (b) => ({ ...b, minHeight: '38px', borderRadius: '8px' }),
-              menu: (b) => ({ ...b, zIndex: 999 })
+              control: (b) => ({ ...b, minHeight: '38px', borderRadius: '8px', textTransform: 'uppercase' }),
+              menu: (b) => ({ ...b, zIndex: 999, textTransform: 'uppercase' })
             }}
           />
         </label>
 
         <label>
-          Vendedora:
+          VENDEDORA:
           <select value={cedula} onChange={e => setCedula(e.target.value)}>
-            <option value="">Todas</option>
+            <option value="">TODAS</option>
             {vendedoras.map(v => (
-              <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre}</option>
+              <option key={v.cedula_ruc} value={v.cedula_ruc}>{v.nombre.toUpperCase()}</option>
             ))}
           </select>
         </label>
 
         <label>
-          Categoría:
+          CATEGORÍA:
           <select value={idCateg} onChange={e => setIdCateg(e.target.value)}>
-            <option value="">Todas</option>
+            <option value="">TODAS</option>
             {categorias.map(c => (
-              <option key={c.id_categoria_venta} value={c.id_categoria_venta}>{c.nombre}</option>
+              <option key={c.id_categoria_venta} value={c.id_categoria_venta}>{c.nombre.toUpperCase()}</option>
             ))}
           </select>
         </label>
@@ -313,13 +310,13 @@ const DashboardMetaVsReal = () => {
             type="button" 
             className="btn-primary" 
             onClick={() => setTriggerBusqueda(prev => prev + 1)}
-            style={{ marginRight: '10px', padding: '8px 16px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            style={{ marginRight: '10px', padding: '8px 16px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', textTransform: 'uppercase' }}
           >
-            🔍 Buscar
+            🔍 BUSCAR
           </button>
           
-          <button type="button" className="btn-sincronizar" onClick={sincronizar} disabled={syncing}>
-            {syncing ? "Sincronizando..." : "🔄 Actualizar totales reales"}
+          <button type="button" className="btn-sincronizar" onClick={sincronizar} disabled={syncing} style={{ textTransform: 'uppercase' }}>
+            {syncing ? "SINCRONIZANDO..." : "🔄 ACTUALIZAR TOTALES REALES"}
           </button>
         </div>
       </div>
@@ -329,51 +326,51 @@ const DashboardMetaVsReal = () => {
       )}
 
       {/* ══ KPIs ══ */}
-      <h2 className="section-title">📊 Resumen general — {periodoLabel}</h2>
+      <h2 className="section-title">📊 RESUMEN GENERAL — {periodoLabel}</h2>
       <div className="kpis-grid kpis-comparacion">
 
         <div className="kpi-card">
-          <span className="kpi-label">Meta acumulada año</span>
+          <span className="kpi-label">META ACUMULADA AÑO</span>
           <span className="kpi-value meta">{usd(kpis.metaAcumuladaAnio)}</span>
         </div>
         <div className="kpi-card">
-          <span className="kpi-label">Real acumulado año</span>
+          <span className="kpi-label">REAL ACUMULADO AÑO</span>
           <span className="kpi-value real">{usd(kpis.realAcumuladaAnio)}</span>
         </div>
         <div className="kpi-card destacado">
-          <span className="kpi-label">Cumplimiento año</span>
+          <span className="kpi-label">CUMPLIMIENTO AÑO</span>
           <span className={`kpi-value ${levelClass(kpis.cumplimientoAnio)}`}>{pct(kpis.cumplimientoAnio)}</span>
         </div>
         <div className="kpi-card">
-          <span className="kpi-label">Gap año (real − meta)</span>
+          <span className="kpi-label">GAP AÑO (REAL − META)</span>
           <span className={`kpi-value ${gapAnio == null ? "" : gapAnio >= 0 ? "ok" : "danger"}`}>
             {gapAnio != null ? usd(gapAnio) : "—"}
           </span>
           {gapAnio != null && (
-            <span className="kpi-sub">{gapAnio >= 0 ? "Por encima de la meta" : "Por debajo de la meta"}</span>
+            <span className="kpi-sub">{gapAnio >= 0 ? "POR ENCIMA DE LA META" : "POR DEBAJO DE LA META"}</span>
           )}
         </div>
 
         {hasMeses && <>
           <div className="kpi-card">
-            <span className="kpi-label">Meta {nombreMeses}</span>
+            <span className="kpi-label">META {nombreMeses}</span>
             <span className="kpi-value meta">{usd(kpis.metaTotalMes)}</span>
           </div>
           <div className="kpi-card">
-            <span className="kpi-label">Real {nombreMeses}</span>
+            <span className="kpi-label">REAL {nombreMeses}</span>
             <span className="kpi-value real">{usd(kpis.realTotalMes)}</span>
           </div>
           <div className="kpi-card destacado">
-            <span className="kpi-label">Cumplimiento {nombreMeses}</span>
+            <span className="kpi-label">CUMPLIMIENTO {nombreMeses}</span>
             <span className={`kpi-value ${levelClass(kpis.cumplimientoMes)}`}>{pct(kpis.cumplimientoMes)}</span>
           </div>
           <div className="kpi-card">
-            <span className="kpi-label">Gap periodo (real − meta)</span>
+            <span className="kpi-label">GAP PERIODO (REAL − META)</span>
             <span className={`kpi-value ${gapMes == null ? "" : gapMes >= 0 ? "ok" : "danger"}`}>
               {gapMes != null ? usd(gapMes) : "—"}
             </span>
             {gapMes != null && (
-              <span className="kpi-sub">{gapMes >= 0 ? "Por encima" : "Por debajo"}</span>
+              <span className="kpi-sub">{gapMes >= 0 ? "POR ENCIMA" : "POR DEBAJO"}</span>
             )}
           </div>
         </>}
@@ -382,34 +379,34 @@ const DashboardMetaVsReal = () => {
       {/* ══ Por categoría ══ */}
       {porCategoria.length > 0 && <>
         <h2 className="section-title">
-          🏷️ Cumplimiento por categoría — {periodoLabel}
+          🏷️ CUMPLIMIENTO POR CATEGORÍA — {periodoLabel}
         </h2>
         <div className="mvr-card-grid-2">
           <div className="mvr-card">
-            <p className="mvr-card-title">Meta vs Real</p>
+            <p className="mvr-card-title">META VS REAL</p>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={porCategoria} margin={{ top: 8, right: 10, left: 0, bottom: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="categoria" tick={{ fontSize: 11 }} angle={-30} textAnchor="end" interval={0} />
+                <XAxis dataKey="categoria" tick={{ fontSize: 11, textTransform: 'uppercase' }} angle={-30} textAnchor="end" interval={0} />
                 <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
                 <Tooltip
                   content={({ active, payload, label }) => (
-                    <ChartTooltip active={active} payload={payload} label={label} render={p => <>
-                      <div>Meta: {usd(p.find(x => x.dataKey === "meta")?.value)}</div>
-                      <div>Real: {usd(p.find(x => x.dataKey === "real")?.value)}</div>
-                      <div>Cumpl.: {pct(p[0]?.payload?.cumplimiento)}</div>
+                    <ChartTooltip active={active} payload={payload} label={label?.toUpperCase()} render={p => <>
+                      <div>META: {usd(p.find(x => x.dataKey === "meta")?.value)}</div>
+                      <div>REAL: {usd(p.find(x => x.dataKey === "real")?.value)}</div>
+                      <div>CUMPL.: {pct(p[0]?.payload?.cumplimiento)}</div>
                     </>} />
                   )}
                 />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="meta" name="Meta" fill={CHART_META} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="real" name="Real" fill={CHART_REAL} radius={[4, 4, 0, 0]} />
+                <Legend wrapperStyle={{ fontSize: 12, textTransform: 'uppercase' }} />
+                <Bar dataKey="meta" name="META" fill={CHART_META} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="real" name="REAL" fill={CHART_REAL} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           <div className="mvr-card">
-            <p className="mvr-card-title">Ranking por cumplimiento</p>
+            <p className="mvr-card-title">RANKING POR CUMPLIMIENTO</p>
             <div className="ranking-list">
               {[...porCategoria]
                 .sort((a, b) => (b.cumplimiento ?? 0) - (a.cumplimiento ?? 0))
@@ -419,7 +416,7 @@ const DashboardMetaVsReal = () => {
                   return (
                     <div key={i}>
                       <div className="ranking-row-label">
-                        <span>{c.categoria}</span>
+                        <span>{c.categoria?.toUpperCase()}</span>
                         <span className={`pct ${lvl}`}>{pct(c.cumplimiento)}</span>
                       </div>
                       <div className="ranking-bar-bg">
@@ -435,17 +432,17 @@ const DashboardMetaVsReal = () => {
 
       {/* ══ Top vendedoras ══ */}
       {topVendedoras.length > 0 && <>
-        <h2 className="section-title">🏆 Top vendedoras — {periodoLabel}</h2>
+        <h2 className="section-title">🏆 TOP VENDEDORAS — {periodoLabel}</h2>
         <div className="mvr-card">
           <p className="mvr-card-title">
-            Top 5 · cumplimiento {hasMeses ? nombreMeses : "anual"}
+            TOP 5 · CUMPLIMIENTO {hasMeses ? nombreMeses : "ANUAL"}
           </p>
           {topVendedoras.map((r, i) => {
             const lvl = levelClass(r.cumplimiento);
             const w = Math.min((r.cumplimiento ?? 0) * 100, 100);
             return (
               <div key={i} className="top-vend-bar-wrapper">
-                <span className="top-vend-nombre" title={r.nombre}>{r.nombre}</span>
+                <span className="top-vend-nombre" title={r.nombre}>{r.nombre?.toUpperCase()}</span>
                 <div className="top-vend-bar-bg">
                   <div className={`top-vend-bar-fill ${lvl}`} style={{ width: `${w}%` }} />
                 </div>
@@ -459,24 +456,24 @@ const DashboardMetaVsReal = () => {
       {/* ══ Riesgo ══ */}
       {enRiesgo.length > 0 && <>
         <h2 className="section-title">
-          ⚠️ Vendedoras con riesgo (&lt;70%) — {periodoLabel}
+          ⚠️ VENDEDORAS CON RIESGO (&lt;70%) — {periodoLabel}
         </h2>
         <div className="mvr-card tabla-comparacion-wrapper">
           <div className="tabla-comparacion-scroll">
             <table className="tabla-comparacion">
               <thead>
                 <tr>
-                  {["Vendedora", "Categoría",
-                    "Meta año", "Real año", "Cumpl. año",
-                    ...(hasMeses ? [`Meta periodo`, `Real periodo`, "Cumpl. periodo"] : [])
+                  {["VENDEDORA", "CATEGORÍA",
+                    "META AÑO", "REAL AÑO", "CUMPL. AÑO",
+                    ...(hasMeses ? [`META PERIODO`, `REAL PERIODO`, "CUMPL. PERIODO"] : [])
                   ].map(h => <th key={h}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {enRiesgo.map((r, i) => (
                   <tr key={i} className="tipo-match">
-                    <td>{r.nombre}</td>
-                    <td>{r.categoria}</td>
+                    <td>{r.nombre?.toUpperCase()}</td>
+                    <td>{r.categoria?.toUpperCase()}</td>
                     <td className="num">{usd(r.metaAnio)}</td>
                     <td className="num">{usd(r.realAnio)}</td>
                     <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
@@ -499,9 +496,9 @@ const DashboardMetaVsReal = () => {
         onClick={() => setMostrarMatch(!mostrarMatch)}
         style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", userSelect: "none", background: "#f8fafc", padding: "8px 12px", borderRadius: "8px" }}
       >
-        <span>🔀 Match de Vendedoras (Múltiples códigos)</span>
+        <span>🔀 MATCH DE VENDEDORAS (MÚLTIPLES CÓDIGOS)</span>
         <span style={{ fontSize: "0.85em", color: "#64748b", fontWeight: "normal" }}>
-          {mostrarMatch ? "▲ Ocultar sección" : "▼ Mostrar sección"}
+          {mostrarMatch ? "▲ OCULTAR SECCIÓN" : "▼ MOSTRAR SECCIÓN"}
         </span>
       </h2>
       
@@ -510,9 +507,9 @@ const DashboardMetaVsReal = () => {
           <table className="tabla-comparacion">
             <thead>
               <tr>
-                <th style={{ width: '30%' }}>Vendedora CRM</th>
-                <th style={{ width: '50%' }}>Vendedora Externa Vinculada</th>
-                <th style={{ width: '20%' }}>Acción</th>
+                <th style={{ width: '30%' }}>VENDEDORA CRM</th>
+                <th style={{ width: '50%' }}>VENDEDORA EXTERNA VINCULADA</th>
+                <th style={{ width: '20%' }}>ACCIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -538,7 +535,7 @@ const DashboardMetaVsReal = () => {
                 return (
                   <tr key={v.id_usuario}>
                     <td>
-                      <strong>{v.nombre}</strong>
+                      <strong>{v.nombre?.toUpperCase()}</strong>
                     </td>
                     <td style={{ position: 'relative' }}>
                       <div 
@@ -552,10 +549,10 @@ const DashboardMetaVsReal = () => {
                           {seleccionados.length > 0 
                             ? seleccionados.map(cod => {
                                 const info = getExtInfo(cod);
-                                const nombre = info?.nombre_vendedora_externo || "Desconocido";
-                                return `${nombre} (${cod})`;
+                                const nombre = info?.nombre_vendedora_externo || "DESCONOCIDO";
+                                return `${nombre.toUpperCase()} (${cod})`;
                               }).join(", ") 
-                            : "Seleccionar nombre externo..."}
+                            : "SELECCIONAR NOMBRE EXTERNO..."}
                         </div>
                         <span className="arrow">{isDropdownOpen ? "▲" : "▼"}</span>
                       </div>
@@ -565,11 +562,12 @@ const DashboardMetaVsReal = () => {
                           <input 
                             type="text" 
                             className="dropdown-search" 
-                            placeholder="Buscar por nombre o código..." 
+                            placeholder="BUSCAR POR NOMBRE O CÓDIGO..." 
                             autoFocus
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onClick={(e) => e.stopPropagation()} 
+                            style={{ textTransform: 'uppercase' }}
                           />
                           <div className="dropdown-options">
                             {filtrados.map(cod => {
@@ -589,19 +587,19 @@ const DashboardMetaVsReal = () => {
                                     onChange={() => toggleCodigoMatch(v.id_usuario, cod)}
                                   />
                                   <span>
-                                    {info?.nombre_vendedora_externo || "Desconocido"}{" "}
+                                    {info?.nombre_vendedora_externo?.toUpperCase() || "DESCONOCIDO"}{" "}
                                     <small style={{ color: "#94a3b8", fontSize: "0.85em" }}>({cod})</small>
                                   </span>
                                   {estaAsignadoAOtro && (
                                     <small className="tag-warning" style={{marginLeft: "8px", color: "orange"}}>
-                                      (Asignado a otro)
+                                      (ASIGNADO A OTRO)
                                     </small>
                                   )}
                                 </label>
                               );
                             })}
                             {filtrados.length === 0 && (
-                              <div className="no-results">No se encontraron resultados</div>
+                              <div className="no-results">NO SE ENCONTRARON RESULTADOS</div>
                             )}
                           </div>
                         </div>
@@ -610,6 +608,7 @@ const DashboardMetaVsReal = () => {
                     <td>
                       <button
                         className="btn-guardar-match"
+                        style={{ textTransform: 'uppercase' }}
                         onClick={async () => {
                           const codigosAsignar = matches[v.id_usuario] || [];
                           try {
@@ -627,14 +626,14 @@ const DashboardMetaVsReal = () => {
                               setOpenDropdown(null); 
                               await cargar(); 
                             } else {
-                              alert("Error: " + json.message);
+                              alert("ERROR: " + json.message.toUpperCase());
                             }
                           } catch (err) {
-                            alert("❌ Error al conectar con el servidor.");
+                            alert("❌ ERROR AL CONECTAR CON EL SERVIDOR.");
                           }
                         }}
                       >
-                        Guardar
+                        GUARDAR
                       </button>
                     </td>
                   </tr>
@@ -647,7 +646,7 @@ const DashboardMetaVsReal = () => {
 
       {/* ══ Heatmap ══ */}
       {porMes.length > 0 && <>
-        <h2 className="section-title">🗓️ Heatmap de cumplimiento mensual — {anio}</h2>
+        <h2 className="section-title">🗓️ HEATMAP DE CUMPLIMIENTO MENSUAL — {anio}</h2>
         <div className="mvr-card">
           <div className="heatmap-grid">
             {heatmapData.map(m => {
@@ -656,9 +655,9 @@ const DashboardMetaVsReal = () => {
                 <div
                   key={m.mes}
                   className={`heatmap-cell ${lvl}${m.esActivo ? " heatmap-cell-active" : ""}`}
-                  title={`Meta: ${usd(m.meta)} | Real: ${usd(m.real)} | Dif: ${usd(m.diferencia)}`}
+                  title={`META: ${usd(m.meta)} | REAL: ${usd(m.real)} | DIF: ${usd(m.diferencia)}`}
                 >
-                  <div className="heatmap-mes">{m.mesLabel}</div>
+                  <div className="heatmap-mes">{m.mesLabel?.toUpperCase()}</div>
                   <div className={`heatmap-pct ${lvl}`}>
                     {m.cumplimiento != null ? `${(m.cumplimiento * 100).toFixed(0)}%` : "—"}
                   </div>
@@ -675,19 +674,19 @@ const DashboardMetaVsReal = () => {
             <span>🔴 &lt;80%</span>
             <span>🟡 80–99%</span>
             <span>🟢 ≥100%</span>
-            {hasMeses && <span className="heatmap-legend-active">⬛ Seleccionado</span>}
+            {hasMeses && <span className="heatmap-legend-active">⬛ SELECCIONADO</span>}
           </div>
         </div>
       </>}
 
       {/* ══ Evolución del cumplimiento ══ */}
       {porMes.some(m => m.cumplimiento != null) && <>
-        <h2 className="section-title">📈 Evolución del cumplimiento — {anio}</h2>
+        <h2 className="section-title">📈 EVOLUCIÓN DEL CUMPLIMIENTO — {anio}</h2>
         <div className="mvr-card">
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={porMes} margin={{ top: 8, right: 20, left: 0, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="mesLabel" tick={{ fontSize: 11 }} />
+              <XAxis dataKey="mesLabel" tick={{ fontSize: 11, textTransform: 'uppercase' }} />
               <YAxis
                 tickFormatter={v => `${(v * 100).toFixed(0)}%`}
                 tick={{ fontSize: 10 }}
@@ -695,12 +694,12 @@ const DashboardMetaVsReal = () => {
               />
               <Tooltip
                 content={({ active, payload, label }) => (
-                  <ChartTooltip active={active} payload={payload} label={label} render={p => {
+                  <ChartTooltip active={active} payload={payload} label={label?.toUpperCase()} render={p => {
                     const v = p.find(x => x.dataKey === "cumplimiento")?.value;
                     return <>
-                      <div>Cumplimiento: <strong>{pct(v)}</strong></div>
-                      <div>Meta: {usd(p[0]?.payload?.meta)}</div>
-                      <div>Real: {usd(p[0]?.payload?.real)}</div>
+                      <div>CUMPLIMIENTO: <strong>{pct(v)}</strong></div>
+                      <div>META: {usd(p[0]?.payload?.meta)}</div>
+                      <div>REAL: {usd(p[0]?.payload?.real)}</div>
                     </>;
                   }} />
                 )}
@@ -717,7 +716,7 @@ const DashboardMetaVsReal = () => {
                 />
               ))}
               <Line
-                dataKey="cumplimiento" name="Cumplimiento"
+                dataKey="cumplimiento" name="CUMPLIMIENTO"
                 stroke={CHART_LINE} strokeWidth={2.5}
                 dot={{ r: 4, fill: CHART_LINE }} activeDot={{ r: 6 }}
                 connectNulls
@@ -729,11 +728,11 @@ const DashboardMetaVsReal = () => {
 
       {/* ══ Donuts ══ */}
       {porCategoria.length > 0 && <>
-        <h2 className="section-title">🍩 Distribución por categoría — {periodoLabel}</h2>
+        <h2 className="section-title">🍩 DISTRIBUCIÓN POR CATEGORÍA — {periodoLabel}</h2>
         <div className="mvr-card-grid-2">
           {[
-            { title: `Distribución de meta`, data: donutMeta, total: totalDonutMeta },
-            { title: `Distribución de real`, data: donutReal, total: totalDonutReal },
+            { title: `DISTRIBUCIÓN DE META`, data: donutMeta, total: totalDonutMeta },
+            { title: `DISTRIBUCIÓN DE REAL`, data: donutReal, total: totalDonutReal },
           ].map(({ title, data: d, total }) => (
             <div key={title} className="mvr-card">
               <p className="mvr-card-title">{title}</p>
@@ -748,7 +747,7 @@ const DashboardMetaVsReal = () => {
                   {d.map((e, i) => (
                     <div key={i} className="donut-legend-row">
                       <div className="donut-legend-dot" style={{ background: e.fill }} />
-                      <span className="donut-legend-name">{e.name}</span>
+                      <span className="donut-legend-name">{e.name?.toUpperCase()}</span>
                       <span className="donut-legend-pct">
                         {total > 0 ? `${((e.value / total) * 100).toFixed(1)}%` : "—"}
                       </span>
@@ -763,37 +762,37 @@ const DashboardMetaVsReal = () => {
 
       {/* ══ Gráfico barras meta vs real por mes ══ */}
       {porMes.length > 0 && <>
-        <h2 className="section-title">📅 Meta vs Real por mes — {anio}</h2>
+        <h2 className="section-title">📅 META VS REAL POR MES — {anio}</h2>
         <div className="dashboard-card card-metas">
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={porMes} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="mesLabel" tick={{ fontSize: 12 }} />
+              <XAxis dataKey="mesLabel" tick={{ fontSize: 12, textTransform: 'uppercase' }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
               <Tooltip
                 content={({ active, payload, label }) => (
-                  <ChartTooltip active={active} payload={payload} label={label} render={p => {
+                  <ChartTooltip active={active} payload={payload} label={label?.toUpperCase()} render={p => {
                     const d = p[0]?.payload;
                     return <>
-                      <div>Meta: {usd(d?.meta)}</div>
-                      <div>Real: {usd(d?.real)}</div>
-                      {d?.cumplimiento != null && <div>Cumplimiento: {pct(d.cumplimiento)}</div>}
+                      <div>META: {usd(d?.meta)}</div>
+                      <div>REAL: {usd(d?.real)}</div>
+                      {d?.cumplimiento != null && <div>CUMPLIMIENTO: {pct(d.cumplimiento)}</div>}
                     </>;
                   }} />
                 )}
               />
-              <Legend />
+              <Legend wrapperStyle={{ textTransform: 'uppercase' }} />
               {hasMeses && mesesArr.map(m => (
                 <ReferenceLine
                   key={m}
                   x={MESES[m - 1]}
                   stroke="#6366f1"
                   strokeDasharray="4 4"
-                  label={{ value: "Activo", fill: "#6366f1", fontSize: 10, position: "top" }}
+                  label={{ value: "ACTIVO", fill: "#6366f1", fontSize: 10, position: "top" }}
                 />
               ))}
-              <Bar dataKey="meta" name="Meta" fill={CHART_META} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="real" name="Real" fill={CHART_REAL} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="meta" name="META" fill={CHART_META} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="real" name="REAL" fill={CHART_REAL} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -805,9 +804,9 @@ const DashboardMetaVsReal = () => {
         onClick={() => setMostrarTablaDetalle(!mostrarTablaDetalle)}
         style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", userSelect: "none", background: "#f8fafc", padding: "8px 12px", borderRadius: "8px" }}
       >
-        <span>👩‍💼 Meta vs Real por vendedora y categoría</span>
+        <span>👩‍💼 META VS REAL POR VENDEDORA Y CATEGORÍA</span>
         <span style={{ fontSize: "0.85em", color: "#64748b", fontWeight: "normal" }}>
-          {mostrarTablaDetalle ? "▲ Ocultar sección" : "▼ Mostrar sección"}
+          {mostrarTablaDetalle ? "▲ OCULTAR SECCIÓN" : "▼ MOSTRAR SECCIÓN"}
         </span>
       </h2>
       
@@ -819,10 +818,10 @@ const DashboardMetaVsReal = () => {
                 <thead>
                   <tr>
                     {[
-                      "Vendedora", "Categoría", "Tipo",
-                      "Meta año", "Real año", "Cumpl. año",
+                      "VENDEDORA", "CATEGORÍA", "TIPO",
+                      "META AÑO", "REAL AÑO", "CUMPL. AÑO",
                       ...(hasMeses
-                        ? [`Meta periodo`, `Real periodo`, "Cumpl. periodo"]
+                        ? [`META PERIODO`, `REAL PERIODO`, "CUMPL. PERIODO"]
                         : [])
                     ].map(h => <th key={h}>{h}</th>)}
                   </tr>
@@ -837,16 +836,16 @@ const DashboardMetaVsReal = () => {
                             : "tipo-solo-real"
                       }
                     >
-                      <td>{r.nombre || "—"}</td>
-                      <td>{r.categoria || "—"}</td>
+                      <td>{r.nombre?.toUpperCase() || "—"}</td>
+                      <td>{r.categoria?.toUpperCase() || "—"}</td>
                       <td>
                         <span className={`tipo-badge ${r.tipo === "match" ? "match"
                             : r.tipo === "solo_meta" ? "solo-meta"
                               : "solo-real"
                           }`}>
-                          {r.tipo === "match" ? "✓ Match"
-                            : r.tipo === "solo_meta" ? "Solo meta"
-                              : "Solo real"}
+                          {r.tipo === "match" ? "✓ MATCH"
+                            : r.tipo === "solo_meta" ? "SOLO META"
+                              : "SOLO REAL"}
                         </span>
                       </td>
                       <td className="num">{usd(r.metaAnio)}</td>
@@ -863,15 +862,15 @@ const DashboardMetaVsReal = () => {
               </table>
             </div>
           ) : (
-            <p className="sin-datos">No hay datos de comparación para los filtros seleccionados.</p>
+            <p className="sin-datos">NO HAY DATOS DE COMPARACIÓN PARA LOS FILTROS SELECCIONADOS.</p>
           )}
         </div>
       )}
 
       {/* ── Footer ── */}
       <div className="dashboard-metas-footer" style={{ marginTop: '20px' }}>
-        <button type="button" className="btn-link" onClick={() => navigate("/forecast-admin")}>
-          📊 Ir a Forecast / Metas
+        <button type="button" className="btn-link" onClick={() => navigate("/forecast-admin")} style={{ textTransform: 'uppercase' }}>
+          📊 IR A FORECAST / METAS
         </button>
       </div>
 
