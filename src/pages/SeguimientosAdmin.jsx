@@ -409,6 +409,7 @@ const SeguimientosAdmin = () => {
       color: "#0f172a",
       fontWeight: 500,
     }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
   };
 
   return (
@@ -449,6 +450,8 @@ const SeguimientosAdmin = () => {
               isClearable
               value={vendedoraSeleccionada}
               styles={selectStyles}
+              menuPortalTarget={document.body} 
+              menuPosition={'fixed'}
             />
           </div>
 

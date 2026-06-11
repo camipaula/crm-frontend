@@ -22,6 +22,7 @@ const NAV_ITEMS = {
     { to: "/calendario-admin",       icon: "📅", label: "Calendario",              section: "herramientas" },
     { to: "/forecast-admin",         icon: "📊", label: "Forecast / Metas",        section: "herramientas" },
     { to: "/dashboard-meta-vs-real", icon: "📈", label: "Meta vs Real",            section: "herramientas" },
+    { to: "/indicadores",            icon: "🎯", label: "Indicadores (KPIs)",      section: "herramientas", adminOnly: true },
     { to: "/documentos",             icon: "📁", label: "Documentos",              section: "herramientas" },
     { to: "/mi-informacion",         icon: "🧍", label: "Mi Información",          section: "herramientas", adminOnly: true },
     /*{ to: "/leads-demo", icon: "📱", label: "Leads Social", section: "principal" },*/
