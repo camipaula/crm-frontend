@@ -41,7 +41,7 @@ const Navbar = ({ toggleSidebar }) => {
         <div className="navbar-logo-mark">
           🏢
         </div>
-        <span className="navbar-title">Santos Distribuidores</span>
+        <span className="navbar-title">Santos Office</span>
       </div>
 
       {/* Derecha: bienvenida + logout */}
