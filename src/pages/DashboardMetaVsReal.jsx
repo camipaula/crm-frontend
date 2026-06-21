@@ -61,6 +61,9 @@ const DashboardMetaVsReal = () => {
   /* ── Estados de visibilidad (Colapsables) ── */
   const [mostrarMatch, setMostrarMatch] = useState(false);
   const [mostrarTablaDetalle, setMostrarTablaDetalle] = useState(false);
+  /* ── Estado para ordenar la tabla de detalles ── */
+  const [ordenDetalle, setOrdenDetalle] = useState("vendedora");
+  
 
   /* ── Estado de catálogos ── */
   const [vendedoras, setVendedoras] = useState([]);
@@ -84,6 +87,8 @@ const DashboardMetaVsReal = () => {
 
   const [openDropdown, setOpenDropdown] = useState(null); 
   const [searchTerm, setSearchTerm] = useState("");
+
+  
 
   /* ── Cargar catálogos al montar ── */
   useEffect(() => {
@@ -208,13 +213,25 @@ const DashboardMetaVsReal = () => {
       .slice(0, 5)
     , [porVend, hasMeses]);
 
-  const enRiesgo = useMemo(() =>
-    porVend.filter(r => {
-      if (r.tipo !== "match") return false;
-      const c = hasMeses ? r.cumplimientoMes : r.cumplimientoAnio;
-      return c != null && c < 0.7;
-    })
-    , [porVend, hasMeses]);
+  const detalleOrdenado = useMemo(() => {
+    let lista = [...porVend];
+    
+    lista.sort((a, b) => {
+      if (ordenDetalle === "vendedora") {
+        const nombreA = a.nombre || "";
+        const nombreB = b.nombre || "";
+        if (nombreA === nombreB) return (a.categoria || "").localeCompare(b.categoria || "");
+        return nombreA.localeCompare(nombreB);
+      } else {
+        const catA = a.categoria || "";
+        const catB = b.categoria || "";
+        if (catA === catB) return (a.nombre || "").localeCompare(b.nombre || "");
+        return catA.localeCompare(catB);
+      }
+    });
+
+    return lista;
+  }, [porVend, ordenDetalle]);
 
   const donutMeta = useMemo(() =>
     porCategoria.map((c, i) => ({ name: c.categoria?.toUpperCase(), value: c.meta ?? 0, fill: PIE_PALETTE[i % PIE_PALETTE.length] }))
@@ -246,6 +263,24 @@ const DashboardMetaVsReal = () => {
     </div>
   );
 
+  /* Helper para formatear visualmente Nombre + Código/Cédula */
+  const formatearNombre = (r) => {
+    const nombre = (r.nombre || "").toUpperCase();
+
+    // Caso A: Es una venta externa que aún no han vinculado a ninguna vendedora en el CRM
+    if (nombre.startsWith("(EXT)")) {
+      return `⚠️ FALTA VINCULAR (CÓD: ${r.codigo_vendedora_externo})`;
+    }
+
+    // Caso B: Es una vendedora normal del CRM
+    const tieneCodigo = r.codigo_vendedora_externo && r.codigo_vendedora_externo !== "En CRM (Sin código)";
+    const identificador = tieneCodigo 
+      ? `CÓD: ${r.codigo_vendedora_externo}` 
+      : `CI: ${r.cedula_ruc || "Sin CI"}`;
+
+    return `${nombre} (${identificador})`;
+  };
+  
   return (
     <div className="dashboard-metas-container dashboard-meta-vs-real" style={{ textTransform: 'uppercase' }}>
 
@@ -453,11 +488,37 @@ const DashboardMetaVsReal = () => {
         </div>
       </>}
 
-      {/* ══ Riesgo ══ */}
-      {enRiesgo.length > 0 && <>
-        <h2 className="section-title">
-          ⚠️ VENDEDORAS CON RIESGO (&lt;70%) — {periodoLabel}
+      {/* ══ Tabla Completa de Detalle (Reemplaza a la tabla de Riesgo) ══ */}
+      {detalleOrdenado.length > 0 && <>
+        <h2 className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>📋 DETALLE DE VENTAS VS METAS — {periodoLabel}</span>
+          
+          {/* Controles para cambiar el orden de la tabla */}
+          <div style={{ fontSize: '0.75rem', fontWeight: 'normal', display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <strong>AGRUPAR/ORDENAR POR:</strong>
+            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <input 
+                type="radio" 
+                name="ordenTabla" 
+                value="vendedora" 
+                checked={ordenDetalle === "vendedora"} 
+                onChange={(e) => setOrdenDetalle(e.target.value)} 
+              />
+              VENDEDORA
+            </label>
+            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <input 
+                type="radio" 
+                name="ordenTabla" 
+                value="categoria" 
+                checked={ordenDetalle === "categoria"} 
+                onChange={(e) => setOrdenDetalle(e.target.value)} 
+              />
+              CATEGORÍA
+            </label>
+          </div>
         </h2>
+
         <div className="mvr-card tabla-comparacion-wrapper">
           <div className="tabla-comparacion-scroll">
             <table className="tabla-comparacion">
@@ -470,20 +531,31 @@ const DashboardMetaVsReal = () => {
                 </tr>
               </thead>
               <tbody>
-                {enRiesgo.map((r, i) => (
-                  <tr key={i} className="tipo-match">
-                    <td>{r.nombre?.toUpperCase()}</td>
-                    <td>{r.categoria?.toUpperCase()}</td>
-                    <td className="num">{usd(r.metaAnio)}</td>
-                    <td className="num">{usd(r.realAnio)}</td>
-                    <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
-                    {hasMeses && <>
-                      <td className="num">{usd(r.metaMes)}</td>
-                      <td className="num">{usd(r.realMes)}</td>
-                      <td className="num" style={cumplStyle(r.cumplimientoMes)}>{pct(r.cumplimientoMes)}</td>
-                    </>}
-                  </tr>
-                ))}
+                {detalleOrdenado.map((r, i) => {
+                  const cumplimientoActual = hasMeses ? r.cumplimientoMes : r.cumplimientoAnio;
+                  const esCritico = cumplimientoActual != null && cumplimientoActual < 0.7;
+                  
+                  const filaStyle = esCritico ? { backgroundColor: '#fee2e2', color: '#dc2626' } : {};
+                  const textoCriticoStyle = esCritico ? { fontWeight: 'bold', color: '#dc2626' } : {};
+
+                  return (
+                    <tr key={i} className="tipo-match" style={filaStyle}>
+                      
+                      {/* LLAMAMOS A LA FUNCIÓN AQUÍ: */}
+                      <td style={textoCriticoStyle}>{formatearNombre(r)}</td>
+                      
+                      <td style={textoCriticoStyle}>{r.categoria?.toUpperCase()}</td>
+                      <td className="num">{usd(r.metaAnio)}</td>
+                      <td className="num">{usd(r.realAnio)}</td>
+                      <td className="num" style={cumplStyle(r.cumplimientoAnio)}>{pct(r.cumplimientoAnio)}</td>
+                      {hasMeses && <>
+                        <td className="num">{usd(r.metaMes)}</td>
+                        <td className="num">{usd(r.realMes)}</td>
+                        <td className="num" style={cumplStyle(r.cumplimientoMes)}>{pct(r.cumplimientoMes)}</td>
+                      </>}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
