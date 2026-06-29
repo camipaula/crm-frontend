@@ -116,7 +116,6 @@ const InformeAccesos = () => {
                   <th>Fecha Salida</th>
                   <th>Cédula</th>
                   <th>Nombre</th>
-                  <th>Dispositivo / IP</th>
                 </tr>
               </thead>
               <tbody>
@@ -135,9 +134,7 @@ const InformeAccesos = () => {
                       </td>
                       <td className="va-td-light">{log.cedula_usuario}</td>
                       <td>{log.usuario ? log.usuario.nombre : "Desconocido"}</td>
-                      <td className="va-td-light" style={{ fontSize: "12px" }}>
-                        IP: {log.ip || "N/A"}
-                      </td>
+            
                     </tr>
                   );
                 })}
