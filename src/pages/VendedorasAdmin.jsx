@@ -36,6 +36,19 @@ const VendedorasAdmin = () => {
     }
   };
 
+  // 👇 MODIFICADO: Asegura el cálculo correcto sin importar diferencias de reloj con el servidor
+  const estaEnLinea = (ultimaConexion) => {
+    if (!ultimaConexion) return false;
+    const fechaConexion = new Date(ultimaConexion);
+    const ahora = new Date();
+
+    // Calculamos la diferencia absoluta en minutos
+    const diferenciaMinutos = Math.abs(ahora - fechaConexion) / (1000 * 60);
+
+    // Si el latido o ingreso ocurrió hace menos de 5 minutos, está en línea
+    return diferenciaMinutos <= 5;
+  };
+
   return (
     <div className="va-wrapper">
       <button className="va-btn-volver" onClick={() => navigate(-1)}>
@@ -72,7 +85,7 @@ const VendedorasAdmin = () => {
           <p>Cargando equipo...</p>
         </div>
       )}
-      
+
       {error && <div className="va-error">{error}</div>}
 
       {!loading && !error && (
@@ -86,6 +99,7 @@ const VendedorasAdmin = () => {
                   <th>Nombre</th>
                   <th>Email</th>
                   <th>Estado</th>
+                  <th>Última Conexión</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -93,12 +107,31 @@ const VendedorasAdmin = () => {
                 {vendedoras.map((v) => (
                   <tr key={v.cedula_ruc}>
                     <td className="va-td-light">{v.cedula_ruc}</td>
-                    <td className="va-td-bold">{v.nombre.toUpperCase()}</td>
+                    <td className="va-td-bold" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      {/* Círculo indicador de Actividad en tiempo real */}
+                      <span style={{
+                        display: "inline-block",
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        backgroundColor: estaEnLinea(v.ultima_conexion) ? "#39ff14" : "#4a4a4a",
+                        boxShadow: estaEnLinea(v.ultima_conexion) ? "0 0 8px #39ff14" : "none"
+                      }}></span>
+                      {v.nombre.toUpperCase()}
+                    </td>
                     <td className="va-td-light">{v.email.toLowerCase()}</td>
                     <td>
                       <span className={`va-badge ${v.estado === 1 ? "va-badge-activa" : "va-badge-inactiva"}`}>
                         {v.estado === 1 ? "Activa" : "Inactiva"}
                       </span>
+                    </td>
+                    <td>
+                      {v.ultima_conexion
+                        ? new Date(v.ultima_conexion).toLocaleString("es-EC", {
+                          day: '2-digit', month: '2-digit', year: 'numeric',
+                          hour: '2-digit', minute: '2-digit'
+                        })
+                        : "Sin registro"}
                     </td>
                     <td>
                       <button className="va-btn-editar" onClick={() => navigate(`/editar-vendedora/${v.cedula_ruc}`)}>
@@ -116,7 +149,17 @@ const VendedorasAdmin = () => {
             {vendedoras.map((v) => (
               <div className="va-m-card" key={v.cedula_ruc}>
                 <div className="va-m-header">
-                  <span className="va-td-bold">{v.nombre.toUpperCase()}</span>
+                  <span className="va-td-bold" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{
+                      display: "inline-block",
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      backgroundColor: estaEnLinea(v.ultima_conexion) ? "#39ff14" : "#4a4a4a",
+                      boxShadow: estaEnLinea(v.ultima_conexion) ? "0 0 8px #39ff14" : "none"
+                    }}></span>
+                    {v.nombre.toUpperCase()}
+                  </span>
                   <span className={`va-badge ${v.estado === 1 ? "va-badge-activa" : "va-badge-inactiva"}`}>
                     {v.estado === 1 ? "Activa" : "Inactiva"}
                   </span>

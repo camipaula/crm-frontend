@@ -26,6 +26,7 @@ const NAV_ITEMS = {
     { to: "/documentos",             icon: "📁", label: "Documentos",              section: "herramientas" },
     { to: "/mi-informacion",         icon: "🧍", label: "Mi Información",          section: "herramientas", adminOnly: true },
     /*{ to: "/leads-demo", icon: "📱", label: "Leads Social", section: "principal" },*/
+    { to: "/informe-accesos",        icon: "🕒", label: "Historial Accesos", section: "herramientas" },
   ],
 };
 

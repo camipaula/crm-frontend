@@ -27,13 +27,13 @@ import ForecastAdmin from "./pages/ForecastAdmin";
 import DashboardMetas from "./pages/DashboardMetas";
 import DashboardMetaVsReal from "./pages/DashboardMetaVsReal";
 import DashboardLeads from "./pages/DashboardLeads";
-
-// 👇 NUEVO: Importamos la pantalla de Indicadores
 import IndicadoresCrm from "./pages/IndicadoresCrm"; 
+import InformeAccesos from "./pages/InformeAccesos";
 
 const App = () => {
   const [isAuth, setIsAuth] = useState(null);
 
+  // Control e inicialización de la sesión
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("token");
@@ -44,6 +44,37 @@ const App = () => {
     window.addEventListener("storage", checkAuth);
     return () => window.removeEventListener("storage", checkAuth);
   }, []);
+
+  // El sistema de latidos (Heartbeat) unificado con las rutas de autenticación
+  useEffect(() => {
+    const enviarLatido = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return; 
+
+      try {
+        // Apunta a la ruta correcta mapeada en tu servidor backend
+        await fetch(`${import.meta.env.VITE_API_URL}/api/auth/ping`, {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (error) {
+        console.error("No se pudo conectar con el servidor para el latido");
+      }
+    };
+
+    if (isAuth) {
+      enviarLatido();
+    }
+
+    // Temporizador cíclico automático cada 3 minutos
+    const intervalo = setInterval(() => {
+      if (localStorage.getItem("token")) {
+        enviarLatido();
+      }
+    }, 180000);
+
+    return () => clearInterval(intervalo);
+  }, [isAuth]); 
 
   if (isAuth === null) {
     return <div>Cargando...</div>;
@@ -69,9 +100,8 @@ const App = () => {
           <Route path="/dashboard-metas" element={<Layout><DashboardMetas /></Layout>} />
           <Route path="/dashboard-meta-vs-real" element={<Layout><DashboardMetaVsReal /></Layout>} />
           <Route path="/mi-informacion" element={<Layout><MiInformacionAdmin /></Layout>} />
-          
-          {/* 👇 NUEVO: Registramos la ruta para que React la reconozca */}
           <Route path="/indicadores" element={<Layout><IndicadoresCrm /></Layout>} />
+          <Route path="/informe-accesos" element={<Layout><InformeAccesos /></Layout>} />
         </Route>
 
         {/* Rutas para VENDEDORA */}

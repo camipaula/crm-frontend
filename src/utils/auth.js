@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 
-// Verifica si el usuario está autenticado
+// Verifica si el usuario está autenticado y si el token no ha expirado
 export const isAuthenticated = () => {
   const token = localStorage.getItem("token");
   if (!token) return false;
@@ -23,7 +23,6 @@ export const isAuthenticated = () => {
   }
 };
 
-
 // Obtiene el rol del usuario desde el token JWT
 export const getRol = () => {
   const token = localStorage.getItem("token");
@@ -31,7 +30,7 @@ export const getRol = () => {
   
   try {
     const decoded = jwtDecode(token);
-    return decoded.rol; // Aseguramos que siempre tomamos el rol correcto del token
+    return decoded.rol; // Toma el rol del payload del token
   } catch (error) {
     console.error("Error al decodificar el token:", error);
     return null;
@@ -52,6 +51,7 @@ export const obtenerCedulaDesdeToken = () => {
   }
 };
 
+// Obtiene el nombre completo del usuario desde el token JWT
 export const getNombreUsuario = () => {
   const token = localStorage.getItem("token");
   if (!token) return null;
@@ -65,19 +65,32 @@ export const getNombreUsuario = () => {
   }
 };
 
-// Cierra sesión elimiAnando los datos del usuario y redirigiendo al login
-export const logout = () => {
+// Cierra sesión notificando al servidor para apagar el indicador verde en tiempo real
+export const logout = async () => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+      // Apunta exactamente a tu ruta de autenticación del backend
+      await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
+        method: "PUT",
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        },
+      });
+    } catch (error) {
+      console.error("No se pudo notificar el logout al servidor:", error);
+    }
+  }
+
+  // Limpieza total del almacenamiento local del navegador
   localStorage.removeItem("token");
 
-  // 🧹 Limpiar todos los filtros que empiecen con "filtros_"
   Object.keys(localStorage).forEach((key) => {
     if (key.startsWith("filtros_")) {
       localStorage.removeItem(key);
     }
   });
 
-
-  window.location.href = "/"; // Redirigir al login
+  window.location.href = "/"; // Redirigir al inicio/login
 };
-
-
